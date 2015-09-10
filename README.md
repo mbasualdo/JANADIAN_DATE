@@ -1,2 +1,0 @@
-# JANADIAN_DATE
-TP Gestion 2015
