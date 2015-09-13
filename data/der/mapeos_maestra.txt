@@ -1,0 +1,83 @@
+Maestra
+
+Cli_Nombre
+Cli_Apellido
+Cli_Dni
+Cli_Dir
+Cli_Telefono
+Cli_Mail
+Cli_Fecha_Nac
+Pasaje_Codigo
+Pasaje_Precio
+Pasaje_FechaCompra
+Butaca_Nro
+Butaca_Tipo
+Butaca_Piso
+Paquete_Codigo
+Paquete_Precio
+Paquete_KG
+Paquete_FechaCompra
+FechaSalida
+Fecha_Llegada_Estimada
+FechaLlegada
+Ruta_Codigo
+Ruta_Precio_BAseKG
+Ruta_Precio_BasePasaje
+Ruta_Ciudad_Origen
+Ruta_Ciudad_Destino
+Aeronave_Matricula
+Aeronave_Modelo
+Aeronave_KG_Disponibles
+Aeronave_Fabricante
+Tipo_Servicio
+
+Cliente
+
+Cli_Nombre -> Nombre
+Cli_Apellido -> Apellido
+Cli_Dni -> Dni
+Cli_Dir -> Dir
+Cli_Telefono -> Telefono
+Cli_Mail -> Mail
+Cli_Fecha_Nac -> Fecha_Nac
+
+Pasaje
+
+Pasaje_Codigo -> Codigo
+Pasaje_Precio -> Precio
+Pasaje_FechaCompra -> FechaCompra
+
+Butaca
+
+Butaca_Nro -> Nro
+Butaca_Tipo -> Tipo
+Butaca_Piso -> Piso
+
+Paquete
+
+Paquete_Codigo -> Codigo
+Paquete_Precio -> Precio
+Paquete_KG -> KG
+Paquete_FechaCompra -> FechaCompra
+
+Viaje
+
+FechaSalida 
+Fecha_Llegada_Estimada
+FechaLlegada
+
+Ruta
+
+Ruta_Codigo -> Codigo
+Ruta_Precio_BaseKG -> Precio_BaseKG
+Ruta_Precio_BasePasaje -> Precio_BasePasaje
+Ruta_Ciudad_Origen -> Ciudad_Origen
+Ruta_Ciudad_Destino -> Ciudad_Destino
+
+Aeronave
+
+Aeronave_Matricula -> Matricula
+Aeronave_Modelo -> Modelo
+Aeronave_KG_Disponibles -> KG_Disponibles
+Aeronave_Fabricante -> Fabricante
+Tipo_Servicio

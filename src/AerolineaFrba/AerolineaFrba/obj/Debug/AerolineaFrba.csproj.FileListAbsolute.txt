@@ -1,9 +1,4 @@
 c:\users\matias\documents\visual studio 2012\Projects\AerolineaFrba\AerolineaFrba\bin\Debug\AerolineaFrba.exe.config
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\bin\Debug\AerolineaFrba.exe.config
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\bin\Debug\AerolineaFrba.exe
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\bin\Debug\AerolineaFrba.pdb
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\obj\Debug\AerolineaFrba.csprojResolveAssemblyReference.cache
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\obj\Debug\AerolineaFrba.Properties.Resources.resources
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\obj\Debug\AerolineaFrba.csproj.GenerateResource.Cache
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\obj\Debug\AerolineaFrba.exe
-C:\Users\matias\JANADIAN_DATE\AerolineaFrba\AerolineaFrba\obj\Debug\AerolineaFrba.pdb
+C:\Users\matias\JANADIAN_DATE\src\AerolineaFrba\AerolineaFrba\bin\Debug\AerolineaFrba.exe.config
+C:\Users\matias\JANADIAN_DATE\src\AerolineaFrba\AerolineaFrba\obj\Debug\AerolineaFrba.exe
+C:\Users\matias\JANADIAN_DATE\src\AerolineaFrba\AerolineaFrba\obj\Debug\AerolineaFrba.pdb
