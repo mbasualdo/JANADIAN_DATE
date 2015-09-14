@@ -73,6 +73,7 @@ Ruta_Precio_BaseKG -> Precio_BaseKG
 Ruta_Precio_BasePasaje -> Precio_BasePasaje
 Ruta_Ciudad_Origen -> Ciudad_Origen
 Ruta_Ciudad_Destino -> Ciudad_Destino
+Tipo_Servicio
 
 Aeronave
 
