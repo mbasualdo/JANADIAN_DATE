@@ -69,17 +69,33 @@ CREATE TABLE [JANADIAN_DATE].[Usuario](
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE,
 	[Password] [nvarchar](255) NOT NULL,
 	[Intentos] [int] NOT NULL DEFAULT 0,
-	[Rol] [int] NOT NULL,
+	[Rol] [int],
 		/**Por defecto habilitado ***/
 	[Habilitado] [bit] NOT NULL DEFAULT 1 
 	CONSTRAINT FK_Usuario_Rol FOREIGN KEY (Rol) REFERENCES [JANADIAN_DATE].[Rol] (Id)
 	ON DELETE NO ACTION
     ON UPDATE CASCADE,
-	CONSTRAINT CHK_Rol_Habilitado CHECK ( [JANADIAN_DATE].[Rol_Habilitado](Id)=1)
+	CONSTRAINT CHK_Rol_Habilitado CHECK ( [JANADIAN_DATE].[Rol_Habilitado]([Rol])=1)
 ) ON [PRIMARY]
 
 GO
 
+
+/** Creacion de trigger para quitar rol de usuario cuando se inhabilita el rol ***/
+CREATE TRIGGER trgQuitarRolDeshabilitarDeUsuario ON  [JANADIAN_DATE].[Rol]
+FOR UPDATE
+AS
+BEGIN
+	declare @habilitado  bit ;
+	declare @id int;
+
+	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
+	
+	if  @habilitado=0
+		UPDATE [JANADIAN_DATE].[Usuario]  set  Rol=NULL
+		where Rol=@id
+	end
+GO
 /** Creacion de trigger para deshabilitar usuario cuando tuvo 3 intentos ***/
 CREATE TRIGGER trgDeshabilitarUserFallido ON  [JANADIAN_DATE].[Usuario]
 FOR UPDATE

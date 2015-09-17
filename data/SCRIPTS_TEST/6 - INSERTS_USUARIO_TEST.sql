@@ -1,0 +1,9 @@
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin',HASHBYTES('SHA2_256','w23e'),1)
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('user',HASHBYTES('SHA2_256','w23e'),2)
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin2',HASHBYTES('SHA2_256','w23e'),1)
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('user3',HASHBYTES('SHA2_256','w23e'),2)
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin3',HASHBYTES('SHA2_256','w23e'),1)
+
+GO 
+
+--UPDATE JANADIAN_DATE.Rol SET Habilitado=0 WHERE Id=2
