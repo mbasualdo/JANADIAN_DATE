@@ -1,18 +1,42 @@
+/*****Inserts funcionalidades a roles ****/
+BEGIN TRANSACTION [Asignar_Funcionalidades_a_Rol]
+
+BEGIN TRY
+
 /*****Inserts funcionalidades admin ****/
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,1)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,2)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,3)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,4)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,5)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,6)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,7)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,8)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (1,9)
+DECLARE @Id int
+DECLARE @Admin int 
+DECLARE db_cursor CURSOR FOR  
+SELECT Id
+FROM JANADIAN_DATE.Funcionalidad
+
+
+SET @Admin = (select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%')
+
+OPEN db_cursor   
+FETCH NEXT FROM db_cursor INTO @Id
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+       INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (@Admin,@Id)
+
+       FETCH NEXT FROM db_cursor INTO @Id  
+END   
+
+CLOSE db_cursor   
+DEALLOCATE db_cursor
+
+COMMIT TRANSACTION [Asignar_Funcionalidades_a_Rol]
+
+END TRY
+BEGIN CATCH
+  ROLLBACK TRANSACTION [Asignar_Funcionalidades_a_Rol]
+END CATCH  
+
+GO
 
 /*****Inserts funcionalidades user ****/
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (2,6)
-INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (2,8)
+INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES ((select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Cliente%'),(select top 1 id from JANADIAN_DATE.Funcionalidad WHERE Descripcion LIKE '%COMPRA_PASAJE%'))
+INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES ((select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Cliente%'),(select top 1 id from JANADIAN_DATE.Funcionalidad WHERE Descripcion LIKE '%CONSULTA_MILLAS%'))
 
-
--- DELETE JANADIAN_DATE.Rol_Funcionalidad WHERE Funcionalidad=8
 GO

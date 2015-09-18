@@ -111,3 +111,51 @@ BEGIN
 		where id=@id
 	end
 GO
+
+ /** Creacion de tabla ciudad  ***/
+CREATE TABLE [JANADIAN_DATE].[Ciudad](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Nombre] [nvarchar](255) NOT NULL UNIQUE
+
+) ON [PRIMARY]
+
+GO
+
+ /** Creacion de tabla tipo servicio  ***/
+CREATE TABLE [JANADIAN_DATE].[Tipo_Servicio](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Nombre] [nvarchar](255) NOT NULL UNIQUE
+
+) ON [PRIMARY]
+
+GO
+
+ /** Creacion de tabla tipo fabricante  ***/
+CREATE TABLE [JANADIAN_DATE].[Fabricante](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Nombre] [nvarchar](255) NOT NULL UNIQUE
+
+) ON [PRIMARY]
+
+GO
+ /** Creacion de tabla ruta  ***/
+CREATE TABLE [JANADIAN_DATE].[Ruta](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
+	[Precio_BaseKG] [numeric](18,2) NOT NULL,
+	[Precio_BasePasaje] [numeric](18,2) NOT NULL,
+	[Ciudad_Origen] [int],
+	[Ciudad_Destino] [int],
+	[Tipo_Servicio] [int] FOREIGN KEY REFERENCES  [JANADIAN_DATE].[Tipo_Servicio] (Id) NOT NULL,
+	/**Por defecto habilitado ***/
+	[Habilitado] [bit] NOT NULL DEFAULT 1 
+	CONSTRAINT FK_Ciudad_Origen FOREIGN KEY (Ciudad_Origen) REFERENCES [JANADIAN_DATE].[Ciudad] (Id)
+	ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+	CONSTRAINT FK_Ciudad_Destino FOREIGN KEY (Ciudad_Destino) REFERENCES [JANADIAN_DATE].[Ciudad] (Id)
+	ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+	CONSTRAINT CHK_Origen CHECK ( [Ciudad_Origen]<>[Ciudad_Destino])
+) ON [PRIMARY]
+
+GO
