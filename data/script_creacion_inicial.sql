@@ -264,7 +264,7 @@ CREATE TABLE [JANADIAN_DATE].[Viaje](
 	CONSTRAINT FK_Ruta_Viaje FOREIGN KEY (Ruta) REFERENCES [JANADIAN_DATE].[Ruta] (Id)
 	ON DELETE NO ACTION
     ON UPDATE CASCADE,
-	CONSTRAINT CHK_Fechas_Futuras CHECK ( DATEDIFF(day,CURRENT_TIMESTAMP,[FechaSalida])>0 and DATEDIFF(day,CURRENT_TIMESTAMP,[Fecha_Llegada_Estimada])>0 and DATEDIFF(day,CURRENT_TIMESTAMP,[FechaLlegada])>0),
+	CONSTRAINT CHK_Fechas_Futuras CHECK ( DATEDIFF(day,CURRENT_TIMESTAMP,[FechaSalida])>0 and DATEDIFF(day,CURRENT_TIMESTAMP,[Fecha_Llegada_Estimada])>0),
 	CONSTRAINT CHK_Mismo_Tipo_Servicio CHECK ([JANADIAN_DATE].[Get_Tipo_Servicio_Aeronave]([Aeronave]) = [JANADIAN_DATE].[Get_Tipo_Servicio_Ruta]([Ruta]) ),
 	CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])=0)
 
@@ -375,8 +375,8 @@ GO
 CREATE TABLE [JANADIAN_DATE].[Producto](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE,
-	[Stock] [int] NOT NULL
-
+	[Stock] [int] NOT NULL,
+	[Millas_Necesarias] [int] NOT NULL
 
 ) ON [PRIMARY]
 
@@ -389,6 +389,7 @@ CREATE TABLE [JANADIAN_DATE].[Canje](
 	[Fecha] [datetime] NOT NULL,
 	[Cantidad] [int] NOT NULL,
 	[Cliente] [int] NOT NULL,
+	[Motivo] [nvarchar](255) NOT NULL,
 	CONSTRAINT FK_Canje_Cliente FOREIGN KEY (Cliente) REFERENCES [JANADIAN_DATE].[Cliente] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
@@ -407,6 +408,7 @@ CREATE TABLE [JANADIAN_DATE].[Millas](
 	[Fecha] [datetime] NOT NULL,
 	[Cantidad] [int] NOT NULL,
 	[Cliente] [int] NOT NULL,
+	[Motivo] [nvarchar](255) NOT NULL,
 	CONSTRAINT FK_Millas_Cliente FOREIGN KEY (Cliente) REFERENCES [JANADIAN_DATE].[Cliente] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
