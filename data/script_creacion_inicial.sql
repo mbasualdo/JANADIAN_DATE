@@ -5,13 +5,14 @@ GO
 CREATE SCHEMA [JANADIAN_DATE] AUTHORIZATION [gd]
 GO
 
-
-/** Creacion de tablas ***/
-
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+/****************************************************************************************/
+/*********************************** CREACION DE FUNCIONES ******************************/
+/****************************************************************************************/
 
 /****** Funcion que chequea si un rol esta habilitado  ********/
 CREATE FUNCTION  [JANADIAN_DATE].[Rol_Habilitado](@id int)
@@ -19,8 +20,8 @@ RETURNS  bit
 AS 
 BEGIN
    DECLARE @retval bit
-   SELECT @retval = Habilitado FROM [JANADIAN_DATE].[Rol] WHERE id=@id
-   RETURN @retval
+   SELECT @retval = Habilitado FROM [JANADIAN_DATE].[Rol] WHERE id=@id   
+   RETURN ISNULL ( @retval , 0 )
 END
 GO
 /****** Funcion que chequea si una aeronave esta habilitada  ********/
@@ -30,7 +31,7 @@ AS
 BEGIN
    DECLARE @retval bit
    SELECT @retval = Habilitado FROM [JANADIAN_DATE].[Aeronave] WHERE id=@id
-   RETURN @retval
+   RETURN ISNULL ( @retval , 0 )
 END
 GO
 /****** Funcion que devuelve el tipo de servicio de una aeronave  ********/
@@ -63,18 +64,16 @@ AS
 BEGIN
    DECLARE @count int
    SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] WHERE Aeronave=@id AND DATEPART(yy,FechaSalida) = DATEPART(yy,@fecha) AND DATEPART(mm,FechaSalida) = DATEPART(mm,@fecha) AND DATEPART(dd,FechaSalida) = DATEPART(dd,@fecha)
-   RETURN  @count
+   RETURN  ISNULL ( @count , 0 )
 END
 GO
 
+/************************************************************************************/
+/************************** CREACION DE TABLAS **************************************/
+/************************************************************************************/
 
-
-/** Creacion de tabla funcionalidad 
-IF OBJECT_ID( '[JANADIAN_DATE].[Funcionalidad]') IS NOT NULL
-DROP TABLE  [JANADIAN_DATE].[Funcionalidad];
-GO
- ***/
  /** Creacion de tabla funcionalidad  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Funcionalidad]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Funcionalidad](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Descripcion] [nvarchar](255) NOT NULL UNIQUE
@@ -83,6 +82,7 @@ CREATE TABLE [JANADIAN_DATE].[Funcionalidad](
 
 GO
 /** Creacion de tabla rol ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Rol]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Rol](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE,
@@ -93,6 +93,7 @@ CREATE TABLE [JANADIAN_DATE].[Rol](
 
 GO
 /** Creacion de tabla rol_funcionalidad ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Rol_Funcionalidad]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Rol_Funcionalidad](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Rol] [int] NOT NULL,
@@ -109,6 +110,7 @@ CREATE TABLE [JANADIAN_DATE].[Rol_Funcionalidad](
 GO
 
 /** Creacion de tabla usuario ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Usuario]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Usuario](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE,
@@ -125,39 +127,8 @@ CREATE TABLE [JANADIAN_DATE].[Usuario](
 
 GO
 
-
-/** Creacion de trigger para quitar rol de usuario cuando se inhabilita el rol ***/
-CREATE TRIGGER trgQuitarRolDeshabilitarDeUsuario ON  [JANADIAN_DATE].[Rol]
-FOR UPDATE
-AS
-BEGIN
-	declare @habilitado  bit ;
-	declare @id int;
-
-	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
-	
-	if  @habilitado=0
-		UPDATE [JANADIAN_DATE].[Usuario]  set  Rol=NULL
-		where Rol=@id
-	end
-GO
-/** Creacion de trigger para deshabilitar usuario cuando tuvo 3 intentos ***/
-CREATE TRIGGER trgDeshabilitarUserFallido ON  [JANADIAN_DATE].[Usuario]
-FOR UPDATE
-AS
-BEGIN
-	declare @intentos int  ;
-	declare @id int;
-
-	select @id=i.Id,@intentos=i.Intentos from inserted i;	
-	
-	if @intentos>=3
-		UPDATE [JANADIAN_DATE].[Usuario]  set  Habilitado=0
-		where id=@id
-	end
-GO
-
  /** Creacion de tabla ciudad  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Ciudad]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Ciudad](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE
@@ -167,6 +138,7 @@ CREATE TABLE [JANADIAN_DATE].[Ciudad](
 GO
 
  /** Creacion de tabla tipo servicio  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Tipo_Servicio]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Tipo_Servicio](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE
@@ -176,6 +148,7 @@ CREATE TABLE [JANADIAN_DATE].[Tipo_Servicio](
 GO
 
  /** Creacion de tabla tipo fabricante  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Fabricante]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Fabricante](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE
@@ -184,6 +157,7 @@ CREATE TABLE [JANADIAN_DATE].[Fabricante](
 
 GO
  /** Creacion de tabla ruta  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Ruta]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Ruta](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
@@ -205,13 +179,8 @@ CREATE TABLE [JANADIAN_DATE].[Ruta](
 
 GO
 
-/*** implementar el trigger que cancela pasajes y encomiendas al dar de baja una ruta (inhabilitar) ****/
-
-
-/***        ****/
-
-
  /** Creacion de tabla aeronave  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Aeronave]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Aeronave](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Matricula] [nvarchar](255) NOT NULL UNIQUE,
@@ -236,6 +205,7 @@ CREATE TABLE [JANADIAN_DATE].[Aeronave](
 GO
 
  /** Creacion de tabla butaca  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Butaca]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Butaca](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Numero] [numeric](18,0) NOT NULL,
@@ -251,6 +221,7 @@ CREATE TABLE [JANADIAN_DATE].[Butaca](
 GO
 
  /** Creacion de tabla viaje  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Viaje]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Viaje](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[FechaSalida] [datetime] NOT NULL,
@@ -272,25 +243,13 @@ CREATE TABLE [JANADIAN_DATE].[Viaje](
 
 GO
 
- /** Creacion de vista itinerario aeronave ***/
- CREATE VIEW [JANADIAN_DATE].[Itinerario_Aeronave] AS  
- SELECT a.Matricula,v.FechaLlegada,o.Nombre as Origen,d.Nombre as Destino FROM   [JANADIAN_DATE].[Viaje] v
- INNER JOIN [JANADIAN_DATE].[Aeronave] a ON (v.Aeronave = a.Id)
- INNER JOIN [JANADIAN_DATE].[Ruta] r ON (v.Ruta = r.Id)
- INNER JOIN [JANADIAN_DATE].[Ciudad] o ON (r.Ciudad_Origen = o.Id)
- INNER JOIN [JANADIAN_DATE].[Ciudad] d ON (r.Ciudad_Destino = d.Id)
-
- GO
-
-
  /** Creacion de tabla Butaca viaje ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Butaca_Viaje]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Butaca_Viaje](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Butaca] [int] NOT NULL,
 	[Viaje] [int] NOT NULL,
-	CONSTRAINT FK_Butaca FOREIGN KEY (Butaca) REFERENCES [JANADIAN_DATE].[Butaca] (Id)
-	ON DELETE CASCADE
-    ON UPDATE CASCADE,
+	CONSTRAINT FK_Butaca FOREIGN KEY (Butaca) REFERENCES [JANADIAN_DATE].[Butaca] (Id),
 	CONSTRAINT FK_Viaje FOREIGN KEY (Viaje) REFERENCES [JANADIAN_DATE].[Viaje] (Id),
 	CONSTRAINT AK_Butaca_Viaje UNIQUE (Butaca,Viaje)
 ) ON [PRIMARY]
@@ -298,6 +257,7 @@ CREATE TABLE [JANADIAN_DATE].[Butaca_Viaje](
 GO
 
  /** Creacion de tabla Cliente ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Cliente]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Cliente](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Dni] [numeric](18,0) UNIQUE NOT NULL,
@@ -313,6 +273,7 @@ GO
 
 
  /** Creacion de tabla Compra ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Compra]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Compra](
 	[PNR] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Precio] [numeric](18,2) NOT NULL,
@@ -327,23 +288,16 @@ CREATE TABLE [JANADIAN_DATE].[Compra](
 
 GO
 
- /** Creacion de vista viajes disponibles ***/
- CREATE VIEW [JANADIAN_DATE].[Viaje_Disponible] AS  
- SELECT v.FechaSalida,o.Nombre as Origen,d.Nombre as Destino FROM   [JANADIAN_DATE].[Viaje] v
- INNER JOIN [JANADIAN_DATE].[Ruta] r ON (v.Ruta = r.Id)
- INNER JOIN [JANADIAN_DATE].[Ciudad] o ON (r.Ciudad_Origen = o.Id)
- INNER JOIN [JANADIAN_DATE].[Ciudad] d ON (r.Ciudad_Destino = d.Id)
-
- GO
-
   /** Creacion de tabla Pasaje ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Pasaje]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Pasaje](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
-	[Butaca] [int],
-	[KG] [numeric](18,0),
+	[Butaca] [int] NOT NULL,
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
+	/**Por defecto activo ***/
+	[Cancelado] [bit] NOT NULL DEFAULT 0 
 	CONSTRAINT FK_Pasaje_Butaca FOREIGN KEY (Butaca) REFERENCES [JANADIAN_DATE].[Butaca] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
@@ -354,8 +308,25 @@ CREATE TABLE [JANADIAN_DATE].[Pasaje](
 
 GO
 
+  /** Creacion de tabla Paquete ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Paquete]') IS NULL
+CREATE TABLE [JANADIAN_DATE].[Paquete](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
+	[KG] [numeric](18,0),
+	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
+	[Cliente] [int] NOT NULL,
+	/**Por defecto activo ***/
+	[Cancelado] [bit] NOT NULL DEFAULT 0 
+	CONSTRAINT FK_Paquete_Cliente FOREIGN KEY (Cliente) REFERENCES [JANADIAN_DATE].[Cliente] (Id)
+	ON DELETE CASCADE
+    ON UPDATE CASCADE,
+) ON [PRIMARY]
+
+GO
 
   /** Creacion de tabla Datos tarjeta ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Datos_Tarjeta]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Datos_Tarjeta](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Numero] [numeric](18,0) NOT NULL UNIQUE,
@@ -372,6 +343,7 @@ CREATE TABLE [JANADIAN_DATE].[Datos_Tarjeta](
 GO
 
  /** Creacion de tabla Producto  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Producto]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Producto](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE,
@@ -384,6 +356,7 @@ GO
 
 
  /** Creacion de tabla Canje  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Canje]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Canje](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Fecha] [datetime] NOT NULL,
@@ -403,6 +376,7 @@ CREATE TABLE [JANADIAN_DATE].[Canje](
 GO
 
  /** Creacion de tabla Millas  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Millas]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Millas](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Fecha] [datetime] NOT NULL,
@@ -418,16 +392,172 @@ CREATE TABLE [JANADIAN_DATE].[Millas](
 GO
 
  /** Creacion de tabla Cancelacion  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Cancelacion]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Cancelacion](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[PNR] [int] NOT NULL,
-	[Codigo] [int] NOT NULL  FOREIGN KEY (Codigo) REFERENCES [JANADIAN_DATE].[Pasaje] (Id),
+	[Codigo_Pasaje] [int] FOREIGN KEY (Codigo_Pasaje) REFERENCES [JANADIAN_DATE].[Pasaje] (Id),
+	[Codigo_Paquete] [int] FOREIGN KEY (Codigo_Paquete) REFERENCES [JANADIAN_DATE].[Paquete] (Id),
+	[Pasaje_o_Paquete] [nvarchar](255) NOT NULL,
 	[Motivo] [nvarchar](255) NOT NULL,
 	[FechaDevolucion] [datetime] NOT NULL,
-	[TipoCompra] [nvarchar](255) NOT NULL,
 	CONSTRAINT FK_Cancelacion_Compra FOREIGN KEY (PNR) REFERENCES [JANADIAN_DATE].[Compra] (PNR)
 	ON DELETE CASCADE
-    ON UPDATE CASCADE
+    ON UPDATE CASCADE,
+	CONSTRAINT CHK_Algun_tipo CHECK ( ([Codigo_Pasaje] IS NOT NULL) OR ([Codigo_Paquete] IS NOT NULL) ),
+	CONSTRAINT CHK_Tipos CHECK ( [Pasaje_o_Paquete] IN ('PASAJE','PAQUETE') )
 ) ON [PRIMARY]
 
+GO
+
+
+/*******************************************************************************/
+/******************** CREACION DE VISTAS ***************************************/
+/*******************************************************************************/
+
+ /** Creacion de vista itinerario aeronave ***/
+ CREATE VIEW [JANADIAN_DATE].[Itinerario_Aeronave] AS  
+ SELECT a.Matricula,v.FechaLlegada,o.Nombre as Origen,d.Nombre as Destino FROM   [JANADIAN_DATE].[Viaje] v
+ INNER JOIN [JANADIAN_DATE].[Aeronave] a ON (v.Aeronave = a.Id)
+ INNER JOIN [JANADIAN_DATE].[Ruta] r ON (v.Ruta = r.Id)
+ INNER JOIN [JANADIAN_DATE].[Ciudad] o ON (r.Ciudad_Origen = o.Id)
+ INNER JOIN [JANADIAN_DATE].[Ciudad] d ON (r.Ciudad_Destino = d.Id)
+
+ GO
+
+ 
+ /** Creacion de vista viajes disponibles ***/
+ CREATE VIEW [JANADIAN_DATE].[Viaje_Disponible] AS  
+ SELECT v.FechaSalida,o.Nombre as Origen,d.Nombre as Destino FROM   [JANADIAN_DATE].[Viaje] v
+ INNER JOIN [JANADIAN_DATE].[Ruta] r ON (v.Ruta = r.Id)
+ INNER JOIN [JANADIAN_DATE].[Ciudad] o ON (r.Ciudad_Origen = o.Id)
+ INNER JOIN [JANADIAN_DATE].[Ciudad] d ON (r.Ciudad_Destino = d.Id)
+
+ GO
+
+ /********************************************************************************/
+/******************** CREACION DE TRIGGERS ***************************************/
+/*********************************************************************************/
+
+/** Creacion de trigger para quitar rol de usuario cuando se inhabilita el rol ***/
+CREATE TRIGGER [JANADIAN_DATE].[trgQuitarRolDeshabilitarDeUsuario] ON  [JANADIAN_DATE].[Rol]
+FOR UPDATE
+AS
+BEGIN
+	declare @habilitado  bit ;
+	declare @id int;
+
+	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
+	
+	if  @habilitado=0
+		UPDATE [JANADIAN_DATE].[Usuario]  set  Rol=NULL
+		where Rol=@id
+	end
+GO
+
+
+/** Creacion de trigger para deshabilitar usuario cuando tuvo 3 intentos ***/
+CREATE TRIGGER [JANADIAN_DATE].[trgDeshabilitarUserFallido] ON  [JANADIAN_DATE].[Usuario]
+FOR UPDATE
+AS
+BEGIN
+	declare @intentos int  ;
+	declare @id int;
+
+	select @id=i.Id,@intentos=i.Intentos from inserted i;	
+	
+	if @intentos>=3
+		UPDATE [JANADIAN_DATE].[Usuario]  set  Habilitado=0
+		where id=@id
+	end
+GO
+
+
+/*** trigger que cancela pasajes y encomiendas al dar de baja una ruta (inhabilitar) ****/
+/***        ****/
+CREATE TRIGGER [JANADIAN_DATE].[trgInhabilitarRuta] ON  [JANADIAN_DATE].[Ruta]
+FOR UPDATE
+AS
+BEGIN
+	declare @habilitado  bit ;
+	declare @id int;
+	declare @pnr int;
+
+	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
+	
+	if  @habilitado=0	
+			
+	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCEARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+		
+		SELECT @pnr=c.PNR FROM [JANADIAN_DATE].[Ruta] r
+		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
+		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
+		WHERE r.Id=@Id		
+
+		exec [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,24,'Baja de Ruta'
+	end
+	
+GO
+
+
+ /********************************************************************************/
+/******************** CREACION DE PROCEDIMIENTOS ***************************************/
+/*********************************************************************************/
+
+/***   cancelar un pasaje  necesito pnr cod pasaje y motivo , obtengo la fecha y guardo con la relacion a id de la tabla pasaje ***/
+CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Pasaje] 
+	@PNR_compra int,
+	@cod_pasaje [numeric](18,0),
+	@motivo nvarchar(255) 
+
+AS
+BEGIN TRY
+	declare @butacaPasaje int;
+	declare @kg_pasaje numeric(18,0);
+
+	BEGIN TRANSACTION
+	/** consultar**/
+	SELECT  @butacaPasaje=Butaca FROM [JANADIAN_DATE].[Pasaje] WHERE Id=@cod_pasaje
+	SELECT  @kg_pasaje=KG FROM [JANADIAN_DATE].[Paquete] WHERE Id=@cod_pasaje
+
+	/** verificar si es pasaje o paquete**/
+	IF  @kg_pasaje IS NOT NULL
+		BEGIN
+		 /** Liberar los KG **/
+			/** Marcamos el paquete como cancelado **/
+			UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1 WHERE Id=@cod_pasaje
+
+			/** grabamos la cancelacion en la tabla correspondiente **/
+				INSERT INTO Cancelacion 
+				(PNR,Codigo_Paquete,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
+				VALUES
+				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
+				END
+			ELSE IF  @butacaPasaje IS NOT NULL
+		BEGIN
+		/** Liberar la butaca **/
+		 DELETE Butaca_Viaje WHERE Butaca=@butacaPasaje
+		/** Marcamos el pasaje como cancelado **/
+			UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1 WHERE Id=@cod_pasaje
+					/** grabamos la cancelacion en la tabla correspondiente **/
+				INSERT INTO Cancelacion 
+				(PNR,Codigo_Pasaje,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
+				VALUES
+				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
+		END
+
+
+	/** aplicamos los cambios **/
+	COMMIT
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+
+END CATCH;
 GO
