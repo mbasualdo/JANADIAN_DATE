@@ -560,7 +560,7 @@ BEGIN
 		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
 		INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
-		WHERE r.Id=@Id		
+		WHERE r.Id=@Id and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0		
 
 		OPEN ViajesEnRuta 
 		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
