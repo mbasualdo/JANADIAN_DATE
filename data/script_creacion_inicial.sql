@@ -435,71 +435,7 @@ GO
 
  GO
 
- /********************************************************************************/
-/******************** CREACION DE TRIGGERS ***************************************/
-/*********************************************************************************/
-
-/** Creacion de trigger para quitar rol de usuario cuando se inhabilita el rol ***/
-CREATE TRIGGER [JANADIAN_DATE].[trgQuitarRolDeshabilitarDeUsuario] ON  [JANADIAN_DATE].[Rol]
-FOR UPDATE
-AS
-BEGIN
-	declare @habilitado  bit ;
-	declare @id int;
-
-	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
-	
-	if  @habilitado=0
-		UPDATE [JANADIAN_DATE].[Usuario]  set  Rol=NULL
-		where Rol=@id
-	end
-GO
-
-
-/** Creacion de trigger para deshabilitar usuario cuando tuvo 3 intentos ***/
-CREATE TRIGGER [JANADIAN_DATE].[trgDeshabilitarUserFallido] ON  [JANADIAN_DATE].[Usuario]
-FOR UPDATE
-AS
-BEGIN
-	declare @intentos int  ;
-	declare @id int;
-
-	select @id=i.Id,@intentos=i.Intentos from inserted i;	
-	
-	if @intentos>=3
-		UPDATE [JANADIAN_DATE].[Usuario]  set  Habilitado=0
-		where id=@id
-	end
-GO
-
-
-/*** trigger que cancela pasajes y encomiendas al dar de baja una ruta (inhabilitar) ****/
-/***        ****/
-CREATE TRIGGER [JANADIAN_DATE].[trgInhabilitarRuta] ON  [JANADIAN_DATE].[Ruta]
-FOR UPDATE
-AS
-BEGIN
-	declare @habilitado  bit ;
-	declare @id int;
-	declare @pnr int;
-
-	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
-	
-	if  @habilitado=0	
-			
-	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCEARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
-		
-		SELECT @pnr=c.PNR FROM [JANADIAN_DATE].[Ruta] r
-		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
-		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
-		WHERE r.Id=@Id		
-
-		exec [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,24,'Baja de Ruta'
-	end
-	
-GO
-
-
+ 
  /********************************************************************************/
 /******************** CREACION DE PROCEDIMIENTOS ***************************************/
 /*********************************************************************************/
@@ -561,3 +497,81 @@ BEGIN CATCH
 
 END CATCH;
 GO
+
+
+ /********************************************************************************/
+/******************** CREACION DE TRIGGERS ***************************************/
+/*********************************************************************************/
+
+/** Creacion de trigger para quitar rol de usuario cuando se inhabilita el rol ***/
+CREATE TRIGGER [JANADIAN_DATE].[trgQuitarRolDeshabilitarDeUsuario] ON  [JANADIAN_DATE].[Rol]
+FOR UPDATE
+AS
+BEGIN
+	declare @habilitado  bit ;
+	declare @id int;
+
+	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
+	
+	if  @habilitado=0
+		UPDATE [JANADIAN_DATE].[Usuario]  set  Rol=NULL
+		where Rol=@id
+	end
+GO
+
+
+/** Creacion de trigger para deshabilitar usuario cuando tuvo 3 intentos ***/
+CREATE TRIGGER [JANADIAN_DATE].[trgDeshabilitarUserFallido] ON  [JANADIAN_DATE].[Usuario]
+FOR UPDATE
+AS
+BEGIN
+	declare @intentos int  ;
+	declare @id int;
+
+	select @id=i.Id,@intentos=i.Intentos from inserted i;	
+	
+	if @intentos>=3
+		UPDATE [JANADIAN_DATE].[Usuario]  set  Habilitado=0
+		where id=@id
+	end
+GO
+
+
+/*** trigger que cancela pasajes y encomiendas al dar de baja una ruta (inhabilitar) ****/
+/***        ****/
+CREATE TRIGGER [JANADIAN_DATE].[trgInhabilitarRuta] ON  [JANADIAN_DATE].[Ruta]
+FOR UPDATE
+AS
+BEGIN
+	declare @habilitado  bit ;
+	declare @id int;
+
+	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
+	
+	if  @habilitado=0	
+			
+	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCEARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+		declare @pnr int;
+		declare @codigo [numeric](18,0);
+
+		DECLARE ViajesEnRuta CURSOR FOR 
+		SELECT c.PNR, ISNULL(p.Codigo,x.Codigo) AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
+		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
+		INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
+		INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
+		WHERE r.Id=@Id		
+
+		OPEN ViajesEnRuta 
+		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+			exec [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta'
+			FETCH NEXT FROM ViajesEnRuta
+		END
+		CLOSE ViajesEnRuta
+		DEALLOCATE ViajesEnRuta
+	end
+	
+GO
+
