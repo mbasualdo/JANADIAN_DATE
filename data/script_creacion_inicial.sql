@@ -115,7 +115,7 @@ CREATE TABLE [JANADIAN_DATE].[Usuario](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE,
 	[Password] [nvarchar](255) NOT NULL,
-	[Intentos] [int] NOT NULL DEFAULT 0,
+	[Intentos] [int] NOT NULL DEFAULT 0 CHECK([Intentos]>=0),
 	[Rol] [int],
 		/**Por defecto habilitado ***/
 	[Habilitado] [bit] NOT NULL DEFAULT 1 
@@ -161,8 +161,8 @@ IF OBJECT_ID('[JANADIAN_DATE].[Ruta]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Ruta](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
-	[Precio_BaseKG] [numeric](18,2) NOT NULL,
-	[Precio_BasePasaje] [numeric](18,2) NOT NULL,
+	[Precio_BaseKG] [numeric](18,2) NOT NULL  CHECK([Precio_BaseKG]>0) ,
+	[Precio_BasePasaje] [numeric](18,2) NOT NULL CHECK([Precio_BasePasaje]>0) ,
 	[Ciudad_Origen] [int],
 	[Ciudad_Destino] [int],
 	[Tipo_Servicio] [int] FOREIGN KEY REFERENCES  [JANADIAN_DATE].[Tipo_Servicio] (Id) NOT NULL,
@@ -185,7 +185,7 @@ CREATE TABLE [JANADIAN_DATE].[Aeronave](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Matricula] [nvarchar](255) NOT NULL UNIQUE,
 	[Modelo] [nvarchar](255) NOT NULL ,
-	[KG_Disponibles] [numeric](18,0) NOT NULL,
+	[KG_Disponibles] [numeric](18,0) NOT NULL CHECK([KG_Disponibles]>=0),
 	[Fabricante] [int] FOREIGN KEY REFERENCES  [JANADIAN_DATE].[Fabricante] (Id) NOT NULL,
 	[Tipo_Servicio] [int] FOREIGN KEY REFERENCES  [JANADIAN_DATE].[Tipo_Servicio] (Id) NOT NULL,
 	[Fecha_Alta] [datetime] NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -195,11 +195,23 @@ CREATE TABLE [JANADIAN_DATE].[Aeronave](
 	[Fecha_Fuera_Servicio] [datetime],
 	[Fecha_Reinicio_Servicio] [datetime],
 	[Fecha_Baja_Definitiva] [datetime],
-	[Cant_Butacas_Ventanilla] [int]  NOT NULL,
-	[Cant_Butacas_Pasillo] [int]  NOT NULL,
+	[Cant_Butacas_Ventanilla] [int]  NOT NULL  CHECK([Cant_Butacas_Ventanilla]>=0),
+	[Cant_Butacas_Pasillo] [int]  NOT NULL  CHECK([Cant_Butacas_Pasillo]>=0),
 		/**Por defecto habilitado ***/
 	[Habilitado] [bit] NOT NULL DEFAULT 1
 
+) ON [PRIMARY]
+
+GO
+
+/*****************   creacion tabla fuera servicio   *********/
+IF OBJECT_ID('[JANADIAN_DATE].[Fuera_Servicio]') IS NULL
+CREATE TABLE [JANADIAN_DATE].[Fuera_Servicio](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Fecha_Baja] [datetime] NOT NULL,
+	[Fecha_Reinicio] [datetime] NOT NULL,
+	[Aeronave] [int] FOREIGN KEY REFERENCES [JANADIAN_DATE].[Aeronave] (Id) NOT NULL,
+	CONSTRAINT CHK_Reinicion_despues_Baja CHECK ( DATEDIFF(day,[Fecha_Baja],[Fecha_Reinicio])>0)
 ) ON [PRIMARY]
 
 GO
@@ -210,7 +222,7 @@ CREATE TABLE [JANADIAN_DATE].[Butaca](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Numero] [numeric](18,0) NOT NULL,
 	[Tipo] [nvarchar](255) NOT NULL,
-    [Piso] [numeric](18,0) NOT NULL,
+    [Piso] [numeric](18,0) NOT NULL CHECK([Piso]>=0),
 	[Aeronave] [int] NOT NULL,
 	CONSTRAINT FK_Butaca_Aeronave FOREIGN KEY (Aeronave) REFERENCES [JANADIAN_DATE].[Aeronave] (Id)
 	ON DELETE NO ACTION
@@ -280,6 +292,7 @@ CREATE TABLE [JANADIAN_DATE].[Compra](
 	[Fecha_Compra] [datetime] NOT NULL,
 	[Viaje] [int] NOT NULL,
 	[Forma_Pago] [nvarchar](255) NOT NULL,
+	[Usuario] [int] FOREIGN KEY (Usuario) REFERENCES  [JANADIAN_DATE].[Usuario] (Id),
 	CONSTRAINT FK_Compra_Viaje FOREIGN KEY (Viaje) REFERENCES [JANADIAN_DATE].[Viaje] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
@@ -313,7 +326,7 @@ IF OBJECT_ID('[JANADIAN_DATE].[Paquete]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Paquete](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
-	[KG] [numeric](18,0),
+	[KG] [numeric](18,0) CHECK ([KG]>=0),
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
 	/**Por defecto activo ***/
@@ -347,8 +360,8 @@ IF OBJECT_ID('[JANADIAN_DATE].[Producto]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Producto](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
 	[Nombre] [nvarchar](255) NOT NULL UNIQUE,
-	[Stock] [int] NOT NULL,
-	[Millas_Necesarias] [int] NOT NULL
+	[Stock] [int] NOT NULL CHECK ([Stock]>=0),
+	[Millas_Necesarias] [int] NOT NULL CHECK ([Millas_Necesarias]>0)
 
 ) ON [PRIMARY]
 
@@ -406,6 +419,19 @@ CREATE TABLE [JANADIAN_DATE].[Cancelacion](
     ON UPDATE CASCADE,
 	CONSTRAINT CHK_Algun_tipo CHECK ( ([Codigo_Pasaje] IS NOT NULL) OR ([Codigo_Paquete] IS NOT NULL) ),
 	CONSTRAINT CHK_Tipos CHECK ( [Pasaje_o_Paquete] IN ('PASAJE','PAQUETE') )
+) ON [PRIMARY]
+
+GO
+
+/** creacion tabla millas canjeadas**/
+IF OBJECT_ID('[JANADIAN_DATE].[Millas_Canjeadas]') IS NULL
+CREATE TABLE [JANADIAN_DATE].[Millas_Canjeadas](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Milla] [int] NOT NULL,
+	[Canje] [int] NOT NULL,
+	CONSTRAINT FK_Milla FOREIGN KEY (Milla) REFERENCES [JANADIAN_DATE].[Millas] (Id),
+	CONSTRAINT FK_Canje FOREIGN KEY (Canje) REFERENCES [JANADIAN_DATE].[Canje] (Id),
+	CONSTRAINT AK_Milla_Canje UNIQUE (Milla,Canje)
 ) ON [PRIMARY]
 
 GO
@@ -498,6 +524,305 @@ BEGIN CATCH
 END CATCH;
 GO
 
+/***   Insert de funcionalidades ***/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Funcionalidades] 
+AS
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ABM_ROL')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ABM_RUTA_AEREA')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ABM_AERONAVE')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('GENERAR_VIAJE')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('REGISTRO_LLEGADA_DESTINO')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('COMPRA_PASAJE_ENCOMIENDA')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('CANCELACION_DEVOLUCION')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('CONSULTA_MILLAS')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('CANJE_MILLAS')
+	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ESTADISTICAS')
+
+	/** aplicamos los cambios **/
+	COMMIT
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+
+END CATCH;
+GO
+
+/***   Insert de Roles ***/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Roles] 
+AS
+BEGIN TRY
+	BEGIN TRANSACTION
+			INSERT INTO JANADIAN_DATE.Rol (Nombre) VALUES ('Administrador General')
+			INSERT INTO JANADIAN_DATE.Rol (Nombre) VALUES ('Cliente')
+
+	/** aplicamos los cambios **/
+	COMMIT
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+
+END CATCH;
+GO
+
+
+/***   Insert de usuarios ***/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Usuarios] 
+AS
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal1',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin2',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal2',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+
+	/** aplicamos los cambios **/
+	COMMIT
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+
+END CATCH;
+GO
+
+/*****Inserts funcionalidades a roles ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Rol_Funcionalidades] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+/*****Inserts funcionalidades admin ****/
+DECLARE @Id int
+DECLARE @Admin int 
+DECLARE @User int 
+DECLARE @Descripcion nvarchar(255)
+
+DECLARE db_cursor_rol_func CURSOR FOR  
+SELECT Id,Descripcion
+FROM JANADIAN_DATE.Funcionalidad
+
+/* rol admin*/
+SET @Admin = (select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%')
+
+/* rol user*/
+SET @User = (select top 1 id from JANADIAN_DATE.Rol WHERE Nombre NOT LIKE '%Admin%')
+
+OPEN db_cursor_rol_func   
+FETCH NEXT FROM db_cursor_rol_func INTO @Id,@Descripcion
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+       INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (@Admin,@Id)
+	   
+	   IF @Descripcion  LIKE '%COMPRA_PASAJE%' OR  @Descripcion LIKE '%CONSULTA_MILLAS%'
+	   BEGIN
+		       INSERT INTO JANADIAN_DATE.Rol_Funcionalidad (Rol,Funcionalidad) VALUES (@User,@Id)
+	   END
+
+       FETCH NEXT FROM db_cursor_rol_func INTO @Id,@Descripcion 
+END   
+
+CLOSE db_cursor_rol_func   
+DEALLOCATE db_cursor_rol_func
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+/*****Inserts CIUDADES ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Ciudades] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Nombre_ciudad nvarchar(255)
+
+DECLARE db_cursor_ciudades CURSOR FOR  
+/******   ******/
+SELECT distinct(
+      [Ruta_Ciudad_Origen]) AS ciudad
+  FROM [GD2C2015].[gd_esquema].[Maestra] UNION SELECT distinct(
+     [Ruta_Ciudad_Destino])
+	    FROM [GD2C2015].[gd_esquema].[Maestra]
+
+OPEN db_cursor_ciudades   
+FETCH NEXT FROM db_cursor_ciudades INTO @Nombre_ciudad
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+       INSERT INTO JANADIAN_DATE.Ciudad  (Nombre) VALUES (@Nombre_ciudad)
+
+       FETCH NEXT FROM db_cursor_ciudades INTO @Nombre_ciudad
+END   
+
+CLOSE db_cursor_ciudades   
+DEALLOCATE db_cursor_ciudades
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+
+/*****Inserts Tipo_Servicio ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Tipo_Servicio] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Tipo_servicio nvarchar(255)
+
+DECLARE db_cursor_tipo_servicio CURSOR FOR  
+/******   ******/
+SELECT 
+      DISTINCT [Tipo_Servicio]
+  FROM [GD2C2015].[gd_esquema].[Maestra]
+
+OPEN db_cursor_tipo_servicio   
+FETCH NEXT FROM db_cursor_tipo_servicio INTO @Tipo_servicio
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+       INSERT INTO JANADIAN_DATE.Tipo_Servicio(Nombre) VALUES (@Tipo_servicio)
+
+       FETCH NEXT FROM db_cursor_tipo_servicio INTO @Tipo_servicio
+END   
+
+CLOSE db_cursor_tipo_servicio   
+DEALLOCATE db_cursor_tipo_servicio
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+/*****Inserts Fabricante ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Fabricantes] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Nombre_fabricante nvarchar(255)
+
+DECLARE db_cursor_fabricante CURSOR FOR  
+/****** S  ******/
+SELECT DISTINCT [Aeronave_Fabricante]
+  FROM [GD2C2015].[gd_esquema].[Maestra]
+
+OPEN db_cursor_fabricante   
+FETCH NEXT FROM db_cursor_fabricante INTO @Nombre_fabricante
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+       INSERT INTO JANADIAN_DATE.Fabricante(Nombre) VALUES (@Nombre_fabricante)
+
+       FETCH NEXT FROM db_cursor_fabricante INTO @Nombre_fabricante
+END   
+
+CLOSE db_cursor_fabricante   
+DEALLOCATE db_cursor_fabricante
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+/***   Insert de productos con su stock para canjear ***/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Productos] 
+AS
+BEGIN TRY
+	BEGIN TRANSACTION
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Aire Acondicionado Split',10,12)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('TV LED 32 HD',4,11)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Maquina de cafe NESPRESSO',4,10)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Metegol estadio',9,8)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Cava Wine Collection',2,14)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Gift Card despegar.com',50,4)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Grupo electrogeno GAMMA',5,40)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Maquina cortar cesped',15,13)
+
+	/** aplicamos los cambios **/
+	COMMIT
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+
+END CATCH;
+GO
+
 
  /********************************************************************************/
 /******************** CREACION DE TRIGGERS ***************************************/
@@ -550,7 +875,7 @@ BEGIN
 	
 	if  @habilitado=0	
 			
-	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCEARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
 		declare @pnr int;
 		declare @codigo [numeric](18,0);
 
@@ -566,7 +891,7 @@ BEGIN
 		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			exec [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta'
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta'
 			FETCH NEXT FROM ViajesEnRuta
 		END
 		CLOSE ViajesEnRuta
@@ -575,3 +900,19 @@ BEGIN
 	
 GO
 
+EXEC [JANADIAN_DATE].[Insertar_Funcionalidades] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Roles] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Rol_Funcionalidades] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Usuarios] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Ciudades] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Tipo_Servicio] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Fabricantes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Productos] 
+GO
