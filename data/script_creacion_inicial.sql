@@ -272,11 +272,11 @@ GO
 IF OBJECT_ID('[JANADIAN_DATE].[Cliente]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Cliente](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Dni] [numeric](18,0) UNIQUE NOT NULL,
+	[Dni] [numeric](18,0) NOT NULL,
 	[Nombre] [nvarchar](255) NOT NULL,
 	[Apellido] [nvarchar](255) NOT NULL,
 	[Dir] [nvarchar](255) NOT NULL,
-	[Telefono] [numeric](18,0) UNIQUE NOT NULL,
+	[Telefono] [numeric](18,0) NOT NULL,
 	[Mail] [nvarchar](255),
 	[Fecha_Nac] [datetime] NOT NULL,
 ) ON [PRIMARY]
@@ -591,6 +591,7 @@ INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin',HASHBYTE
 INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal1',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
 INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin2',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
 INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal2',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('invitado',HASHBYTES('SHA2_256','w23e'),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre NOT LIKE '%Admin%'))
 
 	/** aplicamos los cambios **/
 	COMMIT
