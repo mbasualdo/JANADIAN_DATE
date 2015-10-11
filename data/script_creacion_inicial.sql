@@ -438,6 +438,19 @@ CREATE TABLE [JANADIAN_DATE].[Millas_Canjeadas](
 GO
 
 
+ /** Creacion de tabla log  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Log]') IS NULL
+CREATE TABLE [JANADIAN_DATE].[Log](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Step] [nvarchar](255),
+	[Date] [nvarchar](255)  DEFAULT CURRENT_TIMESTAMP,
+	[Status] int,
+	[Message] [nvarchar](4000)
+) ON [PRIMARY]
+
+GO
+
+
 /*******************************************************************************/
 /******************** CREACION DE VISTAS ***************************************/
 /*******************************************************************************/
@@ -520,7 +533,9 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+  INSERT INTO Log (Step,Status,Message) VALUES ('CANCELAR PASAJE',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
 
 END CATCH;
 GO
@@ -552,6 +567,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR FUNCIONALIDADES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -575,6 +591,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR ROLES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -604,6 +621,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR USUARIOS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -660,6 +678,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR ROL FUNC',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -705,6 +724,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR CIUDADES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -749,6 +769,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR TIPO SERVICIO',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -791,6 +812,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR FABRICANTES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -827,6 +849,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR PRODUCTOS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -839,29 +862,32 @@ BEGIN TRANSACTION
 
 BEGIN TRY
 
-Cli_Nombre]
+DECLARE @Nombre_cliente nvarchar(255)
+DECLARE @Apellido_cliente nvarchar(255)
+DECLARE @Dni_cliente nvarchar(255)
+DECLARE @Dir_cliente nvarchar(255)
+DECLARE @Telefono_cliente nvarchar(255)
+DECLARE @Mail_cliente nvarchar(255)
+DECLARE @Fecha_Nac_cliente nvarchar(255)
+
+DECLARE db_cursor_cliente CURSOR FOR  
+/****** S  ******/
+SELECT DISTINCT [Cli_Nombre]
       ,[Cli_Apellido]
       ,[Cli_Dni]
       ,[Cli_Dir]
       ,[Cli_Telefono]
       ,[Cli_Mail]
       ,[Cli_Fecha_Nac]
-
-DECLARE @Nombre_fabricante nvarchar(255)
-
-DECLARE db_cursor_cliente CURSOR FOR  
-/****** S  ******/
-SELECT DISTINCT [Aeronave_Fabricante]
   FROM [GD2C2015].[gd_esquema].[Maestra]
 
 OPEN db_cursor_cliente   
-FETCH NEXT FROM db_cursor_cliente INTO @Nombre_fabricante
+FETCH NEXT FROM db_cursor_cliente INTO @Nombre_cliente,@Apellido_cliente, @Dni_cliente, @Dir_cliente,@Telefono_cliente,@Mail_cliente,@Fecha_Nac_cliente
 
 WHILE @@FETCH_STATUS = 0   
 BEGIN   
-       INSERT INTO JANADIAN_DATE.Fabricante(Nombre) VALUES (@Nombre_fabricante)
-
-       FETCH NEXT FROM db_cursor_cliente INTO @Nombre_fabricante
+    INSERT INTO JANADIAN_DATE.Cliente(Nombre,Apellido,Dni,Dir,Telefono,Mail,Fecha_Nac) VALUES ( @Nombre_cliente,@Apellido_cliente, @Dni_cliente, @Dir_cliente,@Telefono_cliente,@Mail_cliente,@Fecha_Nac_cliente)
+    FETCH NEXT FROM db_cursor_cliente INTO @Nombre_cliente,@Apellido_cliente, @Dni_cliente, @Dir_cliente,@Telefono_cliente,@Mail_cliente,@Fecha_Nac_cliente
 END   
 
 CLOSE db_cursor_cliente   
@@ -877,6 +903,7 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR CLIENTES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -974,4 +1001,6 @@ GO
 EXEC [JANADIAN_DATE].[Insertar_Fabricantes] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Productos] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Clientes] 
 GO
