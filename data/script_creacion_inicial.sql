@@ -809,6 +809,13 @@ BEGIN TRY
 			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Gift Card despegar.com',50,4)
 			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Grupo electrogeno GAMMA',5,40)
 			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Maquina cortar cesped',15,13)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Descuento viajes',10,3)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Microondas Lux',5,8)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Netbook EX',4,33)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Voucher Fallabela',150,1)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Entrada Hoyts',2000,10)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Entradas 2x1 Temaiken',1400,21)
+			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('LG DVD',15,64)
 
 	/** aplicamos los cambios **/
 	COMMIT
@@ -823,6 +830,56 @@ BEGIN CATCH
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
+GO
+
+/*****Inserts Cliente ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Clientes] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+Cli_Nombre]
+      ,[Cli_Apellido]
+      ,[Cli_Dni]
+      ,[Cli_Dir]
+      ,[Cli_Telefono]
+      ,[Cli_Mail]
+      ,[Cli_Fecha_Nac]
+
+DECLARE @Nombre_fabricante nvarchar(255)
+
+DECLARE db_cursor_cliente CURSOR FOR  
+/****** S  ******/
+SELECT DISTINCT [Aeronave_Fabricante]
+  FROM [GD2C2015].[gd_esquema].[Maestra]
+
+OPEN db_cursor_cliente   
+FETCH NEXT FROM db_cursor_cliente INTO @Nombre_fabricante
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+       INSERT INTO JANADIAN_DATE.Fabricante(Nombre) VALUES (@Nombre_fabricante)
+
+       FETCH NEXT FROM db_cursor_cliente INTO @Nombre_fabricante
+END   
+
+CLOSE db_cursor_cliente   
+DEALLOCATE db_cursor_cliente
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
 GO
 
 
