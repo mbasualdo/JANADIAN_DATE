@@ -161,9 +161,9 @@ GO
 IF OBJECT_ID('[JANADIAN_DATE].[Ruta]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Ruta](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
-	[Precio_BaseKG] [numeric](18,2) NOT NULL  CHECK([Precio_BaseKG]>0) ,
-	[Precio_BasePasaje] [numeric](18,2) NOT NULL CHECK([Precio_BasePasaje]>0) ,
+	[Codigo] [numeric](18,0) NOT NULL,
+	[Precio_BaseKG] [numeric](18,2) NOT NULL ,
+	[Precio_BasePasaje] [numeric](18,2) NOT NULL,
 	[Ciudad_Origen] [int],
 	[Ciudad_Destino] [int],
 	[Tipo_Servicio] [int] FOREIGN KEY REFERENCES  [JANADIAN_DATE].[Tipo_Servicio] (Id) NOT NULL,
@@ -909,6 +909,90 @@ END CATCH
 
 GO
 
+	  /*****Inserts Rutas ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Rutas] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Codigo numeric(18,0)
+DECLARE @Precio_BaseKG numeric(18,2)
+DECLARE @Precio_BasePasaje numeric(18,2)
+DECLARE @Ciudad_Origen int
+DECLARE @Ciudad_Destino int
+DECLARE @Tipo_Servicio int
+
+DECLARE db_cursor_rutas CURSOR FOR  
+/****** S ******/
+ --SELECT distinct
+ --     t1.[Ruta_Codigo] as Codigo
+ --     ,t4.id as Ciudad_Origen
+ --     ,t5.id as Ciudad_Destino
+	--  ,t3.id as Servicio,
+	--   CASE WHEN t1.[Ruta_Precio_BaseKG] =0.00 THEN t2.[Ruta_Precio_BaseKG]
+ --        ELSE  t1.[Ruta_Precio_BaseKG] END AS BaseKG,
+	--	CASE WHEN t1.[Ruta_Precio_BasePasaje] =0.00 THEN t2.[Ruta_Precio_BasePasaje]
+ --        ELSE  t1.[Ruta_Precio_BasePasaje] END AS BasePasaje
+ -- FROM [GD2C2015].[gd_esquema].[Maestra] t1 
+ -- inner join [GD2C2015].[gd_esquema].[Maestra] t2 on  (t1.[Ruta_Precio_BaseKG]<>t2.[Ruta_Precio_BaseKG] and t1.[Ruta_Precio_BasePasaje]<>t2.[Ruta_Precio_BasePasaje] and  t1.[Ruta_Codigo]= t2.[Ruta_Codigo] and t1.Tipo_Servicio= t2.Tipo_Servicio and t1.Ruta_Ciudad_Origen=t2.Ruta_Ciudad_Origen and t1.Ruta_Ciudad_Destino=t2.Ruta_Ciudad_Destino)
+ -- inner join [JANADIAN_DATE].[Tipo_Servicio] t3 on t3.Nombre=t1.Tipo_Servicio  
+ -- inner join [JANADIAN_DATE].[Ciudad] t4 on t4.Nombre=t1.Ruta_Ciudad_Origen
+ -- inner join [JANADIAN_DATE].[Ciudad] t5 on t5.Nombre=t1.Ruta_Ciudad_Destino
+
+
+  SELECT distinct
+      t1.[Ruta_Codigo] as Codigo
+      ,t4.id as Ciudad_Origen
+      ,t5.id as Ciudad_Destino
+	  ,t3.id as Servicio,
+	   t1.[Ruta_Precio_BaseKG],
+		 t1.[Ruta_Precio_BasePasaje]
+  FROM [GD2C2015].[gd_esquema].[Maestra] t1 
+    inner join [JANADIAN_DATE].[Tipo_Servicio] t3 on t3.Nombre=t1.Tipo_Servicio  
+  inner join [JANADIAN_DATE].[Ciudad] t4 on t4.Nombre=t1.Ruta_Ciudad_Origen
+  inner join [JANADIAN_DATE].[Ciudad] t5 on t5.Nombre=t1.Ruta_Ciudad_Destino
+OPEN db_cursor_rutas   
+FETCH NEXT FROM db_cursor_rutas INTO @Codigo ,@Ciudad_Origen ,@Ciudad_Destino , @Tipo_Servicio,@Precio_BaseKG,@Precio_BasePasaje 
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+
+   IF NOT EXISTS (SELECT * FROM JANADIAN_DATE.Ruta 
+                   WHERE Codigo=@Codigo AND Ciudad_Origen =@Ciudad_Origen AND Ciudad_Destino=@Ciudad_Destino AND Tipo_Servicio =@Tipo_Servicio)
+   BEGIN
+     INSERT INTO JANADIAN_DATE.Ruta(Codigo,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio,Precio_BaseKG,Precio_BasePasaje) VALUES ( @Codigo ,@Ciudad_Origen ,@Ciudad_Destino , @Tipo_Servicio,@Precio_BaseKG,@Precio_BasePasaje )
+   END
+   ELSE
+   BEGIN
+	UPDATE JANADIAN_DATE.Ruta 
+	SET
+	  Precio_BaseKG = CASE WHEN @Precio_BaseKG <> 0.00 THEN @Precio_BaseKG ELSE Precio_BaseKG END,
+	  Precio_BasePasaje = CASE WHEN @Precio_BasePasaje <> 0.00 THEN @Precio_BasePasaje ELSE Precio_BasePasaje END
+    WHERE Codigo=@Codigo AND Ciudad_Origen =@Ciudad_Origen AND Ciudad_Destino=@Ciudad_Destino AND Tipo_Servicio =@Tipo_Servicio
+   END
+    FETCH NEXT FROM db_cursor_rutas INTO  @Codigo ,@Ciudad_Origen ,@Ciudad_Destino , @Tipo_Servicio,@Precio_BaseKG,@Precio_BasePasaje 
+END   
+
+CLOSE db_cursor_rutas   
+DEALLOCATE db_cursor_rutas
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR RUTAS',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
 
  /********************************************************************************/
 /******************** CREACION DE TRIGGERS ***************************************/
@@ -1003,4 +1087,6 @@ GO
 EXEC [JANADIAN_DATE].[Insertar_Productos] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Clientes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Rutas] 
 GO
