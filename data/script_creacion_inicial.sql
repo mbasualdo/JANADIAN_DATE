@@ -925,22 +925,6 @@ DECLARE @Tipo_Servicio int
 
 DECLARE db_cursor_rutas CURSOR FOR  
 /****** S ******/
- --SELECT distinct
- --     t1.[Ruta_Codigo] as Codigo
- --     ,t4.id as Ciudad_Origen
- --     ,t5.id as Ciudad_Destino
-	--  ,t3.id as Servicio,
-	--   CASE WHEN t1.[Ruta_Precio_BaseKG] =0.00 THEN t2.[Ruta_Precio_BaseKG]
- --        ELSE  t1.[Ruta_Precio_BaseKG] END AS BaseKG,
-	--	CASE WHEN t1.[Ruta_Precio_BasePasaje] =0.00 THEN t2.[Ruta_Precio_BasePasaje]
- --        ELSE  t1.[Ruta_Precio_BasePasaje] END AS BasePasaje
- -- FROM [GD2C2015].[gd_esquema].[Maestra] t1 
- -- inner join [GD2C2015].[gd_esquema].[Maestra] t2 on  (t1.[Ruta_Precio_BaseKG]<>t2.[Ruta_Precio_BaseKG] and t1.[Ruta_Precio_BasePasaje]<>t2.[Ruta_Precio_BasePasaje] and  t1.[Ruta_Codigo]= t2.[Ruta_Codigo] and t1.Tipo_Servicio= t2.Tipo_Servicio and t1.Ruta_Ciudad_Origen=t2.Ruta_Ciudad_Origen and t1.Ruta_Ciudad_Destino=t2.Ruta_Ciudad_Destino)
- -- inner join [JANADIAN_DATE].[Tipo_Servicio] t3 on t3.Nombre=t1.Tipo_Servicio  
- -- inner join [JANADIAN_DATE].[Ciudad] t4 on t4.Nombre=t1.Ruta_Ciudad_Origen
- -- inner join [JANADIAN_DATE].[Ciudad] t5 on t5.Nombre=t1.Ruta_Ciudad_Destino
-
-
   SELECT distinct
       t1.[Ruta_Codigo] as Codigo
       ,t4.id as Ciudad_Origen
@@ -978,7 +962,8 @@ CLOSE db_cursor_rutas
 DEALLOCATE db_cursor_rutas
 
 COMMIT TRANSACTION
-
+ALTER TABLE  [JANADIAN_DATE].[Ruta] ADD CONSTRAINT CK_Precios_Positivos
+CHECK (Precio_BaseKG>0 AND Precio_BasePasaje >0)
 END TRY
 BEGIN CATCH
   IF @@TRANCOUNT > 0
