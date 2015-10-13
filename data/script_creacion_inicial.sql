@@ -310,6 +310,7 @@ CREATE TABLE [JANADIAN_DATE].[Pasaje](
 	[Butaca] [int] NOT NULL,
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
+	[Precio] [numeric](18,2) NOT NULL CHECK ([Precio] > 0),
 	/**Por defecto activo ***/
 	[Cancelado] [bit] NOT NULL DEFAULT 0 
 	CONSTRAINT FK_Pasaje_Butaca FOREIGN KEY (Butaca) REFERENCES [JANADIAN_DATE].[Butaca] (Id)
@@ -330,6 +331,7 @@ CREATE TABLE [JANADIAN_DATE].[Paquete](
 	[KG] [numeric](18,0) CHECK ([KG]>=0),
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
+	[Precio] [numeric](18,2) NOT NULL CHECK ([Precio] > 0),
 	/**Por defecto activo ***/
 	[Cancelado] [bit] NOT NULL DEFAULT 0 
 	CONSTRAINT FK_Paquete_Cliente FOREIGN KEY (Cliente) REFERENCES [JANADIAN_DATE].[Cliente] (Id)
