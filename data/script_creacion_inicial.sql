@@ -64,7 +64,7 @@ RETURNS  int
 AS 
 BEGIN
    DECLARE @count int
-   SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] WHERE Aeronave=@id AND DATEPART(yy,FechaSalida) = DATEPART(yy,@fecha) AND DATEPART(mm,FechaSalida) = DATEPART(mm,@fecha) AND DATEPART(dd,FechaSalida) = DATEPART(dd,@fecha)
+   SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] WHERE Aeronave=@id AND DATEDIFF(SECOND,@fecha,[FechaSalida]) <=0 AND DATEDIFF(SECOND,@fecha,ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) >= 0
    RETURN  ISNULL ( @count , 0 )
 END
 GO
@@ -250,7 +250,6 @@ CREATE TABLE [JANADIAN_DATE].[Viaje](
     ON UPDATE CASCADE,
 	CONSTRAINT CHK_Fechas_Futuras CHECK ( DATEDIFF(day,CURRENT_TIMESTAMP,[FechaSalida])>0 and DATEDIFF(day,CURRENT_TIMESTAMP,[Fecha_Llegada_Estimada])>0),
 	CONSTRAINT CHK_Mismo_Tipo_Servicio CHECK ([JANADIAN_DATE].[Get_Tipo_Servicio_Aeronave]([Aeronave]) = [JANADIAN_DATE].[Get_Tipo_Servicio_Ruta]([Ruta]) ),
-
 
 ) ON [PRIMARY]
 
@@ -1096,14 +1095,12 @@ DECLARE @Llegada datetime
 DECLARE @Estimada datetime
 DECLARE @Aeronave int
 DECLARE @Ruta int
-DECLARE @tA nvarchar(255)
-DECLARE @tR nvarchar(255)
 DECLARE @naveMat nvarchar(255)
 
 DECLARE db_cursor_viajes CURSOR FOR  
 /****** S ******/
-SELECT
-      distinct t1.[FechaSalida] 
+ SELECT distinct
+       t1.[FechaSalida]	   
 	  ,t2.Id as aeronave
 	  ,t1.[Fecha_LLegada_Estimada] 
 	  ,t1.[FechaLLegada] 
@@ -1111,34 +1108,32 @@ SELECT
 	 ,t1.Aeronave_Matricula
   FROM [GD2C2015].[gd_esquema].[Maestra] t1
   inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 on (t1.Aeronave_Matricula=t2.Matricula)
-    inner join [GD2C2015].[JANADIAN_DATE].[Ruta] t3 on (t3.Codigo=t1.Ruta_Codigo)
+    inner join [GD2C2015].[JANADIAN_DATE].[Ruta] t3 on (t3.Codigo=t1.Ruta_Codigo and Ciudad_Origen in (select c.id from JANADIAN_DATE.ciudad c where t1.Ruta_Ciudad_Origen=c.nombre) and Ciudad_Destino in (select c.id from JANADIAN_DATE.ciudad c where t1.Ruta_Ciudad_Destino=c.nombre))
 
 OPEN db_cursor_viajes   
 FETCH NEXT FROM db_cursor_viajes INTO @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
 
 WHILE @@FETCH_STATUS = 0   
 BEGIN   
-select @tA = t2.Nombre from [GD2C2015].[JANADIAN_DATE].Aeronave  t1 INNER JOIN [GD2C2015].[JANADIAN_DATE].tipo_servicio t2 on (t1.tipo_servicio=t2.id) where t1.id=@Aeronave
-select @tR = t2.Nombre from [GD2C2015].[JANADIAN_DATE].Ruta t1 INNER JOIN [GD2C2015].[JANADIAN_DATE].tipo_servicio t2 on (t1.tipo_servicio=t2.id)  where t1.id=@Ruta
 
-	IF   @tA=@tR
+	IF  ([JANADIAN_DATE].[Aeronave_Habilitada](@Aeronave)=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave](@Aeronave,@Salida)=0)
    BEGIN
 	INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES (   @Salida ,@Llegada,@Estimada , @Aeronave,@Ruta );
    END
    ELSE
    BEGIN
-	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE TIENE DIFERENTE TIPO DE SERVICIO QUE LA RUTA' + ' Aeronave:' + @naveMat + ': ' + @tA + ' Ruta: : ' + @tR );
+	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE NO ESTA DISPONIBLE PARA VIAJAR' + ' Aeronave:' + @naveMat +  ' Fecha:  ' + CAST(@Salida as nvarchar(255)) );
    END
 
     FETCH NEXT FROM db_cursor_viajes INTO  @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
 END   
 
-	
+CLOSE db_cursor_viajes  	
 DEALLOCATE db_cursor_viajes
 
 COMMIT TRANSACTION
-ALTER TABLE  [JANADIAN_DATE].[Viaje] ADD CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])=0)
-CLOSE db_cursor_viajes   
+alter table [JANADIAN_DATE].[Viaje] add CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])=0)
+
 END TRY
 BEGIN CATCH
   IF @@TRANCOUNT > 0
