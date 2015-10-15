@@ -250,7 +250,7 @@ CREATE TABLE [JANADIAN_DATE].[Viaje](
     ON UPDATE CASCADE,
 	CONSTRAINT CHK_Fechas_Futuras CHECK ( DATEDIFF(day,CURRENT_TIMESTAMP,[FechaSalida])>0 and DATEDIFF(day,CURRENT_TIMESTAMP,[Fecha_Llegada_Estimada])>0),
 	CONSTRAINT CHK_Mismo_Tipo_Servicio CHECK ([JANADIAN_DATE].[Get_Tipo_Servicio_Aeronave]([Aeronave]) = [JANADIAN_DATE].[Get_Tipo_Servicio_Ruta]([Ruta]) ),
-	CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])=0)
+
 
 ) ON [PRIMARY]
 
@@ -980,7 +980,178 @@ END CATCH
 
 GO
 
+	  /*****Inserts Aeronaves ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Aeronaves] 
+AS
+BEGIN TRANSACTION
 
+BEGIN TRY
+
+DECLARE @Matricula nvarchar(255)
+DECLARE @Modelo nvarchar(255)
+DECLARE @KG_Disponibles numeric(18,0)
+DECLARE @Fabricante int
+DECLARE @Tipo_Servicio int
+DECLARE @Butacas_Pasillo int
+DECLARE @Butacas_Ventanilla int
+
+DECLARE db_cursor_naves CURSOR FOR  
+/****** S ******/
+    select distinct a.Aeronave_Matricula,t3.Id as fabricante,a.Aeronave_Modelo,t2.Id as tipo_servicio,a.Aeronave_KG_Disponibles from GD2C2015.gd_esquema.Maestra a 
+  inner join GD2C2015.gd_esquema.Maestra b on a.Aeronave_Matricula=b.Aeronave_Matricula
+  inner join [JANADIAN_DATE].[Tipo_Servicio] t2 on t2.Nombre=a.Tipo_Servicio  
+  inner join [JANADIAN_DATE].[Fabricante] t3 on t3.Nombre=a.Aeronave_Fabricante  
+OPEN db_cursor_naves   
+FETCH NEXT FROM db_cursor_naves INTO @Matricula ,@Fabricante,@Modelo , @Tipo_Servicio,@KG_Disponibles
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+
+	SELECT @Butacas_Ventanilla = MAX(c) from (SELECT  COUNT(*) as c  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Ventanilla'  group by FechaSalida) as s
+	SELECT @Butacas_Pasillo = MAX(c2) from (SELECT  COUNT(*) as c2  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Pasillo'  group by FechaSalida) as s2
+
+    INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) VALUES (   @Matricula ,@Fabricante,@Modelo , @Tipo_Servicio,@KG_Disponibles,@Butacas_Pasillo,@Butacas_Ventanilla )
+
+    FETCH NEXT FROM db_cursor_naves INTO  @Matricula ,@Fabricante,@Modelo , @Tipo_Servicio,@KG_Disponibles
+END   
+
+CLOSE db_cursor_naves   
+DEALLOCATE db_cursor_naves
+
+COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR AERONAVES',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+	  /*****Inserts Butacas ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Butacas] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Tipo nvarchar(255)
+DECLARE @Piso numeric(18,0)
+DECLARE @Numero numeric(18,0)
+DECLARE @Aeronave int
+
+DECLARE db_cursor_butacas CURSOR FOR  
+/****** S ******/
+   SELECT distinct
+      [Butaca_Nro]
+      ,[Butaca_Tipo]
+      ,[Butaca_Piso]
+      ,t2.id as Aeronave
+  FROM [GD2C2015].[gd_esquema].[Maestra] t
+  inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 ON (t.Aeronave_Matricula=t2.Matricula)
+  where Butaca_Piso<>0
+OPEN db_cursor_butacas   
+FETCH NEXT FROM db_cursor_butacas INTO @Numero ,@Tipo,@Piso , @Aeronave
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+
+    INSERT INTO JANADIAN_DATE.Butaca(Numero,Tipo,Piso,Aeronave) VALUES (  @Numero ,@Tipo,@Piso , @Aeronave )
+
+    FETCH NEXT FROM db_cursor_butacas INTO  @Numero ,@Tipo,@Piso , @Aeronave
+END   
+
+CLOSE db_cursor_butacas   
+DEALLOCATE db_cursor_butacas
+
+COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR BUTACAS',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+	  /*****Inserts Viajes ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Viajes] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Salida datetime
+DECLARE @Llegada datetime
+DECLARE @Estimada datetime
+DECLARE @Aeronave int
+DECLARE @Ruta int
+DECLARE @tA nvarchar(255)
+DECLARE @tR nvarchar(255)
+DECLARE @naveMat nvarchar(255)
+
+DECLARE db_cursor_viajes CURSOR FOR  
+/****** S ******/
+SELECT
+      distinct t1.[FechaSalida] 
+	  ,t2.Id as aeronave
+	  ,t1.[Fecha_LLegada_Estimada] 
+	  ,t1.[FechaLLegada] 
+	 , t3.id as ruta
+	 ,t1.Aeronave_Matricula
+  FROM [GD2C2015].[gd_esquema].[Maestra] t1
+  inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 on (t1.Aeronave_Matricula=t2.Matricula)
+    inner join [GD2C2015].[JANADIAN_DATE].[Ruta] t3 on (t3.Codigo=t1.Ruta_Codigo)
+
+OPEN db_cursor_viajes   
+FETCH NEXT FROM db_cursor_viajes INTO @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+select @tA = t2.Nombre from [GD2C2015].[JANADIAN_DATE].Aeronave  t1 INNER JOIN [GD2C2015].[JANADIAN_DATE].tipo_servicio t2 on (t1.tipo_servicio=t2.id) where t1.id=@Aeronave
+select @tR = t2.Nombre from [GD2C2015].[JANADIAN_DATE].Ruta t1 INNER JOIN [GD2C2015].[JANADIAN_DATE].tipo_servicio t2 on (t1.tipo_servicio=t2.id)  where t1.id=@Ruta
+
+	IF   @tA=@tR
+   BEGIN
+	INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES (   @Salida ,@Llegada,@Estimada , @Aeronave,@Ruta );
+   END
+   ELSE
+   BEGIN
+	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE TIENE DIFERENTE TIPO DE SERVICIO QUE LA RUTA' + ' Aeronave:' + @naveMat + ': ' + @tA + ' Ruta: : ' + @tR );
+   END
+
+    FETCH NEXT FROM db_cursor_viajes INTO  @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
+END   
+
+	
+DEALLOCATE db_cursor_viajes
+
+COMMIT TRANSACTION
+ALTER TABLE  [JANADIAN_DATE].[Viaje] ADD CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])=0)
+CLOSE db_cursor_viajes   
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
  /********************************************************************************/
 /******************** CREACION DE TRIGGERS ***************************************/
 /*********************************************************************************/
@@ -1076,4 +1247,10 @@ GO
 EXEC [JANADIAN_DATE].[Insertar_Clientes] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Rutas] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Aeronaves] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Butacas] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Viajes] 
 GO
