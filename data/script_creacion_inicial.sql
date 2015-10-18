@@ -244,12 +244,15 @@ CREATE TABLE [JANADIAN_DATE].[Viaje](
 	CONSTRAINT FK_Viaje_Aeronave FOREIGN KEY (Aeronave) REFERENCES [JANADIAN_DATE].[Aeronave] (Id)
 	ON DELETE NO ACTION
     ON UPDATE CASCADE,
+	--CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])=0)
+	CONSTRAINT CHK_Aeronave_Habilitada CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1),
+	CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])<=1),
 	[Ruta] [int],
 	CONSTRAINT FK_Ruta_Viaje FOREIGN KEY (Ruta) REFERENCES [JANADIAN_DATE].[Ruta] (Id)
 	ON DELETE NO ACTION
     ON UPDATE CASCADE,
 	CONSTRAINT CHK_Fechas_Futuras CHECK ( DATEDIFF(day,CURRENT_TIMESTAMP,[FechaSalida])>0 and DATEDIFF(day,CURRENT_TIMESTAMP,[Fecha_Llegada_Estimada])>0),
-	CONSTRAINT CHK_Mismo_Tipo_Servicio CHECK ([JANADIAN_DATE].[Get_Tipo_Servicio_Aeronave]([Aeronave]) = [JANADIAN_DATE].[Get_Tipo_Servicio_Ruta]([Ruta]) ),
+	CONSTRAINT CHK_Mismo_Tipo_Servicio CHECK ([JANADIAN_DATE].[Get_Tipo_Servicio_Aeronave]([Aeronave]) = [JANADIAN_DATE].[Get_Tipo_Servicio_Ruta]([Ruta]) )
 
 ) ON [PRIMARY]
 
@@ -291,7 +294,7 @@ CREATE TABLE [JANADIAN_DATE].[Compra](
 	[Precio] [numeric](18,2) NOT NULL,
 	[Fecha_Compra] [datetime] NOT NULL,
 	[Viaje] [int] NOT NULL,
-	[Forma_Pago] [nvarchar](255) NOT NULL,
+	[Forma_Pago] [nvarchar](255) NOT NULL CHECK (Forma_Pago IN ('TC','EFECTIVO')),
 	[Usuario] [int] FOREIGN KEY (Usuario) REFERENCES  [JANADIAN_DATE].[Usuario] (Id),
 	CONSTRAINT FK_Compra_Viaje FOREIGN KEY (Viaje) REFERENCES [JANADIAN_DATE].[Viaje] (Id)
 	ON DELETE CASCADE
@@ -1115,14 +1118,14 @@ FETCH NEXT FROM db_cursor_viajes INTO @Salida ,@Aeronave,@Estimada,@Llegada,@Rut
 
 WHILE @@FETCH_STATUS = 0   
 BEGIN   
-
-	IF  ([JANADIAN_DATE].[Aeronave_Habilitada](@Aeronave)=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave](@Aeronave,@Salida)=0)
+	--print CAST(@Salida as nvarchar(255)) + ',' + CAST(@Aeronave as nvarchar(255)) + ',' +CAST(@Estimada as nvarchar(255)) + ',' +CAST(@Llegada as nvarchar(255)) + ',' +CAST(@Ruta as nvarchar(255)) + ',' +CAST(@naveMat as nvarchar(255)) 
+	IF  ([JANADIAN_DATE].[Aeronave_Habilitada](@Aeronave)=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave](@Aeronave,@Salida)<=0)
    BEGIN
 	INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES (   @Salida ,@Llegada,@Estimada , @Aeronave,@Ruta );
    END
    ELSE
    BEGIN
-	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE NO ESTA DISPONIBLE PARA VIAJAR' + ' Aeronave:' + @naveMat +  ' Fecha:  ' + CAST(@Salida as nvarchar(255)) );
+	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE NO ESTA DISPONIBLE PARA VIAJAR' + ' Aeronave: ' + @naveMat +  ' Fecha:  ' + CAST(@Salida as nvarchar(255)) );
    END
 
     FETCH NEXT FROM db_cursor_viajes INTO  @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
@@ -1132,7 +1135,6 @@ CLOSE db_cursor_viajes
 DEALLOCATE db_cursor_viajes
 
 COMMIT TRANSACTION
-alter table [JANADIAN_DATE].[Viaje] add CONSTRAINT CHK_Aeronave_Disponible CHECK ([JANADIAN_DATE].[Aeronave_Habilitada]([Aeronave])=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave]([Aeronave],[FechaSalida])=0)
 
 END TRY
 BEGIN CATCH
@@ -1143,6 +1145,104 @@ BEGIN CATCH
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
   INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+	  /*****Inserts Butaca Viajes ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Butaca int
+DECLARE @Viaje int
+
+DECLARE db_cursor_butaca_viajes CURSOR FOR  
+/****** S  ******/
+SELECT  distinct b.Id,v.Id
+  FROM [GD2C2015].[gd_esquema].[Maestra] m
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Butaca] b ON (b.Numero=m.Butaca_Nro and b.Aeronave=a.id)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (r.Codigo=m.Ruta_Codigo)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id and v.Ruta=r.Id)
+
+OPEN db_cursor_butaca_viajes   
+FETCH NEXT FROM db_cursor_butaca_viajes INTO @Butaca ,@Viaje
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+
+	INSERT INTO JANADIAN_DATE.Butaca_Viaje(Butaca,Viaje) VALUES (   @Butaca ,@Viaje);
+
+    FETCH NEXT FROM db_cursor_butaca_viajes INTO   @Butaca ,@Viaje
+END   
+
+CLOSE db_cursor_butaca_viajes  	
+DEALLOCATE db_cursor_butaca_viajes
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR BUTACA VIAJES',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+	  /*****Inserts Compras ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Compras] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+DECLARE @Precio numeric(18,2)
+DECLARE @Fecha_Compra datetime
+DECLARE @Viaje int
+
+DECLARE db_cursor_compras CURSOR FOR  
+/****** S  ******/
+SELECT IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.Id as Viaje
+  FROM [GD2C2015].[gd_esquema].[Maestra] m
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (r.Codigo=m.Ruta_Codigo)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id and v.Ruta=r.Id)
+
+OPEN db_cursor_compras   
+FETCH NEXT FROM db_cursor_compras INTO @Precio ,@Fecha_Compra,@Viaje
+
+WHILE @@FETCH_STATUS = 0   
+BEGIN   
+
+	INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago) VALUES ( @Precio ,@Fecha_Compra,@Viaje,'EFECTIVO');
+
+    FETCH NEXT FROM db_cursor_compras INTO  @Precio ,@Fecha_Compra,@Viaje
+END   
+
+CLOSE db_cursor_compras  	
+DEALLOCATE db_cursor_compras
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR COMPRAS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1248,4 +1348,8 @@ GO
 EXEC [JANADIAN_DATE].[Insertar_Butacas] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Viajes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Compras] 
 GO
