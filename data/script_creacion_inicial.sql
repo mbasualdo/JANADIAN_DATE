@@ -1133,6 +1133,43 @@ BEGIN CATCH
 END CATCH  
 
 GO
+
+	  /*****Inserts Paquetes ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Paquetes] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+/* S*/
+INSERT INTO JANADIAN_DATE.Paquete (Codigo,Precio,KG,Compra,Cliente)
+SELECT 
+      m.[Paquete_Codigo]
+      ,m.[Paquete_Precio]
+      ,m.[Paquete_KG]
+      ,c.PNR as Compra
+	  ,cli.Id as Cliente
+  FROM [GD2C2015].[gd_esquema].[Maestra] m
+  INNER JOIN  [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.FechaSalida=m.FechaSalida AND v.FechaLlegada=m.FechaLLegada and v.Fecha_Llegada_Estimada=m.Fecha_LLegada_Estimada)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] cli ON (cli.Nombre=m.Cli_Nombre AND cli.Apellido=m.Cli_Apellido and cli.Dni=m.Cli_Dni)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Fecha_Compra=m.Paquete_FechaCompra AND c.Precio=m.Paquete_Precio and v.Id=c.Viaje)
+      WHERE Paquete_Codigo<>0
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR PAQUETES',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
  /********************************************************************************/
 /******************** CREACION DE TRIGGERS ***************************************/
 /*********************************************************************************/
@@ -1238,4 +1275,6 @@ GO
 EXEC [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Compras] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Paquetes] 
 GO
