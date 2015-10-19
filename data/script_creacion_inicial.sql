@@ -1125,7 +1125,7 @@ BEGIN
    END
    ELSE
    BEGIN
-	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE NO ESTA DISPONIBLE PARA VIAJAR' + ' Aeronave: ' + @naveMat +  ' Fecha:  ' + CAST(@Salida as nvarchar(255)) );
+	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE NO ESTA DISPONIBLE PARA VIAJAR' + ' Aeronave: ' + @naveMat +  ' Fecha:  ' + CAST(@Salida as nvarchar(255)) + ',' + CAST(@Aeronave as nvarchar(255)) + ',' +CAST(@Estimada as nvarchar(255)) + ',' +CAST(@Llegada as nvarchar(255)) + ',' +CAST(@Ruta as nvarchar(255)) + ',' +CAST(@naveMat as nvarchar(255)));
    END
 
     FETCH NEXT FROM db_cursor_viajes INTO  @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
@@ -1208,25 +1208,40 @@ BEGIN TRY
 
 DECLARE @Precio numeric(18,2)
 DECLARE @Fecha_Compra datetime
+DECLARE @Aeronave int
 DECLARE @Viaje int
+DECLARE @Ruta numeric(18,0)
+DECLARE @Origen int
+DECLARE @Destino int
+DECLARE @Tipo_Servicio int
+DECLARE @Fecha_Salida datetime
 
 DECLARE db_cursor_compras CURSOR FOR  
 /****** S  ******/
-SELECT IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.Id as Viaje
+SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,a.Id as Aeronave,m.Ruta_Codigo,c1.Id as Origen,c2.Id as Destino,t.id as Tipo_Servicio,m.FechaSalida as Salida
   FROM [GD2C2015].[gd_esquema].[Maestra] m
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (r.Codigo=m.Ruta_Codigo)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id and v.Ruta=r.Id)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c1 ON (c1.Nombre=m.Ruta_Ciudad_Origen)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (c2.Nombre=m.Ruta_Ciudad_Destino)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t ON (t.Nombre=m.Tipo_Servicio)
 
 OPEN db_cursor_compras   
-FETCH NEXT FROM db_cursor_compras INTO @Precio ,@Fecha_Compra,@Viaje
+FETCH NEXT FROM db_cursor_compras INTO @Precio ,@Fecha_Compra,@Aeronave,@Ruta,@Origen,@Destino,@Tipo_Servicio,@Fecha_Salida
 
 WHILE @@FETCH_STATUS = 0   
 BEGIN   
+	SELECT @Viaje=v.Id FROM JANADIAN_DATE.Viaje v INNER JOIN JANADIAN_DATE.Ruta r ON (v.Ruta=r.Id and v.Aeronave=@Aeronave) WHERE r.Codigo=@Ruta and r.Ciudad_Origen=@Origen and r.Ciudad_Destino=@Destino and r.Tipo_Servicio=@Tipo_Servicio and FechaSalida=@Fecha_Salida
+	
+	IF  @Viaje IS NULL
+	BEGIN
+		  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR COMPRAS ',1,'No hay viaje para las condiciones compradas' + CAST(@Precio as nvarchar(255)) + ',' +   CAST(@Fecha_Compra as nvarchar(255)) + ',' +   CAST(@Aeronave as nvarchar(255)) + ',' +   CAST(@Ruta as nvarchar(255)) + ',' +   CAST(@Origen as nvarchar(255)) + ',' +   CAST(@Destino as nvarchar(255)) + ',' +   CAST(@Tipo_Servicio as nvarchar(255)) + ',' +   CAST(@Fecha_Salida as nvarchar(255)) );
+	END
+	ELSE
+	BEGIN	
+		INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago) VALUES ( @Precio ,@Fecha_Compra,@Viaje,'EFECTIVO');
+	END
 
-	INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago) VALUES ( @Precio ,@Fecha_Compra,@Viaje,'EFECTIVO');
-
-    FETCH NEXT FROM db_cursor_compras INTO  @Precio ,@Fecha_Compra,@Viaje
+    FETCH NEXT FROM db_cursor_compras INTO  @Precio ,@Fecha_Compra,@Aeronave,@Ruta,@Origen,@Destino,@Tipo_Servicio,@Fecha_Salida
 END   
 
 CLOSE db_cursor_compras  	
