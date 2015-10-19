@@ -528,7 +528,7 @@ BEGIN TRY
 
 
 	/** aplicamos los cambios **/
-	COMMIT
+	COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
   IF @@TRANCOUNT > 0
@@ -562,7 +562,7 @@ BEGIN TRY
 	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ESTADISTICAS')
 
 	/** aplicamos los cambios **/
-	COMMIT
+	COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
   IF @@TRANCOUNT > 0
@@ -694,29 +694,14 @@ AS
 BEGIN TRANSACTION
 
 BEGIN TRY
-
-DECLARE @Nombre_ciudad nvarchar(255)
-
-DECLARE db_cursor_ciudades CURSOR FOR  
+ 
 /******   ******/
+INSERT INTO JANADIAN_DATE.Ciudad  (Nombre) 
 SELECT distinct(
       [Ruta_Ciudad_Origen]) AS ciudad
   FROM [GD2C2015].[gd_esquema].[Maestra] UNION SELECT distinct(
      [Ruta_Ciudad_Destino])
 	    FROM [GD2C2015].[gd_esquema].[Maestra]
-
-OPEN db_cursor_ciudades   
-FETCH NEXT FROM db_cursor_ciudades INTO @Nombre_ciudad
-
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-       INSERT INTO JANADIAN_DATE.Ciudad  (Nombre) VALUES (@Nombre_ciudad)
-
-       FETCH NEXT FROM db_cursor_ciudades INTO @Nombre_ciudad
-END   
-
-CLOSE db_cursor_ciudades   
-DEALLOCATE db_cursor_ciudades
 
 COMMIT TRANSACTION
 
@@ -742,26 +727,11 @@ BEGIN TRANSACTION
 
 BEGIN TRY
 
-DECLARE @Tipo_servicio nvarchar(255)
-
-DECLARE db_cursor_tipo_servicio CURSOR FOR  
 /******   ******/
+ INSERT INTO JANADIAN_DATE.Tipo_Servicio(Nombre)
 SELECT 
       DISTINCT [Tipo_Servicio]
   FROM [GD2C2015].[gd_esquema].[Maestra]
-
-OPEN db_cursor_tipo_servicio   
-FETCH NEXT FROM db_cursor_tipo_servicio INTO @Tipo_servicio
-
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-       INSERT INTO JANADIAN_DATE.Tipo_Servicio(Nombre) VALUES (@Tipo_servicio)
-
-       FETCH NEXT FROM db_cursor_tipo_servicio INTO @Tipo_servicio
-END   
-
-CLOSE db_cursor_tipo_servicio   
-DEALLOCATE db_cursor_tipo_servicio
 
 COMMIT TRANSACTION
 
@@ -786,25 +756,11 @@ BEGIN TRANSACTION
 
 BEGIN TRY
 
-DECLARE @Nombre_fabricante nvarchar(255)
-
-DECLARE db_cursor_fabricante CURSOR FOR  
 /****** S  ******/
+INSERT INTO JANADIAN_DATE.Fabricante(Nombre)
 SELECT DISTINCT [Aeronave_Fabricante]
   FROM [GD2C2015].[gd_esquema].[Maestra]
 
-OPEN db_cursor_fabricante   
-FETCH NEXT FROM db_cursor_fabricante INTO @Nombre_fabricante
-
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-       INSERT INTO JANADIAN_DATE.Fabricante(Nombre) VALUES (@Nombre_fabricante)
-
-       FETCH NEXT FROM db_cursor_fabricante INTO @Nombre_fabricante
-END   
-
-CLOSE db_cursor_fabricante   
-DEALLOCATE db_cursor_fabricante
 
 COMMIT TRANSACTION
 
@@ -844,7 +800,7 @@ BEGIN TRY
 			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('LG DVD',15,64)
 
 	/** aplicamos los cambios **/
-	COMMIT
+	COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
   IF @@TRANCOUNT > 0
@@ -866,16 +822,8 @@ BEGIN TRANSACTION
 
 BEGIN TRY
 
-DECLARE @Nombre_cliente nvarchar(255)
-DECLARE @Apellido_cliente nvarchar(255)
-DECLARE @Dni_cliente nvarchar(255)
-DECLARE @Dir_cliente nvarchar(255)
-DECLARE @Telefono_cliente nvarchar(255)
-DECLARE @Mail_cliente nvarchar(255)
-DECLARE @Fecha_Nac_cliente nvarchar(255)
-
-DECLARE db_cursor_cliente CURSOR FOR  
 /****** S  ******/
+INSERT INTO JANADIAN_DATE.Cliente(Nombre,Apellido,Dni,Dir,Telefono,Mail,Fecha_Nac)
 SELECT DISTINCT [Cli_Nombre]
       ,[Cli_Apellido]
       ,[Cli_Dni]
@@ -884,18 +832,6 @@ SELECT DISTINCT [Cli_Nombre]
       ,[Cli_Mail]
       ,[Cli_Fecha_Nac]
   FROM [GD2C2015].[gd_esquema].[Maestra]
-
-OPEN db_cursor_cliente   
-FETCH NEXT FROM db_cursor_cliente INTO @Nombre_cliente,@Apellido_cliente, @Dni_cliente, @Dir_cliente,@Telefono_cliente,@Mail_cliente,@Fecha_Nac_cliente
-
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-    INSERT INTO JANADIAN_DATE.Cliente(Nombre,Apellido,Dni,Dir,Telefono,Mail,Fecha_Nac) VALUES ( @Nombre_cliente,@Apellido_cliente, @Dni_cliente, @Dir_cliente,@Telefono_cliente,@Mail_cliente,@Fecha_Nac_cliente)
-    FETCH NEXT FROM db_cursor_cliente INTO @Nombre_cliente,@Apellido_cliente, @Dni_cliente, @Dir_cliente,@Telefono_cliente,@Mail_cliente,@Fecha_Nac_cliente
-END   
-
-CLOSE db_cursor_cliente   
-DEALLOCATE db_cursor_cliente
 
 COMMIT TRANSACTION
 
@@ -1042,13 +978,8 @@ BEGIN TRANSACTION
 
 BEGIN TRY
 
-DECLARE @Tipo nvarchar(255)
-DECLARE @Piso numeric(18,0)
-DECLARE @Numero numeric(18,0)
-DECLARE @Aeronave int
-
-DECLARE db_cursor_butacas CURSOR FOR  
 /****** S ******/
+INSERT INTO JANADIAN_DATE.Butaca(Numero,Tipo,Piso,Aeronave)
    SELECT distinct
       [Butaca_Nro]
       ,[Butaca_Tipo]
@@ -1057,19 +988,6 @@ DECLARE db_cursor_butacas CURSOR FOR
   FROM [GD2C2015].[gd_esquema].[Maestra] t
   inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 ON (t.Aeronave_Matricula=t2.Matricula)
   where Butaca_Piso<>0
-OPEN db_cursor_butacas   
-FETCH NEXT FROM db_cursor_butacas INTO @Numero ,@Tipo,@Piso , @Aeronave
-
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-
-    INSERT INTO JANADIAN_DATE.Butaca(Numero,Tipo,Piso,Aeronave) VALUES (  @Numero ,@Tipo,@Piso , @Aeronave )
-
-    FETCH NEXT FROM db_cursor_butacas INTO  @Numero ,@Tipo,@Piso , @Aeronave
-END   
-
-CLOSE db_cursor_butacas   
-DEALLOCATE db_cursor_butacas
 
 COMMIT TRANSACTION
 END TRY
@@ -1157,31 +1075,14 @@ BEGIN TRANSACTION
 
 BEGIN TRY
 
-DECLARE @Butaca int
-DECLARE @Viaje int
-
-DECLARE db_cursor_butaca_viajes CURSOR FOR  
 /****** S  ******/
+INSERT INTO JANADIAN_DATE.Butaca_Viaje(Butaca,Viaje)
 SELECT  distinct b.Id,v.Id
   FROM [GD2C2015].[gd_esquema].[Maestra] m
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Butaca] b ON (b.Numero=m.Butaca_Nro and b.Aeronave=a.id)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (r.Codigo=m.Ruta_Codigo)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id and v.Ruta=r.Id)
-
-OPEN db_cursor_butaca_viajes   
-FETCH NEXT FROM db_cursor_butaca_viajes INTO @Butaca ,@Viaje
-
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-
-	INSERT INTO JANADIAN_DATE.Butaca_Viaje(Butaca,Viaje) VALUES (   @Butaca ,@Viaje);
-
-    FETCH NEXT FROM db_cursor_butaca_viajes INTO   @Butaca ,@Viaje
-END   
-
-CLOSE db_cursor_butaca_viajes  	
-DEALLOCATE db_cursor_butaca_viajes
 
 COMMIT TRANSACTION
 
@@ -1206,46 +1107,16 @@ BEGIN TRANSACTION
 
 BEGIN TRY
 
-DECLARE @Precio numeric(18,2)
-DECLARE @Fecha_Compra datetime
-DECLARE @Aeronave int
-DECLARE @Viaje int
-DECLARE @Ruta numeric(18,0)
-DECLARE @Origen int
-DECLARE @Destino int
-DECLARE @Tipo_Servicio int
-DECLARE @Fecha_Salida datetime
-
-DECLARE db_cursor_compras CURSOR FOR  
-/****** S  ******/
-SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,a.Id as Aeronave,m.Ruta_Codigo,c1.Id as Origen,c2.Id as Destino,t.id as Tipo_Servicio,m.FechaSalida as Salida
-  FROM [GD2C2015].[gd_esquema].[Maestra] m
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c1 ON (c1.Nombre=m.Ruta_Ciudad_Origen)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (c2.Nombre=m.Ruta_Ciudad_Destino)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t ON (t.Nombre=m.Tipo_Servicio)
-
-OPEN db_cursor_compras   
-FETCH NEXT FROM db_cursor_compras INTO @Precio ,@Fecha_Compra,@Aeronave,@Ruta,@Origen,@Destino,@Tipo_Servicio,@Fecha_Salida
-
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-	SELECT @Viaje=v.Id FROM JANADIAN_DATE.Viaje v INNER JOIN JANADIAN_DATE.Ruta r ON (v.Ruta=r.Id and v.Aeronave=@Aeronave) WHERE r.Codigo=@Ruta and r.Ciudad_Origen=@Origen and r.Ciudad_Destino=@Destino and r.Tipo_Servicio=@Tipo_Servicio and FechaSalida=@Fecha_Salida
-	
-	IF  @Viaje IS NULL
-	BEGIN
-		  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR COMPRAS ',1,'No hay viaje para las condiciones compradas' + CAST(@Precio as nvarchar(255)) + ',' +   CAST(@Fecha_Compra as nvarchar(255)) + ',' +   CAST(@Aeronave as nvarchar(255)) + ',' +   CAST(@Ruta as nvarchar(255)) + ',' +   CAST(@Origen as nvarchar(255)) + ',' +   CAST(@Destino as nvarchar(255)) + ',' +   CAST(@Tipo_Servicio as nvarchar(255)) + ',' +   CAST(@Fecha_Salida as nvarchar(255)) );
-	END
-	ELSE
-	BEGIN	
-		INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago) VALUES ( @Precio ,@Fecha_Compra,@Viaje,'EFECTIVO');
-	END
-
-    FETCH NEXT FROM db_cursor_compras INTO  @Precio ,@Fecha_Compra,@Aeronave,@Ruta,@Origen,@Destino,@Tipo_Servicio,@Fecha_Salida
-END   
-
-CLOSE db_cursor_compras  	
-DEALLOCATE db_cursor_compras
+/* CADA REGISTRO DE MAESTRA LO TOMAMOS COMO UNA COMPRA INDEPENDIENTE pagada en efectivo y realizada por autoservicio*/
+INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago) 
+SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.iD as Viaje,'EFECTIVO'
+	 FROM [GD2C2015].[gd_esquema].[Maestra] m
+	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
+	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c1 ON (c1.Nombre=m.Ruta_Ciudad_Origen)
+	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (c2.Nombre=m.Ruta_Ciudad_Destino)
+	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t ON (t.Nombre=m.Tipo_Servicio)
+	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (r.Codigo=m.Ruta_Codigo and r.Ciudad_Origen=c1.Id and r.Ciudad_Destino=c2.Id)
+    INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Ruta=r.Id and v.Aeronave=a.Id and v.FechaSalida=m.FechaSalida)
 
 COMMIT TRANSACTION
 
