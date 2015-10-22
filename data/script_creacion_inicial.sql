@@ -299,7 +299,7 @@ CREATE TABLE [JANADIAN_DATE].[Compra](
 	CONSTRAINT FK_Compra_Viaje FOREIGN KEY (Viaje) REFERENCES [JANADIAN_DATE].[Viaje] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
-
+	[Codigo] [numeric](18,0) UNIQUE,
 ) ON [PRIMARY]
 
 GO
@@ -397,7 +397,7 @@ GO
 IF OBJECT_ID('[JANADIAN_DATE].[Millas]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Millas](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Fecha] [datetime] NOT NULL,
+	[Fecha] [datetime] NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	[Cantidad] [int] NOT NULL,
 	[Cliente] [int] NOT NULL,
 	[Motivo] [nvarchar](255) NOT NULL,
@@ -1108,8 +1108,8 @@ BEGIN TRANSACTION
 BEGIN TRY
 
 /* CADA REGISTRO DE MAESTRA LO TOMAMOS COMO UNA COMPRA INDEPENDIENTE pagada en efectivo y realizada por autoservicio*/
-INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago) 
-SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.iD as Viaje,'EFECTIVO'
+INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago,Codigo) 
+SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.iD as Viaje,'EFECTIVO',IIF(m.Pasaje_Precio=0, m.Paquete_Codigo,m.Pasaje_Codigo) as Codigo
 	 FROM [GD2C2015].[gd_esquema].[Maestra] m
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c1 ON (c1.Nombre=m.Ruta_Ciudad_Origen)
@@ -1143,16 +1143,14 @@ BEGIN TRY
 
 /* S*/
 INSERT INTO JANADIAN_DATE.Paquete (Codigo,Precio,KG,Compra,Cliente)
-SELECT 
-      m.[Paquete_Codigo]
+	  select m.[Paquete_Codigo]
       ,m.[Paquete_Precio]
       ,m.[Paquete_KG]
       ,c.PNR as Compra
 	  ,cli.Id as Cliente
   FROM [GD2C2015].[gd_esquema].[Maestra] m
-  INNER JOIN  [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.FechaSalida=m.FechaSalida AND v.FechaLlegada=m.FechaLLegada and v.Fecha_Llegada_Estimada=m.Fecha_LLegada_Estimada)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] cli ON (cli.Nombre=m.Cli_Nombre AND cli.Apellido=m.Cli_Apellido and cli.Dni=m.Cli_Dni)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Fecha_Compra=m.Paquete_FechaCompra AND c.Precio=m.Paquete_Precio and v.Id=c.Viaje)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Codigo=m.Paquete_Codigo)
       WHERE Paquete_Codigo<>0
 
 COMMIT TRANSACTION
@@ -1170,6 +1168,84 @@ BEGIN CATCH
 END CATCH  
 
 GO
+
+	  /*****Inserts Pasajes ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Pasajes] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+/* S*/
+INSERT INTO JANADIAN_DATE.Pasaje(Codigo,Precio,Butaca,Compra,Cliente)
+  	  select m.[Pasaje_Codigo]
+      ,m.[Pasaje_Precio]
+      ,b.Id as Butaca
+      ,c.PNR as Compra
+	  ,cli.Id as Cliente
+  FROM [GD2C2015].[gd_esquema].[Maestra] m
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] cli ON (cli.Nombre=m.Cli_Nombre AND cli.Apellido=m.Cli_Apellido and cli.Dni=m.Cli_Dni)
+    INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Codigo=m.Pasaje_Codigo)
+	 INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
+  INNER JOIN  [GD2C2015].[JANADIAN_DATE].Butaca b ON ( a.Id=b.Aeronave and b.Numero=m.Butaca_Nro and b.Tipo=m.Butaca_Tipo )
+
+      WHERE Pasaje_Codigo<>0
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR PASAJES',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
+	  /*****Inserts Millas ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Millas] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+/* S*/
+INSERT INTO JANADIAN_DATE.Millas(Cantidad,Cliente,Motivo)
+(SELECT 
+	   FLOOR( [Precio]/10 ) AS Millas
+	   ,[Cliente]
+	   ,'Canje millas paquete nro.' + CAST([Codigo] as nvarchar(255)) as Motivo
+  FROM [GD2C2015].[JANADIAN_DATE].[Paquete]
+
+  UNION
+
+  SELECT 
+	   FLOOR( [Precio]/10 ) AS Millas
+	   ,[Cliente]
+	   ,'Canje millas pasaje nro.' + CAST([Codigo] as nvarchar(255)) as Motivo
+  FROM [GD2C2015].[JANADIAN_DATE].[Pasaje])
+
+COMMIT TRANSACTION
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR MILLAS',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
+
  /********************************************************************************/
 /******************** CREACION DE TRIGGERS ***************************************/
 /*********************************************************************************/
@@ -1277,4 +1353,8 @@ GO
 EXEC [JANADIAN_DATE].[Insertar_Compras] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Paquetes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Pasajes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Millas] 
 GO
