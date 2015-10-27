@@ -69,6 +69,16 @@ BEGIN
 END
 GO
 
+/****** Funcion que chequea si un rol esta habilitado  ********/
+CREATE FUNCTION  [JANADIAN_DATE].[Aeronave_Habilitada_Por_Matricula](@matricula nvarchar(255))
+RETURNS  bit
+AS 
+BEGIN
+   DECLARE @retval bit
+   SELECT @retval = Habilitado FROM [JANADIAN_DATE].[Aeronave] WHERE Matricula=@matricula   
+   RETURN ISNULL ( @retval , 0 )
+END
+GO
 /************************************************************************************/
 /************************** CREACION DE TABLAS **************************************/
 /************************************************************************************/
@@ -971,39 +981,6 @@ END CATCH
 
 GO
 
-	  /*****Inserts Butacas ****/
-CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Butacas] 
-AS
-BEGIN TRANSACTION
-
-BEGIN TRY
-
-/****** S ******/
-INSERT INTO JANADIAN_DATE.Butaca(Numero,Tipo,Piso,Aeronave)
-   SELECT distinct
-      [Butaca_Nro]
-      ,[Butaca_Tipo]
-      ,[Butaca_Piso]
-      ,t2.id as Aeronave
-  FROM [GD2C2015].[gd_esquema].[Maestra] t
-  inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 ON (t.Aeronave_Matricula=t2.Matricula)
-  where Butaca_Piso<>0
-
-COMMIT TRANSACTION
-END TRY
-BEGIN CATCH
-  IF @@TRANCOUNT > 0
-     ROLLBACK
-
-  -- INFO DE ERROR.
-  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
-  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR BUTACAS',@ErrorSeverity,@ErrorMessage);
-  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
-END CATCH  
-
-GO
-
 	  /*****Inserts Viajes ****/
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Viajes] 
 AS
@@ -1037,13 +1014,24 @@ FETCH NEXT FROM db_cursor_viajes INTO @Salida ,@Aeronave,@Estimada,@Llegada,@Rut
 WHILE @@FETCH_STATUS = 0   
 BEGIN   
 	--print CAST(@Salida as nvarchar(255)) + ',' + CAST(@Aeronave as nvarchar(255)) + ',' +CAST(@Estimada as nvarchar(255)) + ',' +CAST(@Llegada as nvarchar(255)) + ',' +CAST(@Ruta as nvarchar(255)) + ',' +CAST(@naveMat as nvarchar(255)) 
+	-- SI ESTA DIPONIBLE LA AERONAVE
 	IF  ([JANADIAN_DATE].[Aeronave_Habilitada](@Aeronave)=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave](@Aeronave,@Salida)<=0)
    BEGIN
 	INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES (   @Salida ,@Llegada,@Estimada , @Aeronave,@Ruta );
    END
    ELSE
+   -- la aeronave no esta disponible
+   --Crear nueva aeronave con las mismas condiciones de la que esta ocupada
    BEGIN
-	insert into Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',1,'la AERONAVE NO ESTA DISPONIBLE PARA VIAJAR' + ' Aeronave: ' + @naveMat +  ' Fecha:  ' + CAST(@Salida as nvarchar(255)) + ',' + CAST(@Aeronave as nvarchar(255)) + ',' +CAST(@Estimada as nvarchar(255)) + ',' +CAST(@Llegada as nvarchar(255)) + ',' +CAST(@Ruta as nvarchar(255)) + ',' +CAST(@naveMat as nvarchar(255)));
+
+		IF ( [JANADIAN_DATE].[Aeronave_Habilitada_Por_Matricula](@naveMat + '_2')=0)
+		
+		INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) 
+		SELECT @naveMat + '_2' ,Fabricante,Modelo , Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla FROM Aeronave WHERE id=@Aeronave
+
+		SELECT @Aeronave=Id FROM [JANADIAN_DATE].[Aeronave] where Matricula=(@naveMat + '_2')
+		INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES (   @Salida ,@Llegada,@Estimada , @Aeronave,@Ruta );
+
    END
 
     FETCH NEXT FROM db_cursor_viajes INTO  @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
@@ -1068,6 +1056,47 @@ END CATCH
 
 GO
 
+	  /*****Inserts Butacas ****/
+CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Butacas] 
+AS
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+/****** S ******/
+INSERT INTO JANADIAN_DATE.Butaca(Numero,Tipo,Piso,Aeronave)
+SELECT distinct
+      [Butaca_Nro]
+      ,[Butaca_Tipo]
+      ,[Butaca_Piso]
+      ,t2.id as Aeronave
+  FROM [GD2C2015].[gd_esquema].[Maestra] t
+  inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 ON (t.Aeronave_Matricula=t2.Matricula)
+  where Butaca_Piso<>0
+  UNION
+  	  select distinct
+      [Butaca_Nro]
+      ,[Butaca_Tipo]
+      ,[Butaca_Piso]
+      ,t2.id as Aeronave
+  FROM [GD2C2015].[gd_esquema].[Maestra] t
+  inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 ON (t.Aeronave_Matricula +'_2'=t2.Matricula)
+  where Butaca_Piso<>0 --Piso =1 Butaca Piso = 0 paquete
+
+COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR BUTACAS',@ErrorSeverity,@ErrorMessage);
+  RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH  
+
+GO
 	  /*****Inserts Butaca Viajes ****/
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
 AS
@@ -1077,12 +1106,11 @@ BEGIN TRY
 
 /****** S  ******/
 INSERT INTO JANADIAN_DATE.Butaca_Viaje(Butaca,Viaje)
-SELECT  distinct b.Id,v.Id
+SELECT distinct b.Id,v.Id
   FROM [GD2C2015].[gd_esquema].[Maestra] m
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula OR a.Matricula=m.Aeronave_Matricula + '_2')
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Butaca] b ON (b.Numero=m.Butaca_Nro and b.Aeronave=a.id)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (r.Codigo=m.Ruta_Codigo)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id and v.Ruta=r.Id)
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id)
 
 COMMIT TRANSACTION
 
@@ -1111,7 +1139,7 @@ BEGIN TRY
 INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago,Codigo) 
 SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.iD as Viaje,'EFECTIVO',IIF(m.Pasaje_Precio=0, m.Paquete_Codigo,m.Pasaje_Codigo) as Codigo
 	 FROM [GD2C2015].[gd_esquema].[Maestra] m
-	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
+	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula  OR a.Matricula=m.Aeronave_Matricula + '_2')
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c1 ON (c1.Nombre=m.Ruta_Ciudad_Origen)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (c2.Nombre=m.Ruta_Ciudad_Destino)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t ON (t.Nombre=m.Tipo_Servicio)
@@ -1151,7 +1179,6 @@ INSERT INTO JANADIAN_DATE.Paquete (Codigo,Precio,KG,Compra,Cliente)
   FROM [GD2C2015].[gd_esquema].[Maestra] m
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] cli ON (cli.Nombre=m.Cli_Nombre AND cli.Apellido=m.Cli_Apellido and cli.Dni=m.Cli_Dni)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Codigo=m.Paquete_Codigo)
-      WHERE Paquete_Codigo<>0
 
 COMMIT TRANSACTION
 
@@ -1186,10 +1213,9 @@ INSERT INTO JANADIAN_DATE.Pasaje(Codigo,Precio,Butaca,Compra,Cliente)
   FROM [GD2C2015].[gd_esquema].[Maestra] m
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] cli ON (cli.Nombre=m.Cli_Nombre AND cli.Apellido=m.Cli_Apellido and cli.Dni=m.Cli_Dni)
     INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Codigo=m.Pasaje_Codigo)
-	 INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
+	 INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula  OR a.Matricula=m.Aeronave_Matricula + '_2')
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v  ON (c.Viaje=v.Id AND a.Id=v.Aeronave)
   INNER JOIN  [GD2C2015].[JANADIAN_DATE].Butaca b ON ( a.Id=b.Aeronave and b.Numero=m.Butaca_Nro and b.Tipo=m.Butaca_Tipo )
-
-      WHERE Pasaje_Codigo<>0
 
 COMMIT TRANSACTION
 
@@ -1344,9 +1370,9 @@ EXEC [JANADIAN_DATE].[Insertar_Rutas]
 GO
 EXEC [JANADIAN_DATE].[Insertar_Aeronaves] 
 GO
-EXEC [JANADIAN_DATE].[Insertar_Butacas] 
-GO
 EXEC [JANADIAN_DATE].[Insertar_Viajes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Butacas] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
 GO
