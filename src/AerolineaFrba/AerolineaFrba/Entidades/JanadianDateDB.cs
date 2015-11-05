@@ -55,8 +55,8 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-              
-                using (SqlCommand command = new SqlCommand(String.Format("SELECT TOP 1 Id,Nombre,Password,Intentos,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Usuario] WHERE Nombre = '{0}'",username), con))
+
+                using (SqlCommand command = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre,u.Password,u.Intentos,u.Habilitado,r.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u,[GD2C2015].[JANADIAN_DATE].[Rol] r WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con))
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     if (!reader.HasRows){
@@ -74,7 +74,7 @@ namespace AerolineaFrba
                             throw (new PasswordMismatchException("No coincide el password"));
                         }
                         else if(reader.GetBoolean(4)){
-                            user = new Usuario(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(3));
+                            user = new Usuario(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(3), reader.GetString(5));
                         }else{
                             con.Close();
                             throw (new UnavailableException("No esta habilitado"));

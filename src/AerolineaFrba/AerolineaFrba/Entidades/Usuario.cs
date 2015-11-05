@@ -11,14 +11,15 @@ namespace AerolineaFrba
         int id;
         string nombre;
         int   intentos;
-        Rol  rol;
+        string  nombreRol;
 
-        public Usuario(int id, string nombre, int intentos)
+        public Usuario(int id, string nombre, int intentos,string rol)
         {
             // TODO: Complete member initialization
             this.id = id;
             this.nombre = nombre;
             this.intentos = intentos;
+            this.nombreRol = rol;
         }
     }
 }
