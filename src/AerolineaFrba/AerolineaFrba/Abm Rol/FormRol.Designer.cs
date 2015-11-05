@@ -1,6 +1,6 @@
-﻿namespace AerolineaFrba.Compra
+﻿namespace AerolineaFrba.Abm_Rol
 {
-    partial class Form1
+    partial class FormRol
     {
         /// <summary>
         /// Required designer variable.

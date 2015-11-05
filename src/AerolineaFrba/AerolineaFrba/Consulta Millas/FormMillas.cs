@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AerolineaFrba.Registro_Llegada_Destino
+namespace AerolineaFrba.Consulta_Millas
 {
-    public partial class Form1 : Form
+    public partial class FormMillas : Form
     {
-        public Form1()
+        public FormMillas()
         {
             InitializeComponent();
         }

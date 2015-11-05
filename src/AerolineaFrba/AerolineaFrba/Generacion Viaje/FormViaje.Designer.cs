@@ -1,6 +1,6 @@
-﻿namespace AerolineaFrba.Abm_Aeronave
+﻿namespace AerolineaFrba.Generacion_Viaje
 {
-    partial class Form1
+    partial class FormViaje
     {
         /// <summary>
         /// Required designer variable.

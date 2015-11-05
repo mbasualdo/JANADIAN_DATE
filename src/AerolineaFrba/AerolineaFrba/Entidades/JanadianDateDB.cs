@@ -47,8 +47,6 @@ namespace AerolineaFrba
             {
                 hash = GetMd5Hash(md5Hash, password);
             }
-            using (SqlConnection con = JanadianDateDB.Instance.GetDBConnection())
-            {
                 //
                 // Open the SqlConnection.
                 //
@@ -64,21 +62,21 @@ namespace AerolineaFrba
                 if (dt.Rows.Count == 0)
                 {
                     con.Close();
-                    throw (new NoResultsException("No hay usuarios"));
+                    throw (new NoResultsException("Usuario incorrecto"));
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
                     if (!Convert.ToBoolean(Fila["Habilitado"]))
                     {
                         con.Close();
-                        throw (new UnavailableException("No esta habilitado"));
+                        throw (new UnavailableException("Usuario no esta habilitado"));
                     }
                     else if (!Convert.ToString(Fila["Password"]).Equals(hash))
                     {
                         SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", Convert.ToInt32(Fila["Intentos"]) + 1, username), con);
                         update.ExecuteNonQuery();
                         con.Close();
-                        throw (new PasswordMismatchException("No coincide el password"));
+                        throw (new PasswordMismatchException("Contraseña incorrecta"));
                     }
                     else
                     {
@@ -90,7 +88,6 @@ namespace AerolineaFrba
                 con.Close();
 
 
-            }
             return user;
         }
 

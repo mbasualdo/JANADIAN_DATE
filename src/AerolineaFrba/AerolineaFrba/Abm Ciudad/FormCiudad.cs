@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AerolineaFrba.Abm_Rol
+namespace AerolineaFrba.Abm_Ciudad
 {
-    public partial class Form1 : Form
+    public partial class FormCiudad : Form
     {
-        public Form1()
+        public FormCiudad()
         {
             InitializeComponent();
         }

@@ -1,6 +1,6 @@
-﻿namespace AerolineaFrba.Abm_Rol
+﻿namespace AerolineaFrba.Abm_Ciudad
 {
-    partial class Form1
+    partial class FormCiudad
     {
         /// <summary>
         /// Required designer variable.

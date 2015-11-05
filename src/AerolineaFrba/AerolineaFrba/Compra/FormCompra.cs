@@ -8,13 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AerolineaFrba.Listado_Estadistico
+namespace AerolineaFrba.Compra
 {
-    public partial class Form1 : Form
+    public partial class FormCompra : Form
     {
-        public Form1()
+        public FormCompra()
         {
             InitializeComponent();
+        }
+
+        private void FormCompra_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

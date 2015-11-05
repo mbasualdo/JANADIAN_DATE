@@ -1,6 +1,6 @@
 ﻿namespace AerolineaFrba.Registro_de_Usuario
 {
-    partial class Form1
+    partial class FormUsuario
     {
         /// <summary>
         /// Required designer variable.
