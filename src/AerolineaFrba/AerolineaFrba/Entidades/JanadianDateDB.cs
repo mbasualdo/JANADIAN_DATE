@@ -41,7 +41,7 @@ namespace AerolineaFrba
 
         internal Usuario getUsuario(string username, string password)
         {
-            Usuario user=null;
+            Usuario user = null;
             string hash = "";
             using (MD5 md5Hash = MD5.Create())
             {
@@ -56,45 +56,41 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre,u.Password,u.Intentos,u.Habilitado,r.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u,[GD2C2015].[JANADIAN_DATE].[Rol] r WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre as UsuarioNombre,u.Password,u.Intentos,u.Habilitado,r.Nombre as RolNombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u,[GD2C2015].[JANADIAN_DATE].[Rol] r WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con);
                 DataTable dt = new DataTable();
 
-                dt.TableName="Tabla";
+                dt.TableName = "Tabla";
                 dt.Load(cmd.ExecuteReader());
-                foreach (DataRow Fila in dt.Rows){
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay usuarios"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    if (!Convert.ToBoolean(Fila["Habilitado"]))
+                    {
+                        con.Close();
+                        throw (new UnavailableException("No esta habilitado"));
+                    }
+                    else if (!Convert.ToString(Fila["Password"]).Equals(hash))
+                    {
                         SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", Convert.ToInt32(Fila["Intentos"]) + 1, username), con);
                         update.ExecuteNonQuery();
-                }
-                con.Close();
-
-                using (SqlCommand command = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre,u.Password,u.Intentos,u.Habilitado,r.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u,[GD2C2015].[JANADIAN_DATE].[Rol] r WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con))
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    if (!reader.HasRows){
                         con.Close();
-                        throw (new NoResultsException("No hay usuarios"));
+                        throw (new PasswordMismatchException("No coincide el password"));
                     }
-                        
-                    while (reader.Read())
+                    else
                     {
-                        if (!reader.GetString(2).Equals(hash))
-                        {
-                            SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", reader.GetInt32(3) + 1, username), con);
-                            update.ExecuteNonQuery();
-                            con.Close();
-                            throw (new PasswordMismatchException("No coincide el password"));
-                        }
-                        else if(reader.GetBoolean(4)){
-                            user = new Usuario(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(3), reader.GetString(5));
-                        }else{
-                            con.Close();
-                            throw (new UnavailableException("No esta habilitado"));
-                        }
+                        user = new Usuario(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["UsuarioNombre"]), Convert.ToInt32(Fila["Intentos"]), Convert.ToString(Fila["RolNombre"]));
                     }
+
+
                 }
                 con.Close();
-            }
 
+
+            }
             return user;
         }
 
