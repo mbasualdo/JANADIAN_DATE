@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using AerolineaFrba.Excepciones;
+using System.Data;
 
 namespace AerolineaFrba
 {
@@ -55,6 +56,16 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre,u.Password,u.Intentos,u.Habilitado,r.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u,[GD2C2015].[JANADIAN_DATE].[Rol] r WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName="Tabla";
+                dt.Load(cmd.ExecuteReader());
+                foreach (DataRow Fila in dt.Rows){
+                        SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", Convert.ToInt32(Fila["Intentos"]) + 1, username), con);
+                        update.ExecuteNonQuery();
+                }
+                con.Close();
 
                 using (SqlCommand command = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre,u.Password,u.Intentos,u.Habilitado,r.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u,[GD2C2015].[JANADIAN_DATE].[Rol] r WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con))
                 using (SqlDataReader reader = command.ExecuteReader())
