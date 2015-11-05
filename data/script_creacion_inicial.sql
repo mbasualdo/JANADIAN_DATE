@@ -559,7 +559,8 @@ CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Funcionalidades]
 AS
 BEGIN TRY
 	BEGIN TRANSACTION
-	
+	print ' '
+	print 'Insertar funcionalidades'
 	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ABM_ROL')
 	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ABM_RUTA_AEREA')
 	INSERT INTO JANADIAN_DATE.Funcionalidad (Descripcion) VALUES ('ABM_AERONAVE')
@@ -592,6 +593,8 @@ CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Roles]
 AS
 BEGIN TRY
 	BEGIN TRANSACTION
+			print ' '
+			print 'Insertar Roles'
 			INSERT INTO JANADIAN_DATE.Rol (Nombre) VALUES ('Administrador General')
 			INSERT INTO JANADIAN_DATE.Rol (Nombre) VALUES ('Cliente')
 
@@ -617,7 +620,8 @@ CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Usuarios]
 AS
 BEGIN TRY
 	BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Usuario'
 INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
 INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal1',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
 INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin2',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
@@ -645,6 +649,8 @@ CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Rol_Funcionalidades]
 AS
 BEGIN TRANSACTION
 
+	print ' '
+	print 'Insertar Rol_Funcionalidad'
 BEGIN TRY
 
 /*****Inserts funcionalidades admin ****/
@@ -701,7 +707,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Ciudades] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Ciudades'
 BEGIN TRY
  
 /******   ******/
@@ -733,7 +740,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Tipo_Servicio] 
 AS
 BEGIN TRANSACTION
-
+print ' '
+print 'Insertar Tipo Servicio'
 BEGIN TRY
 
 /******   ******/
@@ -762,7 +770,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Fabricantes] 
 AS
 BEGIN TRANSACTION
-
+print ' '
+print 'Insertar Fabricantes'
 BEGIN TRY
 
 /****** S  ******/
@@ -792,6 +801,8 @@ CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Productos]
 AS
 BEGIN TRY
 	BEGIN TRANSACTION
+	print ' '
+	print 'Insertar Productos'
 			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Aire Acondicionado Split',10,12)
 			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('TV LED 32 HD',4,11)
 			INSERT INTO JANADIAN_DATE.Producto(Nombre,Stock,Millas_Necesarias) VALUES ('Maquina de cafe NESPRESSO',4,10)
@@ -828,7 +839,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Clientes] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Clientes'
 BEGIN TRY
 
 /****** S  ******/
@@ -862,7 +874,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Rutas] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Rutas'
 BEGIN TRY
 
 DECLARE @Codigo numeric(18,0)
@@ -931,7 +944,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Aeronaves] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Aeronaves'
 BEGIN TRY
 
 DECLARE @Matricula nvarchar(255)
@@ -984,7 +998,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Viajes] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Viajes'
 BEGIN TRY
 
 DECLARE @Salida datetime
@@ -1059,7 +1074,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Butacas] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Butacas'
 BEGIN TRY
 
 /****** S ******/
@@ -1100,7 +1116,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Butaca_Viajes'
 BEGIN TRY
 
 /****** S  ******/
@@ -1131,7 +1148,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Compras] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Compras'
 BEGIN TRY
 
 /* CADA REGISTRO DE MAESTRA LO TOMAMOS COMO UNA COMPRA INDEPENDIENTE pagada en efectivo y realizada por autoservicio*/
@@ -1165,7 +1183,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Paquetes] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Paquetes'
 BEGIN TRY
 
 /* S*/
@@ -1199,7 +1218,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Pasajes] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Pasajes'
 BEGIN TRY
 
 /* S*/
@@ -1236,7 +1256,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Millas] 
 AS
 BEGIN TRANSACTION
-
+	print ' '
+	print 'Insertar Millas'
 BEGIN TRY
 
 /* S*/
