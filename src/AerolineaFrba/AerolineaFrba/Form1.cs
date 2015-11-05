@@ -29,5 +29,46 @@ namespace AerolineaFrba
             int cod = JanadianDateDB.Instance.getCompras();
             cod.ToString();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            AerolineaFrba.Compra.Form1 frm = new AerolineaFrba.Compra.Form1();
+            frm.Show();
+            this.Close();
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelIniciarSesion_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonLogin_Click(object sender, EventArgs e)
+        {
+            if (textBoxLoginUser.Text =="")
+            {
+                MessageBox.Show(null, "Debe ingresar el nombre de usuario", "Login incorrecto");
+                return;
+            }
+            if (textBoxLoginPassword.Text == "")
+            {
+                MessageBox.Show(null, "Debe ingresar la clave del usuario", "Login incorrecto");
+                return;
+            }
+
+            int cod = JanadianDateDB.Instance.getUsuario(textBoxLoginUser.Text, textBoxLoginPassword.Text);
+
+
+        }
     }
 }
