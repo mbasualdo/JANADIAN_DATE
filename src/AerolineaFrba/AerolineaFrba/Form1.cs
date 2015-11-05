@@ -22,12 +22,7 @@ namespace AerolineaFrba
         private void Form1_Load(object sender, EventArgs e)
         {
 
-	//
-	// In a using statement, acquire the SqlConnection as a resource.
-	//
 
-            int cod = JanadianDateDB.Instance.getCompras();
-            cod.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -66,7 +61,10 @@ namespace AerolineaFrba
                 return;
             }
 
-            int cod = JanadianDateDB.Instance.getUsuario(textBoxLoginUser.Text, textBoxLoginPassword.Text);
+            Usuario userLogin = JanadianDateDB.Instance.getUsuario(textBoxLoginUser.Text, textBoxLoginPassword.Text);
+
+            userLogin.ToString();
+
 
 
         }

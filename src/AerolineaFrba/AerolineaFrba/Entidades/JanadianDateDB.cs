@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using AerolineaFrba.Excepciones;
 
 namespace AerolineaFrba
 {
@@ -37,35 +38,9 @@ namespace AerolineaFrba
             return con;
         }
 
-        public int getCompras() { 
-        using (SqlConnection con = JanadianDateDB.Instance.GetDBConnection())
-	{
-	    //
-	    // Open the SqlConnection.
-	    //
-	    con.Open();
-	    //
-	    // The following code uses an SqlCommand based on the SqlConnection.
-	    //
-        using (SqlCommand command = new SqlCommand("SELECT TOP 2 * FROM [GD2C2015].[JANADIAN_DATE].[Compra]", con))
-	    using (SqlDataReader reader = command.ExecuteReader())
-	    {
-		while (reader.Read())
-		{
-		 //   Console.WriteLine("{0} {1} {2}",
-      //      reader.GetString(0), reader.GetString(4), reader.GetString(6));
-
-            return reader.GetInt32(0);
-		}
-	}
-            con.Close();
-    }
-        return 0;
-        }
-
-
-        internal int getUsuario(string username, string password)
+        internal Usuario getUsuario(string username, string password)
         {
+            Usuario user=null;
             string hash = "";
             using (MD5 md5Hash = MD5.Create())
             {
@@ -81,25 +56,39 @@ namespace AerolineaFrba
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
               
-                using (SqlCommand command = new SqlCommand(String.Format("SELECT TOP 1 * FROM [GD2C2015].[JANADIAN_DATE].[Usuario] WHERE Nombre = '{0}' AND Password = '{1}'",username,hash), con))
+                using (SqlCommand command = new SqlCommand(String.Format("SELECT TOP 1 Id,Nombre,Password,Intentos,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Usuario] WHERE Nombre = '{0}'",username), con))
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
+                    if (!reader.HasRows){
+                        con.Close();
+                        throw (new NoResultsException("No hay usuarios"));
+                    }
+                        
                     while (reader.Read())
                     {
-                           Console.WriteLine("{0} {1} {2}",
-                              reader.GetString(0), reader.GetString(4), reader.GetString(6));
-
-                        return reader.GetInt32(0);
+                        if (!reader.GetString(2).Equals(hash))
+                        {
+                            SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", reader.GetInt32(3) + 1, username), con);
+                            update.ExecuteNonQuery();
+                            con.Close();
+                            throw (new PasswordMismatchException("No coincide el password"));
+                        }
+                        else if(reader.GetBoolean(4)){
+                            user = new Usuario(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(3));
+                        }else{
+                            con.Close();
+                            throw (new UnavailableException("No esta habilitado"));
+                        }
                     }
                 }
                 con.Close();
             }
+
+            return user;
         }
 
 
 
-
-        
         private string GetMd5Hash(MD5 md5Hash, string input)
         {
 

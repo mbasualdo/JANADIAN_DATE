@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AerolineaFrba
 {
-    class Usuario
+    class Rol
     {
+        int id;
+        string nombre;
+        List<String> funcionalidades;
+        Boolean habilitado;
     }
 }
