@@ -1,13 +1,5 @@
-﻿using AerolineaFrba.Abm_Aeronave;
-using AerolineaFrba.Abm_Rol;
-using AerolineaFrba.Abm_Ruta;
-using AerolineaFrba.Canje_Millas;
-using AerolineaFrba.Compra;
+﻿using AerolineaFrba.Compra;
 using AerolineaFrba.Consulta_Millas;
-using AerolineaFrba.Devolucion;
-using AerolineaFrba.Generacion_Viaje;
-using AerolineaFrba.Listado_Estadistico;
-using AerolineaFrba.Registro_Llegada_Destino;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,23 +10,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AerolineaFrba
+namespace AerolineaFrba.Administrador
 {
-    public partial class FormAdminMenu : Form
+    public partial class FormInvitadoMenu : Form
     {
-        private System.Windows.Forms.LinkLabel linkLabel1;
-        private Usuario userLogin;
+                private System.Windows.Forms.LinkLabel linkLabel1;
 
-        public FormAdminMenu()
+        public FormInvitadoMenu()
         {
             InitializeComponent();
-        }
-
-        public FormAdminMenu(Usuario userLogin)
-        {
-            this.userLogin = userLogin;
-            InitializeComponent();
-
         }
 
         private void labelBienvenida_Click(object sender, EventArgs e)
@@ -42,11 +26,12 @@ namespace AerolineaFrba
 
         }
 
-        private void FormAdminMenu_Load(object sender, EventArgs e)
+        private void FormInvitadoMenu_Load(object sender, EventArgs e)
         {
+                    
             try
             {
-                List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidadesAdmin();
+                List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidadesInvitado();
 
                 // Create the LinkLabel.
                 this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -76,7 +61,7 @@ namespace AerolineaFrba
                 this.Controls.AddRange(new System.Windows.Forms.Control[] { this.linkLabel1 });
             }
             catch {
-                MessageBox.Show(null, "Error al traer las funcionalidades", "Menu Administrador");
+                MessageBox.Show(null, "Error al traer las funcionalidades", "Menu Invitado");
                 return;
             }
         }
@@ -90,36 +75,13 @@ namespace AerolineaFrba
             // LinkData property of the Link object.
             string target = e.Link.LinkData as string;
 
-            if (target.Equals("ABM_ROL")){
-                NavigateToForm(new FormRol());
-            }
-            if (target.Equals("ABM_RUTA_AEREA")){
-                NavigateToForm(new FormRuta());
-            }
-            if (target.Equals("ABM_AERONAVE")){
-                NavigateToForm(new FormAeronave());
-            }
-             if (target.Equals("GENERAR_VIAJE")){
-                 NavigateToForm(new FormViaje());
-            }
-             if (target.Equals("REGISTRO_LLEGADA_DESTINO")){
-                 NavigateToForm(new FormLlegada());
-            }
             if (target.Equals("COMPRA_PASAJE_ENCOMIENDA")){
-                NavigateToForm(new FormCompra(this.userLogin));
-            }
-            if (target.Equals("CANCELACION_DEVOLUCION")){
-                NavigateToForm(new FormDevolucion());
+                NavigateToForm(new FormCompra());
             }
              if (target.Equals("CONSULTA_MILLAS")){
                  NavigateToForm(new FormMillas());
             }
-             if (target.Equals("CANJE_MILLAS")){
-                 NavigateToForm(new FormCanje());
-            }
-             if (target.Equals("ESTADISTICAS")){
-                 NavigateToForm(new FormEstadistica());
-            }
+
         }
 
         private void NavigateToForm(Form frm)

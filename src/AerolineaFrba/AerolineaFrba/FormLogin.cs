@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using AerolineaFrba.Excepciones;
 using AerolineaFrba.Abm_Rol;
 using AerolineaFrba.Compra;
+using AerolineaFrba.Administrador;
 
 namespace AerolineaFrba
 {
@@ -64,7 +65,7 @@ namespace AerolineaFrba
                 Usuario userLogin = JanadianDateDB.Instance.getUsuario(textBoxLoginUser.Text, textBoxLoginPassword.Text);
 
                 if(userLogin!=null){
-                    FormAdminMenu frm = new FormAdminMenu();
+                    FormAdminMenu frm = new FormAdminMenu(userLogin);
                     frm.Show(this);
                     this.Hide();
                 }
@@ -98,6 +99,13 @@ namespace AerolineaFrba
             textBoxLoginPassword.Text = "";
             return;
 }
+
+        private void linkLabelNoAdmin_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            FormInvitadoMenu frm = new FormInvitadoMenu();
+            frm.Show(this);
+            this.Hide();
+        }
 
             
         }

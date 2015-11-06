@@ -84,6 +84,12 @@
     <Compile Include="Abm Ruta\FormRuta.Designer.cs">
       <DependentUpon>FormRuta.cs</DependentUpon>
     </Compile>
+    <Compile Include="Administrador\FormInvitadoMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Administrador\FormInvitadoMenu.Designer.cs">
+      <DependentUpon>FormInvitadoMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="Canje Millas\FormCanje.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,6 +160,9 @@
     <Compile Include="Entidades\Usuario.cs" />
     <EmbeddedResource Include="Administrador\FormAdminMenu.resx">
       <DependentUpon>FormAdminMenu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Administrador\FormInvitadoMenu.resx">
+      <DependentUpon>FormInvitadoMenu.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Compra\FormCompra.resx">
       <DependentUpon>FormCompra.cs</DependentUpon>

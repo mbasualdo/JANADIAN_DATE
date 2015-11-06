@@ -109,6 +109,7 @@
             this.linkLabelNoAdmin.TabIndex = 9;
             this.linkLabelNoAdmin.TabStop = true;
             this.linkLabelNoAdmin.Text = "No soy administrador";
+            this.linkLabelNoAdmin.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelNoAdmin_LinkClicked);
             // 
             // labelLoginPassword
             // 
@@ -128,14 +129,14 @@
             this.labelLoginUser.TabIndex = 7;
             this.labelLoginUser.Text = "Usuario";
             // 
-            // Form1
+            // FormLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(602, 262);
             this.Controls.Add(this.labelBienvenida);
             this.Controls.Add(this.panel1);
-            this.Name = "Form1";
+            this.Name = "FormLogin";
             this.Text = "Aerolinea FRBA";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);

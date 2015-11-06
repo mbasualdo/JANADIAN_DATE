@@ -12,9 +12,17 @@ namespace AerolineaFrba.Compra
 {
     public partial class FormCompra : Form
     {
+        private Usuario usuario;
         public FormCompra()
         {
             InitializeComponent();
+        }
+
+        public FormCompra(Usuario usuario)
+        {
+            this.usuario = usuario;
+            InitializeComponent();
+
         }
 
         private void FormCompra_Load(object sender, EventArgs e)

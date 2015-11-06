@@ -1,6 +1,6 @@
-﻿namespace AerolineaFrba
+﻿namespace AerolineaFrba.Administrador
 {
-    partial class FormAdminMenu
+    partial class FormInvitadoMenu
     {
         /// <summary>
         /// Required designer variable.
@@ -28,20 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelBienvenida = new System.Windows.Forms.Label();
             this.labelFuncionalidades = new System.Windows.Forms.Label();
+            this.labelBienvenida = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // labelBienvenida
-            // 
-            this.labelBienvenida.AutoSize = true;
-            this.labelBienvenida.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelBienvenida.Location = new System.Drawing.Point(12, 9);
-            this.labelBienvenida.Name = "labelBienvenida";
-            this.labelBienvenida.Size = new System.Drawing.Size(160, 25);
-            this.labelBienvenida.TabIndex = 3;
-            this.labelBienvenida.Text = "Administrador";
-            this.labelBienvenida.Click += new System.EventHandler(this.labelBienvenida_Click);
             // 
             // labelFuncionalidades
             // 
@@ -49,19 +38,30 @@
             this.labelFuncionalidades.Location = new System.Drawing.Point(14, 34);
             this.labelFuncionalidades.Name = "labelFuncionalidades";
             this.labelFuncionalidades.Size = new System.Drawing.Size(84, 13);
-            this.labelFuncionalidades.TabIndex = 4;
+            this.labelFuncionalidades.TabIndex = 6;
             this.labelFuncionalidades.Text = "Funcionalidades";
             // 
-            // FormAdminMenu
+            // labelBienvenida
+            // 
+            this.labelBienvenida.AutoSize = true;
+            this.labelBienvenida.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBienvenida.Location = new System.Drawing.Point(12, 9);
+            this.labelBienvenida.Name = "labelBienvenida";
+            this.labelBienvenida.Size = new System.Drawing.Size(98, 25);
+            this.labelBienvenida.TabIndex = 5;
+            this.labelBienvenida.Text = "Invitado";
+            this.labelBienvenida.Click += new System.EventHandler(this.labelBienvenida_Click);
+            // 
+            // FormInvitadoMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 429);
+            this.ClientSize = new System.Drawing.Size(284, 262);
             this.Controls.Add(this.labelFuncionalidades);
             this.Controls.Add(this.labelBienvenida);
-            this.Name = "FormAdminMenu";
+            this.Name = "FormInvitadoMenu";
             this.Text = "Aerolinea FRBA";
-            this.Load += new System.EventHandler(this.FormAdminMenu_Load);
+            this.Load += new System.EventHandler(this.FormInvitadoMenu_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -69,7 +69,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label labelBienvenida;
         private System.Windows.Forms.Label labelFuncionalidades;
+        private System.Windows.Forms.Label labelBienvenida;
     }
 }

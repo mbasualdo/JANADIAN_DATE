@@ -103,5 +103,61 @@ namespace AerolineaFrba
             return hex;
         }
 
+
+        internal List<string> getFuncionalidadesAdmin()
+        {
+            List<String> funcionalidades = new List<String>();
+            //
+            // Open the SqlConnection.
+            //
+            con.Open();
+            //
+            // The following code uses an SqlCommand based on the SqlConnection.
+            //
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] rf ON (rf.Funcionalidad=f.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol] r ON (rf.Rol=r.Id) WHERE r.Nombre LIKE '%Admin%'  "), con);
+            DataTable dt = new DataTable();
+
+            dt.TableName = "Tabla";
+            dt.Load(cmd.ExecuteReader());
+            if (dt.Rows.Count == 0)
+            {
+                con.Close();
+                throw (new NoResultsException("No hay Rol"));
+            }
+            foreach (DataRow Fila in dt.Rows)
+            {
+               funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
+            }
+
+            return funcionalidades;
+        }
+
+        internal List<string> getFuncionalidadesInvitado()
+        {
+            List<String> funcionalidades = new List<String>();
+            //
+            // Open the SqlConnection.
+            //
+            con.Open();
+            //
+            // The following code uses an SqlCommand based on the SqlConnection.
+            //
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] rf ON (rf.Funcionalidad=f.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol] r ON (rf.Rol=r.Id) WHERE r.Nombre NOT LIKE '%Admin%'  "), con);
+            DataTable dt = new DataTable();
+
+            dt.TableName = "Tabla";
+            dt.Load(cmd.ExecuteReader());
+            if (dt.Rows.Count == 0)
+            {
+                con.Close();
+                throw (new NoResultsException("No hay Rol"));
+            }
+            foreach (DataRow Fila in dt.Rows)
+            {
+                funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
+            }
+
+            return funcionalidades;
+        }
     }
 }
