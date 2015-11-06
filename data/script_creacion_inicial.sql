@@ -622,11 +622,11 @@ BEGIN TRY
 	BEGIN TRANSACTION
 	print ' '
 	print 'Insertar Usuario'
-INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
-INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal1',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
-INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin2',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
-INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal2',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
-INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('invitado',LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre NOT LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin',LOWER(CONVERT(NVARCHAR(64),HashBytes('SHA2_256', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal1',LOWER(CONVERT(NVARCHAR(64),HashBytes('SHA2_256', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('admin2',LOWER(CONVERT(NVARCHAR(64),HashBytes('SHA2_256', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('sucursal2',LOWER(CONVERT(NVARCHAR(64),HashBytes('SHA2_256', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre LIKE '%Admin%'))
+INSERT INTO JANADIAN_DATE.Usuario (Nombre,Password,Rol) VALUES ('invitado',LOWER(CONVERT(NVARCHAR(64),HashBytes('SHA2_256', 'w23e'),2)),(select top 1 id from JANADIAN_DATE.Rol WHERE Nombre NOT LIKE '%Admin%'))
 
 	/** aplicamos los cambios **/
 	COMMIT

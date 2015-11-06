@@ -42,11 +42,7 @@ namespace AerolineaFrba
         internal Usuario getUsuario(string username, string password)
         {
             Usuario user = null;
-            string hash = "";
-            using (MD5 md5Hash = MD5.Create())
-            {
-                hash = GetMd5Hash(md5Hash, password);
-            }
+            string hash = GetSha256FromString(password);
                 //
                 // Open the SqlConnection.
                 //
@@ -54,7 +50,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre as UsuarioNombre,u.Password,u.Intentos,u.Habilitado,r.Nombre as RolNombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u,[GD2C2015].[JANADIAN_DATE].[Rol] r WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre as UsuarioNombre,u.Password,u.Intentos,u.Habilitado,r.Nombre as RolNombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol] r ON (u.Rol=r.Id) WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -80,6 +76,8 @@ namespace AerolineaFrba
                     }
                     else
                     {
+                        SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", 0, username), con);
+                        update.ExecuteNonQuery();
                         user = new Usuario(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["UsuarioNombre"]), Convert.ToInt32(Fila["Intentos"]), Convert.ToString(Fila["RolNombre"]));
                     }
 
@@ -91,27 +89,18 @@ namespace AerolineaFrba
             return user;
         }
 
-
-
-        private string GetMd5Hash(MD5 md5Hash, string input)
+        public static string GetSha256FromString(string strData)
         {
+            var message = Encoding.ASCII.GetBytes(strData);
+            SHA256Managed hashString = new SHA256Managed();
+            string hex = "";
 
-            // Convert the input string to a byte array and compute the hash.
-            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
-
-            // Create a new Stringbuilder to collect the bytes
-            // and create a string.
-            StringBuilder sBuilder = new StringBuilder();
-
-            // Loop through each byte of the hashed data 
-            // and format each one as a hexadecimal string.
-            for (int i = 0; i < data.Length; i++)
+            var hashValue = hashString.ComputeHash(message);
+            foreach (byte x in hashValue)
             {
-                sBuilder.Append(data[i].ToString("x2"));
+                hex += String.Format("{0:x2}", x);
             }
-
-            // Return the hexadecimal string.
-            return sBuilder.ToString();
+            return hex;
         }
 
     }

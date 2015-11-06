@@ -111,6 +111,12 @@
     <Compile Include="Excepciones\PasswordMismatchException.cs" />
     <Compile Include="Excepciones\UnavailableException.cs" />
     <Compile Include="Excepciones\NoResultsException.cs" />
+    <Compile Include="Administrador\FormAdminMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Administrador\FormAdminMenu.Designer.cs">
+      <DependentUpon>FormAdminMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -146,6 +152,9 @@
     <Compile Include="Entidades\JanadianDateDB.cs" />
     <Compile Include="Entidades\Rol.cs" />
     <Compile Include="Entidades\Usuario.cs" />
+    <EmbeddedResource Include="Administrador\FormAdminMenu.resx">
+      <DependentUpon>FormAdminMenu.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Compra\FormCompra.resx">
       <DependentUpon>FormCompra.cs</DependentUpon>
     </EmbeddedResource>

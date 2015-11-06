@@ -63,28 +63,43 @@ namespace AerolineaFrba
 
                 Usuario userLogin = JanadianDateDB.Instance.getUsuario(textBoxLoginUser.Text, textBoxLoginPassword.Text);
 
+                if(userLogin!=null){
+                    FormAdminMenu frm = new FormAdminMenu();
+                    frm.Show(this);
+                    this.Hide();
+                }
             }
             catch (NoResultsException e1)
             {
-                MessageBox.Show(null, e1.Message, "Login incorrecto");
+                messageErrorLogin(e1);
                 return;
             }
             catch (PasswordMismatchException e2)
             {
-                MessageBox.Show(null, e2.Message, "Login incorrecto");
+                messageErrorLogin(e2);
                 return;
             }
             catch (UnavailableException e3)
             {
-                MessageBox.Show(null, e3.Message, "Login incorrecto");
+                messageErrorLogin(e3);
                 return;
             }
             catch (Exception e4)
             {
-                MessageBox.Show(null, e4.Message, "Login incorrecto");
+                messageErrorLogin(e4);
                 return;
             }
         }
-        FormCompra frm = new FormCompra();
-    }
+
+        private void messageErrorLogin(Exception e1)
+        {
+            MessageBox.Show(null, e1.Message, "Login incorrecto");
+            textBoxLoginUser.Text = "";
+            textBoxLoginPassword.Text = "";
+            return;
+}
+
+            
+        }
+
 }
