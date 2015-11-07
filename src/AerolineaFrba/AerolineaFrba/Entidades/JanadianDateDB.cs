@@ -129,7 +129,7 @@ namespace AerolineaFrba
             {
                funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
             }
-
+            con.Close();
             return funcionalidades;
         }
 
@@ -157,18 +157,46 @@ namespace AerolineaFrba
             {
                 funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
             }
-
+            con.Close();
             return funcionalidades;
         }
-        internal DataTable getRoles(DataGridView d){
-             SqlCommand cmd = new SqlCommand(String.Format("SELECT * FROM [GD2C2015].[JANADIAN_DATE].[Rol] "), con);
+        internal DataTable getDataTableResults(DataGridView d,String query){
+            con.Open();
+            SqlCommand cmd = new SqlCommand(String.Format(query), con);
             DataTable dt = new DataTable();
 
             dt.TableName = "Tabla";
             dt.Load(cmd.ExecuteReader());
-
+            con.Close();
             return dt;
         }
 
+        internal List<string> getFuncionalidades()
+        {
+            List<String> funcionalidades = new List<String>();
+            //
+            // Open the SqlConnection.
+            //
+            con.Open();
+            //
+            // The following code uses an SqlCommand based on the SqlConnection.
+            //
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f "), con);
+            DataTable dt = new DataTable();
+
+            dt.TableName = "Tabla";
+            dt.Load(cmd.ExecuteReader());
+            if (dt.Rows.Count == 0)
+            {
+                con.Close();
+                throw (new NoResultsException("No hay Rol"));
+            }
+            foreach (DataRow Fila in dt.Rows)
+            {
+                funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
+            }
+            con.Close();
+            return funcionalidades;
+        }
     }
 }
