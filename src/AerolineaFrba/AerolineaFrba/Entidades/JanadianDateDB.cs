@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using AerolineaFrba.Excepciones;
 using System.Data;
+using System.Windows.Forms;
 
 namespace AerolineaFrba
 {
@@ -159,5 +160,15 @@ namespace AerolineaFrba
 
             return funcionalidades;
         }
+        internal DataTable getRoles(DataGridView d){
+             SqlCommand cmd = new SqlCommand(String.Format("SELECT * FROM [GD2C2015].[JANADIAN_DATE].[Rol] "), con);
+            DataTable dt = new DataTable();
+
+            dt.TableName = "Tabla";
+            dt.Load(cmd.ExecuteReader());
+
+            return dt;
+        }
+
     }
 }
