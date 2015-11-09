@@ -106,16 +106,17 @@ namespace AerolineaFrba.Abm_Rol
                 // Set column values
                 columnSave.Name = "comboFuncionalidadRol";
                 columnSave.HeaderText = "Funcionalidades";
-                //getFuncionalidadesRol(funciones);
-                //columnSave.DataSource = funciones;
+                columnSave.DisplayStyle = DataGridViewComboBoxDisplayStyle.ComboBox;
+                columnSave.ReadOnly = false;
+                columnSave.DropDownWidth = 100;
+                columnSave.MaxDropDownItems = 3;
+                columnSave.Visible = true;
+                ((ComboBox)columnSave).DroppedDown = true;
                 dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
-                foreach(DataGridViewRow row in dataGridRol1.Rows){
-                    DataGridViewComboBoxCell combrol = (DataGridViewComboBoxCell) row.Cells["comboFuncionalidadRol"];
-                    combrol.Items.Add("saraza");
-                }
 
-//                foreach(){
-//}
+                getFuncionalidadesRol();
+
+
 
             }
             catch (Exception en)
@@ -126,14 +127,19 @@ namespace AerolineaFrba.Abm_Rol
             }
         }
 
-        private void getFuncionalidadesRol(List<List<String>> funciones)
+        private void getFuncionalidadesRol()
         {
             foreach (DataGridViewRow row in dataGridRol1.Rows)
             {
                 try
                 {
                     List<String> func = JanadianDateDB.Instance.getFuncionalidadesByRol(Convert.ToInt32(row.Cells["Id"].Value));
-                    funciones.Add(func);
+                    DataGridViewComboBoxCell combrol = (DataGridViewComboBoxCell)row.Cells["comboFuncionalidadRol"];
+                    foreach(String f in func){
+                        combrol.Items.Add(f);
+                    }
+                    combrol.Value = combrol.Items[0];
+
                 }
 
                 catch (NoResultsException err)
@@ -143,6 +149,20 @@ namespace AerolineaFrba.Abm_Rol
                 }
             }
         }
+
+        //private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //bool validRow = (e.RowIndex != -1); //Make sure the clicked row isn't the header.
+        //var datagridview = sender as DataGridView;
+
+        //// Check to make sure the cell clicked is the cell containing the combobox 
+        //if(datagridview.Columns["comboFuncionalidadRol"] is DataGridViewComboBoxColumn && validRow)
+        //{
+        //    dataGridRol1.BeginEdit(true);
+        //         ((ComboBox)dataGridRol1.EditingControl).DroppedDown = true;
+        //    ((ComboBox)datagridview.EditingControl).DroppedDown = true;
+        //}
+        //}
         //        this.dataGridRol1 = new DataGridView();
         //this.dataGridRol1.DataSource = JanadianDateDB.Instance.getRoles(dataGridRol1);
         //this.dataGridRol1.Location = new System.Drawing.Point(10, 50);

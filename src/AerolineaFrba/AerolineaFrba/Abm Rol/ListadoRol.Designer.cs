@@ -38,7 +38,6 @@
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.dataGridRol1 = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.SuspendLayout();
@@ -135,19 +134,11 @@
             this.dataGridRol1.AllowUserToAddRows = false;
             this.dataGridRol1.AllowUserToDeleteRows = false;
             this.dataGridRol1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridRol1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column1});
             this.dataGridRol1.Location = new System.Drawing.Point(22, 200);
             this.dataGridRol1.Name = "dataGridRol1";
             this.dataGridRol1.ReadOnly = true;
             this.dataGridRol1.Size = new System.Drawing.Size(552, 150);
             this.dataGridRol1.TabIndex = 3;
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "Column1";
-            this.Column1.Name = "Column1";
-            this.Column1.ReadOnly = true;
             // 
             // ListadoRol
             // 
@@ -180,6 +171,5 @@
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.Button buttonBuscar;
         private System.Windows.Forms.DataGridView dataGridRol1;
-        private System.Windows.Forms.DataGridViewComboBoxColumn Column1;
     }
 }
