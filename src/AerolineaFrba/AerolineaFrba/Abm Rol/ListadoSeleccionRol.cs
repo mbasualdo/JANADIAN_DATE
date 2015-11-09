@@ -1,21 +1,18 @@
-﻿using AerolineaFrba.Excepciones;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AerolineaFrba.Abm_Rol
 {
-    public partial class ListadoRol : Form
+    public partial class ListadoSeleccionRol : Form
     {
-
-        public ListadoRol()
+        public ListadoSeleccionRol()
         {
             InitializeComponent();
             List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
@@ -24,26 +21,6 @@ namespace AerolineaFrba.Abm_Rol
             {
                 comboFuncionalidad.Items.Add(f);
             }
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ListadoRol_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
@@ -99,54 +76,29 @@ namespace AerolineaFrba.Abm_Rol
 
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
                 // Create a  button column
-                DataGridViewComboBoxColumn columnSave = new DataGridViewComboBoxColumn();
-
-                List<List<String>> funciones = new List<List<String>>();
+                DataGridViewButtonColumn columnSave = new DataGridViewButtonColumn();
 
                 // Set column values
-                columnSave.Name = "comboFuncionalidadRol";
-                columnSave.HeaderText = "Funcionalidades";
-                //getFuncionalidadesRol(funciones);
-                //columnSave.DataSource = funciones;
+                columnSave.Name = "buttonSelection";
+                columnSave.HeaderText = "Seleccionar";
                 dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
-                foreach(DataGridViewRow row in dataGridRol1.Rows){
-                    DataGridViewComboBoxCell combrol = (DataGridViewComboBoxCell) row.Cells["comboFuncionalidadRol"];
-                    combrol.Items.Add("saraza");
-                }
-
-//                foreach(){
-//}
 
             }
-            catch (Exception en)
+            catch
             {
-                en.ToString();
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
             }
         }
 
-        private void getFuncionalidadesRol(List<List<String>> funciones)
+        private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            foreach (DataGridViewRow row in dataGridRol1.Rows)
+            // Ignore clicks that are not in our 
+            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
             {
-                try
-                {
-                    List<String> func = JanadianDateDB.Instance.getFuncionalidadesByRol(Convert.ToInt32(row.Cells["Id"].Value));
-                    funciones.Add(func);
-                }
-
-                catch (NoResultsException err)
-                {
-                    err.ToString();
-
-                }
+             //   Form frm = new ModificacionRol(dataGridRol1.Rows[e.RowIndex].Cells[0].Value, dataGridRol1.Rows[e.RowIndex].Cells[1].Value, dataGridRol1.Rows[e.RowIndex].Cells[2].Value);
+             //   frm.Show(this);
             }
         }
-        //        this.dataGridRol1 = new DataGridView();
-        //this.dataGridRol1.DataSource = JanadianDateDB.Instance.getRoles(dataGridRol1);
-        //this.dataGridRol1.Location = new System.Drawing.Point(10, 50);
-        //this.dataGridRol1.Size = new System.Drawing.Size(500, 300);
-        //this.Controls.AddRange(new System.Windows.Forms.Control[] { this.dataGridRol1 });
     }
 }

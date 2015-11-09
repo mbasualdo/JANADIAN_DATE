@@ -237,11 +237,40 @@ namespace AerolineaFrba
             SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol] (Nombre) VALUES ('{0}')", p), con);
             insertRol.ExecuteNonQuery();
 
-            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Nombre='{1}'", string.Join("','", list), p), con);
+            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Nombre='{1}'", string.Join("','", list), p), con);
             insertRol_Func.ExecuteNonQuery();
             con.Close();
 
 
+        }
+
+        internal List<String>   getFuncionalidadesByRol(int id)
+
+        {
+            List<String> funcionalidades = new List<String>();
+            //
+            // Open the SqlConnection.
+            //
+            con.Open();
+            //
+            // The following code uses an SqlCommand based on the SqlConnection.
+            //
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f,[GD2C2015].[JANADIAN_DATE].[Rol] r,[GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] rf WHERE r.Id=rf.Rol AND f.Id=rf.Funcionalidad and r.Id={0}",id), con);
+            DataTable dt = new DataTable();
+
+            dt.TableName = "Tabla";
+            dt.Load(cmd.ExecuteReader());
+            if (dt.Rows.Count == 0)
+            {
+                con.Close();
+                throw (new NoResultsException("No hay Rol"));
+            }
+            foreach (DataRow Fila in dt.Rows)
+            {
+                funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
+            }
+            con.Close();
+            return funcionalidades;
         }
     }
 }

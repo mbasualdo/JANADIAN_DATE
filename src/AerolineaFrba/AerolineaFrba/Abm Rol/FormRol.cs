@@ -64,7 +64,7 @@ namespace AerolineaFrba.Abm_Rol
 
         private void linkModificacion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Form frm = new ModificacionRol();
+            Form frm = new ListadoSeleccionRol();
             frm.Show(this);
         }
 

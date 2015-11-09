@@ -29,17 +29,21 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.listBoxFuncionalidades = new System.Windows.Forms.ListBox();
             this.labelFuncionalidad = new System.Windows.Forms.Label();
             this.labelNombre = new System.Windows.Forms.Label();
             this.textNombre = new System.Windows.Forms.TextBox();
             this.buttonGuardar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
-            this.listBoxFuncionalidades = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.listBoxFuncionalidades);
             this.groupBox1.Controls.Add(this.labelFuncionalidad);
             this.groupBox1.Controls.Add(this.labelNombre);
@@ -50,6 +54,15 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Campos Rol";
+            // 
+            // listBoxFuncionalidades
+            // 
+            this.listBoxFuncionalidades.FormattingEnabled = true;
+            this.listBoxFuncionalidades.Location = new System.Drawing.Point(175, 72);
+            this.listBoxFuncionalidades.Name = "listBoxFuncionalidades";
+            this.listBoxFuncionalidades.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.listBoxFuncionalidades.Size = new System.Drawing.Size(185, 95);
+            this.listBoxFuncionalidades.TabIndex = 5;
             // 
             // labelFuncionalidad
             // 
@@ -71,7 +84,7 @@
             // 
             // textNombre
             // 
-            this.textNombre.Location = new System.Drawing.Point(101, 32);
+            this.textNombre.Location = new System.Drawing.Point(175, 32);
             this.textNombre.Name = "textNombre";
             this.textNombre.Size = new System.Drawing.Size(185, 20);
             this.textNombre.TabIndex = 2;
@@ -96,14 +109,25 @@
             this.buttonLimpiar.UseVisualStyleBackColor = true;
             this.buttonLimpiar.Click += new System.EventHandler(this.buttonLimpiar_Click);
             // 
-            // listBoxFuncionalidades
+            // label1
             // 
-            this.listBoxFuncionalidades.FormattingEnabled = true;
-            this.listBoxFuncionalidades.Location = new System.Drawing.Point(101, 69);
-            this.listBoxFuncionalidades.Name = "listBoxFuncionalidades";
-            this.listBoxFuncionalidades.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.listBoxFuncionalidades.Size = new System.Drawing.Size(185, 95);
-            this.listBoxFuncionalidades.TabIndex = 5;
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(107, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "* obligatorio";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Red;
+            this.label2.Location = new System.Drawing.Point(107, 72);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(62, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "* obligatorio";
             // 
             // AltaRol
             // 
@@ -130,5 +154,7 @@
         private System.Windows.Forms.Button buttonGuardar;
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.ListBox listBoxFuncionalidades;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }

@@ -116,6 +116,12 @@
     <Compile Include="Abm Rol\ListadoRol.Designer.cs">
       <DependentUpon>ListadoRol.cs</DependentUpon>
     </Compile>
+    <Compile Include="Abm Rol\ListadoSeleccionRol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Rol\ListadoSeleccionRol.Designer.cs">
+      <DependentUpon>ListadoSeleccionRol.cs</DependentUpon>
+    </Compile>
     <Compile Include="Abm Rol\ModificacionRol.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -210,6 +216,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Rol\ListadoRol.resx">
       <DependentUpon>ListadoRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Rol\ListadoSeleccionRol.resx">
+      <DependentUpon>ListadoSeleccionRol.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Administrador\FormAdminMenu.resx">
       <DependentUpon>FormAdminMenu.cs</DependentUpon>

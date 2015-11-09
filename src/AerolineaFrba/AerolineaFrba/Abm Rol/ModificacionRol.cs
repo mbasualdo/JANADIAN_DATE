@@ -12,9 +12,11 @@ namespace AerolineaFrba.Abm_Rol
 {
     public partial class ModificacionRol : Form
     {
+
         public ModificacionRol()
         {
             InitializeComponent();
         }
+
     }
 }

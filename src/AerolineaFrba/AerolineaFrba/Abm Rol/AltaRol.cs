@@ -25,6 +25,11 @@ namespace AerolineaFrba.Abm_Rol
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
+            limpiarForm();
+        }
+
+        private void limpiarForm()
+        {
             textNombre.Text = "";
             listBoxFuncionalidades.SelectedItems.Clear();
         }
@@ -54,6 +59,8 @@ namespace AerolineaFrba.Abm_Rol
 
                 }
                 JanadianDateDB.Instance.insertarRol(JanadianDateDB.RemoveSpecialCharacters(textNombre.Text), listBoxFuncionalidades.SelectedItems.Cast<string>().ToList());
+                MessageBox.Show(null, "Se ha insertado correctamente el nuevo Rol", "Alta de Rol");
+                limpiarForm();
             }
             catch
             {
