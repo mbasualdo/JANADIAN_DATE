@@ -66,9 +66,7 @@ namespace AerolineaFrba.Abm_Rol
                 }
                 if (textId.Text != null && textId.Text.Trim()!="")
                 {
-                    bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
-                    if (isNumeric)
-                    {
+                   // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                         String andText = "";
                         if (conditions)
                         {
@@ -80,7 +78,6 @@ namespace AerolineaFrba.Abm_Rol
                             conditions = true;
                         }
                     query += String.Format(andText + " r.Id={0}", textId.Text);
-                    }
                 }
                 if (textNombre.Text != null && textNombre.Text.Trim() != "")
                 {
@@ -97,6 +94,7 @@ namespace AerolineaFrba.Abm_Rol
                 }
                 Console.WriteLine(query);
                 MessageBox.Show(null, query, "Query");
+
               dataGridRol1.DataSource=  JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
             }
             catch {

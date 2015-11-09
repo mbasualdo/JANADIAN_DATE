@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using AerolineaFrba.Excepciones;
 using System.Data;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace AerolineaFrba
 {
@@ -104,7 +105,10 @@ namespace AerolineaFrba
             return hex;
         }
 
-
+        public static string RemoveSpecialCharacters(string str)
+        {
+            return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+        }
         internal List<string> getFuncionalidadesAdmin()
         {
             List<String> funcionalidades = new List<String>();
@@ -197,6 +201,47 @@ namespace AerolineaFrba
             }
             con.Close();
             return funcionalidades;
+        }
+
+        internal Rol getRolByname(string nombreRol)
+        {
+         Rol   rol = null;
+            //
+            // Open the SqlConnection.
+            //
+            con.Open();
+            //
+            // The following code uses an SqlCommand based on the SqlConnection.
+            //
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Id,Nombre,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Rol] r WHERE r.Nombre = '{0}'  ",nombreRol), con);
+            DataTable dt = new DataTable();
+
+            dt.TableName = "Tabla";
+            dt.Load(cmd.ExecuteReader());
+            if (dt.Rows.Count == 0)
+            {
+                con.Close();
+                return null;
+            }
+            foreach (DataRow Fila in dt.Rows)
+            {
+                rol = new Rol(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Nombre"]), Convert.ToBoolean(Fila["Habilitado"]));
+            }
+            con.Close();
+            return rol;
+        }
+
+        internal void insertarRol(string p, List<string> list)
+        {
+            con.Open();
+            SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol] (Nombre) VALUES ('{0}')", p), con);
+            insertRol.ExecuteNonQuery();
+
+            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Nombre='{1}'", string.Join("','", list), p), con);
+            insertRol_Func.ExecuteNonQuery();
+            con.Close();
+
+
         }
     }
 }

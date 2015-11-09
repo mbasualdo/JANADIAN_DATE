@@ -11,5 +11,12 @@ namespace AerolineaFrba
         string nombre;
         List<String> funcionalidades;
         Boolean habilitado;
+
+        public Rol(int id, string nombre,Boolean habilitado) {
+            this.id = id;
+            this.nombre = nombre;
+            this.habilitado = habilitado;
+        }
+
     }
 }
