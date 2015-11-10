@@ -109,7 +109,7 @@ namespace AerolineaFrba.Abm_Rol
             // Ignore clicks that are not in our 
             if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
             {
-                Rol rolSel = new Rol(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Nombre"].Value), getFuncionalidadRol(dataGridRol1.Rows[e.RowIndex].Cells["comboFuncionalidadRol"]), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
+                Rol rolSel = new Rol(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value),JanadianDateDB.RemoveSpecialCharacters( Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Nombre"].Value)), getFuncionalidadRol(dataGridRol1.Rows[e.RowIndex].Cells["comboFuncionalidadRol"]), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
                 Form frm = new ModificacionRol(rolSel);
                 frm.Show(this);
             }

@@ -42,7 +42,19 @@ namespace AerolineaFrba.Abm_Rol
 
         private void buttonGuardar_Click(object sender, EventArgs e)
         {
+            try
+            {
 
+                JanadianDateDB.Instance.bajaLogicaRol(rolSel.getId);
+                MessageBox.Show(null,String.Format("Se ha dado de baja correctamente el Rol con Id {0}", rolSel.getId), "Baja de Rol");
+                limpiarForm();
+                this.Close();
+            }
+            catch
+            {
+                MessageBox.Show(null, "Intente de nuevo", "Error");
+                return;
+            }
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
@@ -54,6 +66,15 @@ namespace AerolineaFrba.Abm_Rol
         {
             textNombre.Text = "";
             listBoxFuncionalidades.SelectedItems.Clear();
+        }
+
+        private void BajaRol_Load(object sender, EventArgs e)
+        {
+            textNombre.Text = rolSel.getNombre;
+            foreach (String s in rolSel.getFuncionalidades) {
+                listBoxFuncionalidades.SelectedItems.Add(s);
+            }
+
         }
     }
 }

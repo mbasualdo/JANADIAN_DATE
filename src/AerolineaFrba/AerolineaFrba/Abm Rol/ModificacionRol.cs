@@ -59,10 +59,6 @@ namespace AerolineaFrba.Abm_Rol
                 {
                     textoError += "El campo nombre es obligatorio\n";
                 }
-                if (JanadianDateDB.Instance.getRolByname(textNombre.Text) != null)
-                {
-                    textoError += "Ya existe un rol con este nombre\n";
-                }
                 if (listBoxFuncionalidades.SelectedItems.Count == 0)
                 {
                     textoError += "El campo Funcionalidades es obligatorio\n";
@@ -74,12 +70,14 @@ namespace AerolineaFrba.Abm_Rol
                     return;
 
                 }
-                JanadianDateDB.Instance.insertarRol(JanadianDateDB.RemoveSpecialCharacters(textNombre.Text), listBoxFuncionalidades.SelectedItems.Cast<string>().ToList());
-                MessageBox.Show(null, "Se ha insertado correctamente el nuevo Rol", "Alta de Rol");
+                JanadianDateDB.Instance.modificarRol(rolSel);
+                MessageBox.Show(null,String.Format( "Se ha modificado correctamente el Rol con Id {0}",rolSel.getId), "Modificacion de Rol");
                 limpiarForm();
+                this.Close();
             }
-            catch
+            catch (Exception erM)
             {
+                erM.ToString();
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
             }

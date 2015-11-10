@@ -31,8 +31,6 @@
             this.buttonGuardar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.listBoxFuncionalidades = new System.Windows.Forms.ListBox();
             this.labelFuncionalidad = new System.Windows.Forms.Label();
             this.labelNombre = new System.Windows.Forms.Label();
@@ -46,7 +44,7 @@
             this.buttonGuardar.Name = "buttonGuardar";
             this.buttonGuardar.Size = new System.Drawing.Size(75, 23);
             this.buttonGuardar.TabIndex = 7;
-            this.buttonGuardar.Text = "Guardar";
+            this.buttonGuardar.Text = "Eliminar";
             this.buttonGuardar.UseVisualStyleBackColor = true;
             this.buttonGuardar.Click += new System.EventHandler(this.buttonGuardar_Click);
             // 
@@ -62,8 +60,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.listBoxFuncionalidades);
             this.groupBox1.Controls.Add(this.labelFuncionalidad);
             this.groupBox1.Controls.Add(this.labelNombre);
@@ -75,28 +71,9 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Campos Rol";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.Red;
-            this.label2.Location = new System.Drawing.Point(107, 72);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(62, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "* obligatorio";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(107, 35);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "* obligatorio";
-            // 
             // listBoxFuncionalidades
             // 
+            this.listBoxFuncionalidades.Enabled = false;
             this.listBoxFuncionalidades.FormattingEnabled = true;
             this.listBoxFuncionalidades.Location = new System.Drawing.Point(175, 72);
             this.listBoxFuncionalidades.Name = "listBoxFuncionalidades";
@@ -126,6 +103,7 @@
             // 
             this.textNombre.Location = new System.Drawing.Point(175, 32);
             this.textNombre.Name = "textNombre";
+            this.textNombre.ReadOnly = true;
             this.textNombre.Size = new System.Drawing.Size(185, 20);
             this.textNombre.TabIndex = 2;
             // 
@@ -139,6 +117,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "BajaRol";
             this.Text = "Baja";
+            this.Load += new System.EventHandler(this.BajaRol_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -150,8 +129,6 @@
         private System.Windows.Forms.Button buttonGuardar;
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox listBoxFuncionalidades;
         private System.Windows.Forms.Label labelFuncionalidad;
         private System.Windows.Forms.Label labelNombre;

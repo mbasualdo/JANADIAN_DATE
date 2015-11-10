@@ -61,6 +61,7 @@ namespace AerolineaFrba.Abm_Rol
                 JanadianDateDB.Instance.insertarRol(JanadianDateDB.RemoveSpecialCharacters(textNombre.Text), listBoxFuncionalidades.SelectedItems.Cast<string>().ToList());
                 MessageBox.Show(null, "Se ha insertado correctamente el nuevo Rol", "Alta de Rol");
                 limpiarForm();
+                this.Close();
             }
             catch
             {

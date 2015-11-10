@@ -76,7 +76,6 @@ namespace AerolineaFrba.Abm_Rol
                 MessageBox.Show(null, query, "Query");
 
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
-                dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
                 // Create a  button column
                 DataGridViewComboBoxColumn columnFunciones = new DataGridViewComboBoxColumn();
 
@@ -92,8 +91,8 @@ namespace AerolineaFrba.Abm_Rol
                 DataGridViewButtonColumn columnSave = new DataGridViewButtonColumn();
 
                 // Set column values
-                columnSave.Name = "buttonSelection";
-                columnSave.HeaderText = "Seleccionar";
+                columnSave.Name = "buttonEliminar";
+                columnSave.HeaderText = "Eliminar";
                 dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
 
             }
@@ -152,7 +151,7 @@ namespace AerolineaFrba.Abm_Rol
         {
 
             // Ignore clicks that are not in our 
-            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
+            if (e.ColumnIndex == dataGridRol1.Columns["buttonEliminar"].Index && e.RowIndex >= 0)
             {
                 Rol rolSel = new Rol(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Nombre"].Value), getFuncionalidadRol(dataGridRol1.Rows[e.RowIndex].Cells["comboFuncionalidadRol"]), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
                 Form frm = new BajaRol(rolSel);

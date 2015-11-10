@@ -16,6 +16,10 @@ namespace AerolineaFrba
         {
             get { return habilitado; }
         }
+        public int getId
+        {
+            get { return id; }
+        }
         public string getNombre
         {
             get { return nombre; }

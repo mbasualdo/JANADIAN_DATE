@@ -272,5 +272,24 @@ namespace AerolineaFrba
             con.Close();
             return funcionalidades;
         }
+
+        internal void bajaLogicaRol(int idRol)
+        {
+            con.Open();
+            SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Habilitado=0 WHERE Id ={0}", idRol), con);
+            updateRol.ExecuteNonQuery();
+            con.Close();
+        }
+
+        internal void modificarRol(Rol rolSel)
+        {
+            con.Open();
+            SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Nombre='{0}' WHERE Id={1}", rolSel.getNombre,rolSel.getId), con);
+            updateRol.ExecuteNonQuery();
+
+            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Nombre='{1}'", string.Join("','", rolSel.getFuncionalidades), rolSel.getId), con);
+            insertRol_Func.ExecuteNonQuery();
+            con.Close();
+        }
     }
 }
