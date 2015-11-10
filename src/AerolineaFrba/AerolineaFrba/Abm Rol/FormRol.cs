@@ -70,7 +70,7 @@ namespace AerolineaFrba.Abm_Rol
 
         private void linkBaja_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Form frm = new BajaRol();
+            Form frm = new ListadoSeleccionBajaRol();
             frm.Show(this);
         }
 

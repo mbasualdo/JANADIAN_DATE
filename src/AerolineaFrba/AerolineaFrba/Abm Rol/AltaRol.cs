@@ -68,5 +68,15 @@ namespace AerolineaFrba.Abm_Rol
                 return;
             }
         }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AltaRol_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

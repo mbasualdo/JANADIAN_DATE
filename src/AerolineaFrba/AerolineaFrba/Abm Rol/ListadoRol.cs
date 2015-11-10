@@ -106,14 +106,7 @@ namespace AerolineaFrba.Abm_Rol
                 // Set column values
                 columnSave.Name = "comboFuncionalidadRol";
                 columnSave.HeaderText = "Funcionalidades";
-                columnSave.DisplayStyle = DataGridViewComboBoxDisplayStyle.ComboBox;
-                columnSave.ReadOnly = false;
-                columnSave.DropDownWidth = 100;
-                columnSave.MaxDropDownItems = 3;
-                columnSave.Visible = true;
-                ((ComboBox)columnSave).DroppedDown = true;
                 dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
-
                 getFuncionalidadesRol();
 
 

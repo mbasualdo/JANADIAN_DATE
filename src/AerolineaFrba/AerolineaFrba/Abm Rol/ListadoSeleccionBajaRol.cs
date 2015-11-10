@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace AerolineaFrba.Abm_Rol
 {
-    public partial class ListadoSeleccionRol : Form
+    public partial class ListadoSeleccionBajaRol : Form
     {
-        public ListadoSeleccionRol()
+        public ListadoSeleccionBajaRol()
         {
             InitializeComponent();
             List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
@@ -103,18 +103,6 @@ namespace AerolineaFrba.Abm_Rol
                 return;
             }
         }
-
-        private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Ignore clicks that are not in our 
-            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
-            {
-                Rol rolSel = new Rol(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Nombre"].Value), getFuncionalidadRol(dataGridRol1.Rows[e.RowIndex].Cells["comboFuncionalidadRol"]), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
-                Form frm = new ModificacionRol(rolSel);
-                frm.Show(this);
-            }
-        }
-
         private List<String> getFuncionalidadRol(DataGridViewCell dataGridViewCell)
         {
             List<String> func = new List<string>();
@@ -160,5 +148,16 @@ namespace AerolineaFrba.Abm_Rol
             }
         }
 
+        private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            // Ignore clicks that are not in our 
+            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
+            {
+                Rol rolSel = new Rol(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Nombre"].Value), getFuncionalidadRol(dataGridRol1.Rows[e.RowIndex].Cells["comboFuncionalidadRol"]), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
+                Form frm = new BajaRol(rolSel);
+                frm.Show(this);
+            }
+        }
     }
 }
