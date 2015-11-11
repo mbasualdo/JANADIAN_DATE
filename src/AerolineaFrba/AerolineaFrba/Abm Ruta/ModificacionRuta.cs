@@ -16,11 +16,18 @@ namespace AerolineaFrba.Abm_Ruta
         public ModificacionRuta()
         {
             InitializeComponent();
-            List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
+            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
 
-            foreach (String f in funcionalidades)
+            foreach (String f in ciudades)
             {
-                listBoxFuncionalidades.Items.Add(f);
+                comboOrigen.Items.Add(f);
+                comboDestino.Items.Add(f);
+            }
+            List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
+
+            foreach (String f in tiposServicio)
+            {
+                comboBoxTipoServicio.Items.Add(f);
             }
         }
         public ModificacionRuta(Ruta rutaSel)
@@ -28,11 +35,18 @@ namespace AerolineaFrba.Abm_Ruta
             // TODO: Complete member initialization
             this.rutaSel = rutaSel;
             InitializeComponent();
-            List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
+            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
 
-            foreach (String f in funcionalidades)
+            foreach (String f in ciudades)
             {
-                listBoxFuncionalidades.Items.Add(f);
+                comboOrigen.Items.Add(f);
+                comboDestino.Items.Add(f);
+            }
+            List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
+
+            foreach (String f in tiposServicio)
+            {
+                comboBoxTipoServicio.Items.Add(f);
             }
         }
         private void buttonLimpiar_Click(object sender, EventArgs e)
@@ -42,8 +56,13 @@ namespace AerolineaFrba.Abm_Ruta
 
         private void limpiarForm()
         {
-            textNombre.Text = "";
-            listBoxFuncionalidades.SelectedItems.Clear();
+            textCodigo.Text = "";
+            textCodigo.Text = "";
+            textBoxKG.Text = "";
+            textBoxPasaje.Text = "";
+            comboOrigen.Text = "";
+            comboDestino.Text = "";
+            comboBoxTipoServicio.Text = "";
             checkBoxHabilitado.Checked = false;
         }
 
@@ -51,27 +70,55 @@ namespace AerolineaFrba.Abm_Ruta
         {
             try
             {
+
                 String textoError = "";
-                if (textNombre.Text == null || textNombre.Text.Trim() == "")
+                if (textCodigo.Text == null || textCodigo.Text.Trim() == "")
                 {
-                    textoError += "El campo nombre es obligatorio\n";
+                    textoError += "El campo codigo es obligatorio\n";
                 }
-                else
-                {
-                    rutaSel.setNombre(JanadianDateDB.RemoveSpecialCharacters(textNombre.Text));
+                else {
+                    rutaSel.setCodigo(Convert.ToDecimal(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text)));
                 }
-                if (listBoxFuncionalidades.SelectedItems.Count == 0)
+                if (textBoxKG.Text == null || textBoxKG.Text.Trim() == "")
                 {
-                    textoError += "El campo Funcionalidades es obligatorio\n";
+                    textoError += "El campo Precio Base KG es obligatorio\n";
                 }
-                else
+                                else {
+                    rutaSel.setPrecio_BaseKG(Convert.ToDouble(JanadianDateDB.RemoveSpecialCharacters(textBoxKG.Text)));
+                }
+                if (textBoxPasaje.Text == null || textBoxPasaje.Text.Trim() == "")
                 {
-                    List<String> funcionalidades = new List<String>();
-                    foreach (String f in listBoxFuncionalidades.SelectedItems)
-                    {
-                        funcionalidades.Add(f);
-                    }
-                    rutaSel.setFuncionalidades(funcionalidades);
+                    textoError += "El campo Precio Base Pasaje es obligatorio\n";
+                }
+                                else {
+                    rutaSel.setPrecio_BasePasaje(Convert.ToDouble(JanadianDateDB.RemoveSpecialCharacters(textBoxPasaje.Text)));
+                }
+                if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
+                {
+                    textoError += "El campo Origen es obligatorio\n";
+                }
+                                else {
+                    rutaSel.setOrigen(JanadianDateDB.RemoveSpecialCharacters(comboOrigen.Text));
+                }
+                if (comboDestino.Text == null || comboDestino.Text.Trim() == "")
+                {
+                    textoError += "El campo Destino es obligatorio\n";
+                }
+                                else {
+                    rutaSel.setDestino(JanadianDateDB.RemoveSpecialCharacters(comboDestino.Text));
+                }
+                if (comboOrigen.Text.Equals(comboDestino.Text))
+                {
+                    textoError += "Origen y Destino no deben ser iguales\n";
+
+                }
+
+                if (comboBoxTipoServicio.Text == null || comboBoxTipoServicio.Text.Trim() == "")
+                {
+                    textoError += "El campo Tipo de servicio es obligatorio\n";
+                }
+                                else {
+                    rutaSel.setTipoServicio(JanadianDateDB.RemoveSpecialCharacters(comboBoxTipoServicio.Text));
                 }
                 rutaSel.setHabilitado(checkBoxHabilitado.Checked);
                 if (textoError.Length != 0)
@@ -80,8 +127,8 @@ namespace AerolineaFrba.Abm_Ruta
                     return;
 
                 }
-                JanadianDateDB.Instance.modificarRol(rutaSel);
-                MessageBox.Show(null, String.Format("Se ha modificado correctamente el Rol con Id {0}", rutaSel.getId), "Modificacion de Rol");
+                JanadianDateDB.Instance.modificarRuta(rutaSel);
+                MessageBox.Show(null, String.Format("Se ha modificado correctamente la ruta con Id {0}", rutaSel.getId), "Modificacion de Ruta");
                 limpiarForm();
                 this.Close();
             }
@@ -95,13 +142,13 @@ namespace AerolineaFrba.Abm_Ruta
 
         private void ModificacionRuta_Load(object sender, EventArgs e)
         {
-            textNombre.Text = rutaSel.getNombre;
+            textCodigo.Text = rutaSel.getCodigo.ToString();
+            textBoxKG.Text = rutaSel.getPrecio_BaseKG.ToString();
+            textBoxPasaje.Text = rutaSel.getPrecio_BasePasaje.ToString();
+            comboOrigen.SelectedItem = rutaSel.getOrigen;
+            comboDestino.Text = rutaSel.getDestino;
+            comboBoxTipoServicio.Text = rutaSel.getTipoServicio;
             checkBoxHabilitado.Checked = rutaSel.getHabilitado;
-
-            foreach (String c in rutaSel.getFuncionalidades)
-            {
-                listBoxFuncionalidades.SelectedItems.Add(c);
-            }
         }
     }
 }

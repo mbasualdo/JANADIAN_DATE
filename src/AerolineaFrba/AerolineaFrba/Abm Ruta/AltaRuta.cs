@@ -74,7 +74,7 @@ namespace AerolineaFrba.Abm_Ruta
                 {
                     textoError += "El campo Origen es obligatorio\n";
                 }
-                if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
+                if (comboDestino.Text == null || comboDestino.Text.Trim() == "")
                 {
                     textoError += "El campo Destino es obligatorio\n";
                 }

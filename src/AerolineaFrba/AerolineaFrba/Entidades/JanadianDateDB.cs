@@ -463,8 +463,39 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Ruta] (Codigo,Precio_BaseKG ,Precio_BasePasaje,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio) SELECT '{0}',{1},{2},t.Id,o.Id,d.Id FROM ", codigo,pBaseKG,pBasePasaje), con);
+                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Ruta] (Codigo,Precio_BaseKG ,Precio_BasePasaje,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio) SELECT '{0}',{1},{2},o.Id,d.Id,t.Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Ciudad] o,[GD2C2015].[JANADIAN_DATE].[Ciudad] d WHERE o.Nombre='{3}' AND d.Nombre='{4}' AND t.Nombre='{5}'", codigo, pBaseKG, pBasePasaje,origen,destino,tipoServicio), con);
                 insertRol.ExecuteNonQuery();
+                con.Close();
+            }
+            catch
+            {
+                con.Close();
+            }
+        }
+
+        internal void bajaLogicaRuta(int idRuta)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Ruta] SET Habilitado=0 WHERE Id ={0}", idRuta), con);
+                updateRol.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+            }
+        }
+
+        internal void modificarRuta(Ruta rutaSel)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Ruta] r SET r.Codigo={0},r.Habilitado={1} INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o (ON o.Nombre='{2}') INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d (ON d.Nombre='{3}') INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t (ON t.Nombre='{4}') WHERE r.Id={5}", rutaSel.getCodigo, rutaSel.getHabilitado ? "1" : "0",rutaSel.getOrigen,rutaSel.getDestino,rutaSel.getTipoServicio, rutaSel.getId), con);
+                updateRol.ExecuteNonQuery();
                 con.Close();
             }
             catch

@@ -16,24 +16,37 @@ namespace AerolineaFrba.Abm_Ruta
         public BajaRuta()
         {
             InitializeComponent();
-            List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
+            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
 
-            foreach (String f in funcionalidades)
+            foreach (String f in ciudades)
             {
-                listBoxFuncionalidades.Items.Add(f);
+                comboOrigen.Items.Add(f);
+                comboDestino.Items.Add(f);
+            }
+            List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
+
+            foreach (String f in tiposServicio)
+            {
+                comboBoxTipoServicio.Items.Add(f);
             }
         }
                 public BajaRuta(Ruta rutaSel)
         {
             // TODO: Complete member initialization
             InitializeComponent();
-
             this.rutaSel = rutaSel;
-            List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
+            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
 
-            foreach (String f in funcionalidades)
+            foreach (String f in ciudades)
             {
-                listBoxFuncionalidades.Items.Add(f);
+                comboOrigen.Items.Add(f);
+                comboDestino.Items.Add(f);
+            }
+            List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
+
+            foreach (String f in tiposServicio)
+            {
+                comboBoxTipoServicio.Items.Add(f);
             }
 
         }
@@ -45,8 +58,13 @@ namespace AerolineaFrba.Abm_Ruta
 
         private void limpiarForm()
         {
-            textNombre.Text = "";
-            listBoxFuncionalidades.SelectedItems.Clear();
+            textCodigo.Text = "";
+            textBoxKG.Text = "";
+            textBoxPasaje.Text = "";
+            comboOrigen.Text = "";
+            comboDestino.Text = "";
+            comboBoxTipoServicio.Text = "";
+
         }
 
         private void buttonGuardar_Click(object sender, EventArgs e)
@@ -54,8 +72,8 @@ namespace AerolineaFrba.Abm_Ruta
             try
             {
 
-                JanadianDateDB.Instance.bajaLogicaRol(rutaSel.getId);
-                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente el Rol con Id {0}", rutaSel.getId), "Baja de Rol");
+                JanadianDateDB.Instance.bajaLogicaRuta(rutaSel.getId);
+                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la ruta con Id {0}", rutaSel.getId), "Baja de Ruta");
                 limpiarForm();
                 this.Close();
             }
@@ -68,12 +86,13 @@ namespace AerolineaFrba.Abm_Ruta
 
         private void BajaRuta_Load(object sender, EventArgs e)
         {
-            textNombre.Text = rutaSel.getNombre;
+            textCodigo.Text = rutaSel.getCodigo.ToString();
+            textBoxKG.Text = rutaSel.getPrecio_BaseKG.ToString();
+            textBoxPasaje.Text = rutaSel.getPrecio_BasePasaje.ToString();
+            comboOrigen.SelectedItem = rutaSel.getOrigen;
+            comboDestino.Text = rutaSel.getDestino;
+            comboBoxTipoServicio.Text = rutaSel.getTipoServicio;
 
-            foreach (String s in rutaSel.getFuncionalidades)
-            {
-                listBoxFuncionalidades.SelectedItems.Add(s);
-            }
 
         }
     }

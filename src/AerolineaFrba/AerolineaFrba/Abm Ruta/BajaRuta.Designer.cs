@@ -32,17 +32,17 @@
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.comboBoxTipoServicio = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.comboBoxDestino = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxKG = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxPasaje = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.comboOrigen = new System.Windows.Forms.ComboBox();
             this.labelNombre = new System.Windows.Forms.Label();
             this.textCodigo = new System.Windows.Forms.TextBox();
+            this.comboBoxTipoServicio = new System.Windows.Forms.ComboBox();
+            this.comboDestino = new System.Windows.Forms.ComboBox();
+            this.comboOrigen = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,7 +71,7 @@
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.comboBoxTipoServicio);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.comboBoxDestino);
+            this.groupBox1.Controls.Add(this.comboDestino);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.textBoxKG);
             this.groupBox1.Controls.Add(this.label6);
@@ -96,15 +96,6 @@
             this.label4.TabIndex = 48;
             this.label4.Text = "Tipo Servicio";
             // 
-            // comboBoxTipoServicio
-            // 
-            this.comboBoxTipoServicio.Enabled = false;
-            this.comboBoxTipoServicio.FormattingEnabled = true;
-            this.comboBoxTipoServicio.Location = new System.Drawing.Point(198, 186);
-            this.comboBoxTipoServicio.Name = "comboBoxTipoServicio";
-            this.comboBoxTipoServicio.Size = new System.Drawing.Size(185, 21);
-            this.comboBoxTipoServicio.TabIndex = 47;
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -113,15 +104,6 @@
             this.label3.Size = new System.Drawing.Size(43, 13);
             this.label3.TabIndex = 46;
             this.label3.Text = "Destino";
-            // 
-            // comboBoxDestino
-            // 
-            this.comboBoxDestino.Enabled = false;
-            this.comboBoxDestino.FormattingEnabled = true;
-            this.comboBoxDestino.Location = new System.Drawing.Point(198, 154);
-            this.comboBoxDestino.Name = "comboBoxDestino";
-            this.comboBoxDestino.Size = new System.Drawing.Size(185, 21);
-            this.comboBoxDestino.TabIndex = 45;
             // 
             // label5
             // 
@@ -166,15 +148,6 @@
             this.label7.TabIndex = 40;
             this.label7.Text = "Origen";
             // 
-            // comboOrigen
-            // 
-            this.comboOrigen.Enabled = false;
-            this.comboOrigen.FormattingEnabled = true;
-            this.comboOrigen.Location = new System.Drawing.Point(198, 127);
-            this.comboOrigen.Name = "comboOrigen";
-            this.comboOrigen.Size = new System.Drawing.Size(185, 21);
-            this.comboOrigen.TabIndex = 39;
-            // 
             // labelNombre
             // 
             this.labelNombre.AutoSize = true;
@@ -191,6 +164,33 @@
             this.textCodigo.ReadOnly = true;
             this.textCodigo.Size = new System.Drawing.Size(185, 20);
             this.textCodigo.TabIndex = 35;
+            // 
+            // comboBoxTipoServicio
+            // 
+            this.comboBoxTipoServicio.Enabled = false;
+            this.comboBoxTipoServicio.FormattingEnabled = true;
+            this.comboBoxTipoServicio.Location = new System.Drawing.Point(198, 186);
+            this.comboBoxTipoServicio.Name = "comboBoxTipoServicio";
+            this.comboBoxTipoServicio.Size = new System.Drawing.Size(185, 21);
+            this.comboBoxTipoServicio.TabIndex = 47;
+            // 
+            // comboDestino
+            // 
+            this.comboDestino.Enabled = false;
+            this.comboDestino.FormattingEnabled = true;
+            this.comboDestino.Location = new System.Drawing.Point(198, 154);
+            this.comboDestino.Name = "comboDestino";
+            this.comboDestino.Size = new System.Drawing.Size(185, 21);
+            this.comboDestino.TabIndex = 45;
+            // 
+            // comboOrigen
+            // 
+            this.comboOrigen.Enabled = false;
+            this.comboOrigen.FormattingEnabled = true;
+            this.comboOrigen.Location = new System.Drawing.Point(198, 127);
+            this.comboOrigen.Name = "comboOrigen";
+            this.comboOrigen.Size = new System.Drawing.Size(185, 21);
+            this.comboOrigen.TabIndex = 39;
             // 
             // BajaRuta
             // 
@@ -215,16 +215,16 @@
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBoxTipoServicio;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBoxDestino;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBoxKG;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBoxPasaje;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ComboBox comboOrigen;
         private System.Windows.Forms.Label labelNombre;
         private System.Windows.Forms.TextBox textCodigo;
+        private System.Windows.Forms.ComboBox comboBoxTipoServicio;
+        private System.Windows.Forms.ComboBox comboDestino;
+        private System.Windows.Forms.ComboBox comboOrigen;
     }
 }
