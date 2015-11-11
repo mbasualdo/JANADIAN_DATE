@@ -35,7 +35,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.comboBoxTipoServicio = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.comboBoxDestino = new System.Windows.Forms.ComboBox();
+            this.comboDestino = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxKG = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -87,7 +87,7 @@
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.comboBoxTipoServicio);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.comboBoxDestino);
+            this.groupBox1.Controls.Add(this.comboDestino);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.textBoxKG);
             this.groupBox1.Controls.Add(this.label1);
@@ -131,13 +131,13 @@
             this.label3.TabIndex = 28;
             this.label3.Text = "Destino";
             // 
-            // comboBoxDestino
+            // comboDestino
             // 
-            this.comboBoxDestino.FormattingEnabled = true;
-            this.comboBoxDestino.Location = new System.Drawing.Point(376, 49);
-            this.comboBoxDestino.Name = "comboBoxDestino";
-            this.comboBoxDestino.Size = new System.Drawing.Size(151, 21);
-            this.comboBoxDestino.TabIndex = 27;
+            this.comboDestino.FormattingEnabled = true;
+            this.comboDestino.Location = new System.Drawing.Point(376, 49);
+            this.comboDestino.Name = "comboDestino";
+            this.comboDestino.Size = new System.Drawing.Size(151, 21);
+            this.comboDestino.TabIndex = 27;
             // 
             // label2
             // 
@@ -247,7 +247,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox comboBoxTipoServicio;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBoxDestino;
+        private System.Windows.Forms.ComboBox comboDestino;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBoxKG;
         private System.Windows.Forms.Label label1;

@@ -16,19 +16,30 @@ namespace AerolineaFrba.Abm_Ruta
         public ListadoSeleccionBajaRuta()
         {
             InitializeComponent();
-            List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
+            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
 
-            foreach (String f in funcionalidades)
+            foreach (String f in ciudades)
             {
-                comboFuncionalidad.Items.Add(f);
+                comboOrigen.Items.Add(f);
+                comboDestino.Items.Add(f);
+            }
+            List<String> tiposServicio = JanadianDateDB.Instance.getTposServicio();
+
+            foreach (String f in tiposServicio)
+            {
+                comboBoxTipoServicio.Items.Add(f);
             }
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
             textId.Text = "";
-            textNombre.Text = "";
-            comboFuncionalidad.Text = "";
+            textCodigo.Text = "";
+            textBoxKG.Text = "";
+            textBoxPasaje.Text = "";
+            comboOrigen.Text = "";
+            comboDestino.Text = "";
+            comboBoxTipoServicio.Text = "";
             dataGridRol1.DataSource = null;
             dataGridRol1.Columns.Clear();
         }
@@ -37,14 +48,14 @@ namespace AerolineaFrba.Abm_Ruta
         {
             try
             {
-                String query = "SELECT r.Id, r.Nombre,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Rol] r";
+                String query = "SELECT r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id)  ";
                 bool conditions = false;
-                if (comboFuncionalidad.Text != null && comboFuncionalidad.Text.Trim() != "")
+
+                if (comboOrigen.Text != null && comboOrigen.Text.Trim() != "")
                 {
-                    query += String.Format(" INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] rf ON (r.Id=rf.Rol)  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ON (f.Id=rf.Funcionalidad) WHERE f.Descripcion='{0}'", comboFuncionalidad.Text);
+                    query += String.Format(" WHERE Origen='{0}'", comboOrigen.Text);
                     conditions = true;
                 }
-
                 if (conditions)
                 {
                     query += String.Format(" AND  r.Habilitado=1 ");
@@ -52,6 +63,38 @@ namespace AerolineaFrba.Abm_Ruta
                 else
                 {
                     query += String.Format("  WHERE r.Habilitado=1 ");
+                    conditions = true;
+                }
+                if (comboDestino.Text != null && comboDestino.Text.Trim() != "")
+                {
+                    // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + "  Destino='{0}'", comboDestino.Text);
+                    conditions = true;
+                }
+                if (comboBoxTipoServicio.Text != null && comboBoxTipoServicio.Text.Trim() != "")
+                {
+                    // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + "  Tipo_Servicio='{0}'", comboBoxTipoServicio.Text);
                     conditions = true;
                 }
                 if (textId.Text != null && textId.Text.Trim() != "")
@@ -69,7 +112,7 @@ namespace AerolineaFrba.Abm_Ruta
                     }
                     query += String.Format(andText + " r.Id={0}", textId.Text);
                 }
-                if (textNombre.Text != null && textNombre.Text.Trim() != "")
+                if (textCodigo.Text != null && textCodigo.Text.Trim() != "")
                 {
                     String andText = "";
                     if (conditions)
@@ -81,22 +124,43 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Nombre like '%{0}%'", textNombre.Text);
+                    query += String.Format(andText + " r.Codigo like '%{0}%'", textCodigo.Text);
                 }
+                if (textBoxPasaje.Text != null && textBoxPasaje.Text.Trim() != "")
+                {
+                    // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + " r.Precio_BasePasaje={0}", textBoxPasaje.Text);
+                }
+                if (textBoxKG.Text != null && textBoxKG.Text.Trim() != "")
+                {
+                    // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + " r.Precio_BaseKG={0}", textBoxKG.Text);
+                }
+
                 Console.WriteLine(query);
                 //MessageBox.Show(null, query, "Query");
                 dataGridRol1.Columns.Clear();
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
-                // Create a  button column
-                DataGridViewComboBoxColumn columnFunciones = new DataGridViewComboBoxColumn();
-
-                List<List<String>> funciones = new List<List<String>>();
-
-                // Set column values
-                columnFunciones.Name = "comboFuncionalidadRol";
-                columnFunciones.HeaderText = "Funcionalidades";
-                dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnFunciones);
-                getFuncionalidadesRol();
 
                 // Create a  button column
                 DataGridViewButtonColumn columnSave = new DataGridViewButtonColumn();
@@ -113,59 +177,14 @@ namespace AerolineaFrba.Abm_Ruta
                 return;
             }
         }
-        private List<String> getFuncionalidadRol(DataGridViewCell dataGridViewCell)
-        {
-            List<String> func = new List<string>();
-
-            try
-            {
-                DataGridViewComboBoxCell combrol = (DataGridViewComboBoxCell)dataGridViewCell;
-                foreach (String f in combrol.Items)
-                {
-                    func.Add(f);
-                }
-
-            }
-
-            catch (NoResultsException err)
-            {
-                err.ToString();
-
-            }
-            return func;
-        }
-        private void getFuncionalidadesRol()
-        {
-            foreach (DataGridViewRow row in dataGridRol1.Rows)
-            {
-                try
-                {
-                    List<String> func = JanadianDateDB.Instance.getFuncionalidadesByRol(Convert.ToInt32(row.Cells["Id"].Value));
-                    DataGridViewComboBoxCell combrol = (DataGridViewComboBoxCell)row.Cells["comboFuncionalidadRol"];
-                    foreach (String f in func)
-                    {
-                        combrol.Items.Add(f);
-                    }
-                    if (combrol.Items.Count > 0)
-                    {
-                        combrol.Value = combrol.Items[0];
-                    }
-                }
-
-                catch (NoResultsException err)
-                {
-                    err.ToString();
-
-                }
-            }
-        }
+    
 
         private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // Ignore clicks that are not in our 
             if (e.ColumnIndex == dataGridRol1.Columns["buttonEliminar"].Index && e.RowIndex >= 0)
             {
-                Ruta rutaSel = new Ruta(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Nombre"].Value), getFuncionalidadRol(dataGridRol1.Rows[e.RowIndex].Cells["comboFuncionalidadRol"]), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
+                Ruta rutaSel = new Ruta(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Origen"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Destino"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BaseKG"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BasePasaje"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo_Servicio"].Value), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
                 Form frm = new BajaRuta(rutaSel);
                 frm.Show(this);
             }

@@ -14,6 +14,8 @@ namespace AerolineaFrba
         Double precio_BasePasaje;
         String origen;
         String destino;
+        String tipoServicio;
+
         Boolean habilitado;
 
         public Boolean getHabilitado
@@ -27,6 +29,10 @@ namespace AerolineaFrba
         public string getOrigen
         {
             get { return origen; }
+        }
+        public string getTipoServicio
+        {
+            get { return tipoServicio; }
         }
         public string getDestino
         {
@@ -44,7 +50,7 @@ namespace AerolineaFrba
         {
             get { return precio_BasePasaje; }
         }
-        public Ruta(int id, string origen, string destino, Decimal codigo,Double precio_BaseKG,Double precio_BasePasaje, bool habilitado)
+        public Ruta(int id, string origen, string destino, Decimal codigo, Double precio_BaseKG, Double precio_BasePasaje, string tipoServicio, bool habilitado)
         {
             // TODO: Complete member initialization
             this.id = id;
@@ -53,6 +59,7 @@ namespace AerolineaFrba
             this.codigo = codigo;
             this.precio_BaseKG = precio_BaseKG;
             this.precio_BasePasaje = precio_BasePasaje;
+            this.tipoServicio = tipoServicio;
             this.habilitado = habilitado;
         }
 
@@ -80,6 +87,10 @@ namespace AerolineaFrba
         internal void setHabilitado(Boolean p)
         {
             this.habilitado = p;
+        }
+        internal void setTipoServicio(string p)
+        {
+            this.tipoServicio = p;
         }
     }
 }

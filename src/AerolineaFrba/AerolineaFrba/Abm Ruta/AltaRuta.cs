@@ -15,11 +15,18 @@ namespace AerolineaFrba.Abm_Ruta
         public AltaRuta()
         {
             InitializeComponent();
-            List<String> funcionalidades = JanadianDateDB.Instance.getFuncionalidades();
+            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
 
-            foreach (String f in funcionalidades)
+            foreach (String f in ciudades)
             {
-                listBoxFuncionalidades.Items.Add(f);
+                comboOrigen.Items.Add(f);
+                comboDestino.Items.Add(f);
+            }
+            List<String> tiposServicio = JanadianDateDB.Instance.getTposServicio();
+
+            foreach (String f in tiposServicio)
+            {
+                comboBoxTipoServicio.Items.Add(f);
             }
         }
 
@@ -36,7 +43,13 @@ namespace AerolineaFrba.Abm_Ruta
         private void limpiarForm()
         {
             textCodigo.Text = "";
-            listBoxFuncionalidades.SelectedItems.Clear();
+            textCodigo.Text = "";
+            textBoxKG.Text = "";
+            textBoxPasaje.Text = "";
+            comboOrigen.Text = "";
+            comboDestino.Text = "";
+            comboBoxTipoServicio.Text = "";
+
         }
 
 
@@ -47,11 +60,19 @@ namespace AerolineaFrba.Abm_Ruta
                 String textoError = "";
                 if (textCodigo.Text == null || textCodigo.Text.Trim() == "")
                 {
-                    textoError += "El campo nombre es obligatorio\n";
+                    textoError += "El campo codigo es obligatorio\n";
                 }
-                if (JanadianDateDB.Instance.getRolByname(textCodigo.Text) != null)
+                if (textBoxKG.Text == null || textBoxKG.Text.Trim() == "")
                 {
-                    textoError += "Ya existe un rol con este nombre\n";
+                    textoError += "El campo Precio Base KG es obligatorio\n";
+                }
+                if (textBoxPasaje.Text == null || textBoxPasaje.Text.Trim() == "")
+                {
+                    textoError += "El campo Precio Base Pasaje es obligatorio\n";
+                }
+                if (JanadianDateDB.Instance.getRutaBySameConditions(comboOrigen.SelectedItem.ToString(),comboDestino.SelectedItem.ToString(),comboBoxTipoServicio.SelectedItem.ToString()) != null)
+                {
+                    textoError += "Ya existe una ruta para los mismos destinos y tipo de servicio\n";
                 }
                 if (listBoxFuncionalidades.SelectedItems.Count == 0)
                 {

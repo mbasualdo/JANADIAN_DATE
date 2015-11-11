@@ -387,5 +387,45 @@ namespace AerolineaFrba
             }
             return ciudades;
         }
+
+        internal List<string> getTposServicio()
+        {
+            List<String> tiposServicio = new List<String>();
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT c.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] c "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Tipos Servicio"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    tiposServicio.Add(Convert.ToString(Fila["Nombre"]));
+                }
+                con.Close();
+            }
+            catch
+            {
+                con.Close();
+            }
+            return tiposServicio;
+        }
+
+        internal object getRutaBySameConditions(string p1, string p2, string p3)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
