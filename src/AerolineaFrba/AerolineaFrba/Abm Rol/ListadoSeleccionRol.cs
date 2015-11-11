@@ -30,6 +30,8 @@ namespace AerolineaFrba.Abm_Rol
             textNombre.Text = "";
             comboFuncionalidad.Text = "";
             dataGridRol1.DataSource = null;
+            dataGridRol1.Columns.Clear();
+            checkBoxHabilitado.Checked = true;
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)
@@ -72,10 +74,23 @@ namespace AerolineaFrba.Abm_Rol
                     }
                     query += String.Format(andText + " r.Nombre like '%{0}%'", textNombre.Text);
                 }
+
+                    String andTextt = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + " r.Habilitado = {0} ", checkBoxHabilitado.Checked ? "1" : "0");
+                }
+
                 Console.WriteLine(query);
                 MessageBox.Show(null, query, "Query");
-
-                dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
+                dataGridRol1.Columns.Clear();
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
                 // Create a  button column
                 DataGridViewComboBoxColumn columnFunciones = new DataGridViewComboBoxColumn();
@@ -97,8 +112,9 @@ namespace AerolineaFrba.Abm_Rol
                 dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
 
             }
-            catch
+            catch (Exception excep)
             {
+               Console.WriteLine(excep.ToString());
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
             }
@@ -148,8 +164,10 @@ namespace AerolineaFrba.Abm_Rol
                     {
                         combrol.Items.Add(f);
                     }
-                    combrol.Value = combrol.Items[0];
-
+                    if (combrol.Items.Count > 0)
+                    {
+                        combrol.Value = combrol.Items[0];
+                    }
                 }
 
                 catch (NoResultsException err)

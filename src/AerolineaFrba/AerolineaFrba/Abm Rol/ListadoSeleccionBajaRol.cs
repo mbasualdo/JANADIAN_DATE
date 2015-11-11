@@ -30,6 +30,7 @@ namespace AerolineaFrba.Abm_Rol
             textNombre.Text = "";
             comboFuncionalidad.Text = "";
             dataGridRol1.DataSource = null;
+            dataGridRol1.Columns.Clear();
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)
@@ -74,7 +75,7 @@ namespace AerolineaFrba.Abm_Rol
                 }
                 Console.WriteLine(query);
                 MessageBox.Show(null, query, "Query");
-
+                dataGridRol1.Columns.Clear();
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
                 // Create a  button column
                 DataGridViewComboBoxColumn columnFunciones = new DataGridViewComboBoxColumn();
@@ -135,8 +136,9 @@ namespace AerolineaFrba.Abm_Rol
                     {
                         combrol.Items.Add(f);
                     }
+                    if(combrol.Items.Count>0){
                     combrol.Value = combrol.Items[0];
-
+                    }
                 }
 
                 catch (NoResultsException err)

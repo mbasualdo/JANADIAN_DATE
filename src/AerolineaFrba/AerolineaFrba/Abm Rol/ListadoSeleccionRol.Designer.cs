@@ -38,6 +38,7 @@
             this.textNombre = new System.Windows.Forms.TextBox();
             this.labelId = new System.Windows.Forms.Label();
             this.textId = new System.Windows.Forms.TextBox();
+            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -76,6 +77,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxHabilitado);
             this.groupBox1.Controls.Add(this.labelFuncionalidad);
             this.groupBox1.Controls.Add(this.comboFuncionalidad);
             this.groupBox1.Controls.Add(this.labelNombre);
@@ -138,6 +140,19 @@
             this.textId.Size = new System.Drawing.Size(185, 20);
             this.textId.TabIndex = 0;
             // 
+            // checkBoxHabilitado
+            // 
+            this.checkBoxHabilitado.AutoSize = true;
+            this.checkBoxHabilitado.Checked = true;
+            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 58);
+            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
+            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxHabilitado.TabIndex = 6;
+            this.checkBoxHabilitado.Text = "Habilitado        ";
+            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
+            // 
             // ListadoSeleccionRol
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,5 +183,6 @@
         private System.Windows.Forms.TextBox textNombre;
         private System.Windows.Forms.Label labelId;
         private System.Windows.Forms.TextBox textId;
+        private System.Windows.Forms.CheckBox checkBoxHabilitado;
     }
 }
