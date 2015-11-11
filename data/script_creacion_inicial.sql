@@ -1348,7 +1348,7 @@ BEGIN
 		declare @codigo [numeric](18,0);
 
 		DECLARE ViajesEnRuta CURSOR FOR 
-		SELECT c.PNR, p.Codigo AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Ruta] r
 		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
 		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
@@ -1384,7 +1384,7 @@ BEGIN
 		declare @codigo [numeric](18,0);
 
 		DECLARE ViajesEnRuta CURSOR FOR 
-		SELECT c.PNR, x.Codigo AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		SELECT c.PNR, x.Id AS codigo FROM [JANADIAN_DATE].[Ruta] r
 		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
 		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
