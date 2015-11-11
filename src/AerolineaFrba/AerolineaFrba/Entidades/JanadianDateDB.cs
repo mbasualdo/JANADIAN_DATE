@@ -388,7 +388,7 @@ namespace AerolineaFrba
             return ciudades;
         }
 
-        internal List<string> getTposServicio()
+        internal List<string> getTiposServicio()
         {
             List<String> tiposServicio = new List<String>();
             try
@@ -423,9 +423,54 @@ namespace AerolineaFrba
             return tiposServicio;
         }
 
-        internal object getRutaBySameConditions(string p1, string p2, string p3)
+        internal Ruta getRutaBySameConditions(string origen, string destino, string tipoServicio)
         {
-            throw new NotImplementedException();
+            Ruta ruta = null;
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) WHERE Origen = '{0}' AND Destino = '{1}' AND Tipo_Servicio = '{2}'  ", origen,destino,tipoServicio), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    ruta = new Ruta(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Origen"]), Convert.ToString(Fila["Destino"]), Convert.ToDecimal(Fila["Codigo"]), Convert.ToDouble(Fila["Precio_BaseKG"]), Convert.ToDouble(Fila["Precio_BasePasaje"]), Convert.ToString(Fila["Tipo_Servicio"]), Convert.ToBoolean(Fila["Habilitado"]));
+                }
+                con.Close();
+            }
+            catch
+            {
+                con.Close();
+            }
+            return ruta;
+        }
+
+        internal void insertarRuta(string codigo, string pBaseKG, string pBasePasaje, string tipoServicio,string origen, string destino)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Ruta] (Codigo,Precio_BaseKG ,Precio_BasePasaje,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio) SELECT '{0}',{1},{2},t.Id,o.Id,d.Id FROM ", codigo,pBaseKG,pBasePasaje), con);
+                insertRol.ExecuteNonQuery();
+                con.Close();
+            }
+            catch
+            {
+                con.Close();
+            }
         }
     }
 }

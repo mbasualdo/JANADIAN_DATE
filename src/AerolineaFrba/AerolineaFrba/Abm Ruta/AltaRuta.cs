@@ -22,7 +22,7 @@ namespace AerolineaFrba.Abm_Ruta
                 comboOrigen.Items.Add(f);
                 comboDestino.Items.Add(f);
             }
-            List<String> tiposServicio = JanadianDateDB.Instance.getTposServicio();
+            List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
 
             foreach (String f in tiposServicio)
             {
@@ -70,13 +70,26 @@ namespace AerolineaFrba.Abm_Ruta
                 {
                     textoError += "El campo Precio Base Pasaje es obligatorio\n";
                 }
+                if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
+                {
+                    textoError += "El campo Origen es obligatorio\n";
+                }
+                if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
+                {
+                    textoError += "El campo Destino es obligatorio\n";
+                }
+                if (comboOrigen.Text.Equals(comboDestino.Text))
+                {
+                    textoError += "Origen y Destino no deben ser iguales\n";
+
+                }
                 if (JanadianDateDB.Instance.getRutaBySameConditions(comboOrigen.SelectedItem.ToString(),comboDestino.SelectedItem.ToString(),comboBoxTipoServicio.SelectedItem.ToString()) != null)
                 {
                     textoError += "Ya existe una ruta para los mismos destinos y tipo de servicio\n";
                 }
-                if (listBoxFuncionalidades.SelectedItems.Count == 0)
+                if (comboBoxTipoServicio.Text == null || comboBoxTipoServicio.Text.Trim() == "")
                 {
-                    textoError += "El campo Funcionalidades es obligatorio\n";
+                    textoError += "El campo Tipo de servicio es obligatorio\n";
                 }
 
                 if (textoError.Length != 0)
@@ -85,8 +98,8 @@ namespace AerolineaFrba.Abm_Ruta
                     return;
 
                 }
-                JanadianDateDB.Instance.insertarRol(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), listBoxFuncionalidades.SelectedItems.Cast<string>().ToList());
-                MessageBox.Show(null, "Se ha insertado correctamente el nuevo Rol", "Alta de Rol");
+                JanadianDateDB.Instance.insertarRuta(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), JanadianDateDB.RemoveSpecialCharacters(textBoxKG.Text), JanadianDateDB.RemoveSpecialCharacters(textBoxPasaje.Text), comboBoxTipoServicio.Text.ToString(), comboOrigen.Text.ToString(), comboDestino.Text.ToString());
+                MessageBox.Show(null, "Se ha insertado correctamente la nueva ruta", "Alta de Ruta");
                 limpiarForm();
                 this.Close();
             }

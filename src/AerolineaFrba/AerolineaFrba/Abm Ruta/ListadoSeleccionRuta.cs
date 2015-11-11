@@ -23,7 +23,7 @@ namespace AerolineaFrba.Abm_Ruta
                 comboOrigen.Items.Add(f);
                 comboDestino.Items.Add(f);
             }
-            List<String> tiposServicio = JanadianDateDB.Instance.getTposServicio();
+            List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
 
             foreach (String f in tiposServicio)
             {
