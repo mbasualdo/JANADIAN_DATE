@@ -217,7 +217,7 @@ namespace AerolineaFrba
             if (dt.Rows.Count == 0)
             {
                 con.Close();
-                throw (new NoResultsException("No hay Rol"));
+                throw (new NoResultsException("No hay Funcionalidades"));
             }
             foreach (DataRow Fila in dt.Rows)
             {
@@ -351,6 +351,41 @@ namespace AerolineaFrba
             {
                 con.Close();
             }
+        }
+
+        internal List<string> getCiudades()
+        {
+            List<String> ciudades = new List<String>();
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT c.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Ciudad] c "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Ciudades"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    ciudades.Add(Convert.ToString(Fila["Nombre"]));
+                }
+                con.Close();
+            }
+            catch
+            {
+                con.Close();
+            }
+            return ciudades;
         }
     }
 }

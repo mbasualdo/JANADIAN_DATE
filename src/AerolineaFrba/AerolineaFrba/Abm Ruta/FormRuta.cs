@@ -16,5 +16,40 @@ namespace AerolineaFrba.Abm_Ruta
         {
             InitializeComponent();
         }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            backClick();
+        }
+
+        private void backClick()
+        {
+            this.Owner.Show();
+            this.Hide();
+        }
+
+        private void linkAlta_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form frm = new AltaRuta();
+            frm.Show(this);
+        }
+
+        private void linkListado_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form frm = new ListadoRuta();
+            frm.Show(this);
+        }
+
+        private void linkModificacion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form frm = new ListadoSeleccionRuta();
+            frm.Show(this);
+        }
+
+        private void linkBaja_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form frm = new ListadoSeleccionBajaRuta();
+            frm.Show(this);
+        }
     }
 }

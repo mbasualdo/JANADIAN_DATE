@@ -134,11 +134,47 @@
     <Compile Include="Abm Rol\ModificacionRol.Designer.cs">
       <DependentUpon>ModificacionRol.cs</DependentUpon>
     </Compile>
+    <Compile Include="Abm Ruta\AltaRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\AltaRuta.Designer.cs">
+      <DependentUpon>AltaRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\BajaRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\BajaRuta.Designer.cs">
+      <DependentUpon>BajaRuta.cs</DependentUpon>
+    </Compile>
     <Compile Include="Abm Ruta\FormRuta.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Abm Ruta\FormRuta.Designer.cs">
       <DependentUpon>FormRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoRuta.Designer.cs">
+      <DependentUpon>ListadoRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoSeleccionBajaRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoSeleccionBajaRuta.Designer.cs">
+      <DependentUpon>ListadoSeleccionBajaRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoSeleccionRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoSeleccionRuta.Designer.cs">
+      <DependentUpon>ListadoSeleccionRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\ModificacionRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\ModificacionRuta.Designer.cs">
+      <DependentUpon>ModificacionRuta.cs</DependentUpon>
     </Compile>
     <Compile Include="Administrador\FormInvitadoMenu.cs">
       <SubType>Form</SubType>
@@ -170,6 +206,7 @@
     <Compile Include="Devolucion\FormDevolucion.Designer.cs">
       <DependentUpon>FormDevolucion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entidades\Ruta.cs" />
     <Compile Include="Excepciones\PasswordMismatchException.cs" />
     <Compile Include="Excepciones\UnavailableException.cs" />
     <Compile Include="Excepciones\NoResultsException.cs" />
@@ -234,6 +271,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Rol\ModificacionRol.resx">
       <DependentUpon>ModificacionRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\AltaRuta.resx">
+      <DependentUpon>AltaRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\BajaRuta.resx">
+      <DependentUpon>BajaRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\FormRuta.resx">
+      <DependentUpon>FormRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\ListadoRuta.resx">
+      <DependentUpon>ListadoRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\ListadoSeleccionBajaRuta.resx">
+      <DependentUpon>ListadoSeleccionBajaRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\ListadoSeleccionRuta.resx">
+      <DependentUpon>ListadoSeleccionRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\ModificacionRuta.resx">
+      <DependentUpon>ModificacionRuta.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Administrador\FormAdminMenu.resx">
       <DependentUpon>FormAdminMenu.cs</DependentUpon>
