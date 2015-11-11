@@ -37,12 +37,13 @@
             this.labelFuncionalidad = new System.Windows.Forms.Label();
             this.labelNombre = new System.Windows.Forms.Label();
             this.textNombre = new System.Windows.Forms.TextBox();
+            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonGuardar
             // 
-            this.buttonGuardar.Location = new System.Drawing.Point(488, 213);
+            this.buttonGuardar.Location = new System.Drawing.Point(489, 242);
             this.buttonGuardar.Name = "buttonGuardar";
             this.buttonGuardar.Size = new System.Drawing.Size(75, 23);
             this.buttonGuardar.TabIndex = 7;
@@ -52,7 +53,7 @@
             // 
             // buttonLimpiar
             // 
-            this.buttonLimpiar.Location = new System.Drawing.Point(12, 213);
+            this.buttonLimpiar.Location = new System.Drawing.Point(12, 242);
             this.buttonLimpiar.Name = "buttonLimpiar";
             this.buttonLimpiar.Size = new System.Drawing.Size(75, 23);
             this.buttonLimpiar.TabIndex = 6;
@@ -62,6 +63,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxHabilitado);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.listBoxFuncionalidades);
@@ -70,7 +72,7 @@
             this.groupBox1.Controls.Add(this.textNombre);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(552, 186);
+            this.groupBox1.Size = new System.Drawing.Size(552, 224);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Campos Rol";
@@ -129,6 +131,17 @@
             this.textNombre.Size = new System.Drawing.Size(185, 20);
             this.textNombre.TabIndex = 2;
             // 
+            // checkBoxHabilitado
+            // 
+            this.checkBoxHabilitado.AutoSize = true;
+            this.checkBoxHabilitado.Location = new System.Drawing.Point(110, 185);
+            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
+            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxHabilitado.Size = new System.Drawing.Size(73, 17);
+            this.checkBoxHabilitado.TabIndex = 8;
+            this.checkBoxHabilitado.Text = "Habilitado";
+            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
+            // 
             // ModificacionRol
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -157,5 +170,6 @@
         private System.Windows.Forms.Label labelFuncionalidad;
         private System.Windows.Forms.Label labelNombre;
         private System.Windows.Forms.TextBox textNombre;
+        private System.Windows.Forms.CheckBox checkBoxHabilitado;
     }
 }

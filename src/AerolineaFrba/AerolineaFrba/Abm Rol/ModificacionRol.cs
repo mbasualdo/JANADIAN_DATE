@@ -48,6 +48,7 @@ namespace AerolineaFrba.Abm_Rol
         {
             textNombre.Text = "";
             listBoxFuncionalidades.SelectedItems.Clear();
+            checkBoxHabilitado.Checked = false;
         }
 
         private void buttonGuardar_Click(object sender, EventArgs e)
@@ -59,11 +60,23 @@ namespace AerolineaFrba.Abm_Rol
                 {
                     textoError += "El campo nombre es obligatorio\n";
                 }
+                else {
+                    rolSel.setNombre(JanadianDateDB.RemoveSpecialCharacters(textNombre.Text));
+                }
                 if (listBoxFuncionalidades.SelectedItems.Count == 0)
                 {
                     textoError += "El campo Funcionalidades es obligatorio\n";
                 }
-
+                else
+                {
+                    List<String> funcionalidades = new List<String>();
+                    foreach (String f in listBoxFuncionalidades.SelectedItems)
+                    {
+                        funcionalidades.Add(f);
+                    }
+                    rolSel.setFuncionalidades(funcionalidades);
+                }
+                    rolSel.setHabilitado(checkBoxHabilitado.Checked);
                 if (textoError.Length != 0)
                 {
                     MessageBox.Show(null, textoError, "Error de Validacion");
@@ -86,6 +99,8 @@ namespace AerolineaFrba.Abm_Rol
         private void ModificacionRol_Load(object sender, EventArgs e)
         {
             textNombre.Text = rolSel.getNombre;
+            checkBoxHabilitado.Checked = rolSel.getHabilitado;
+
            foreach(String c in rolSel.getFuncionalidades){
                listBoxFuncionalidades.SelectedItems.Add(c);
            }

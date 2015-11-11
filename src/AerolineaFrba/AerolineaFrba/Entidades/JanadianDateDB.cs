@@ -337,10 +337,13 @@ namespace AerolineaFrba
         {
             try{
             con.Open();
-            SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Nombre='{0}' WHERE Id={1}", rolSel.getNombre, rolSel.getId), con);
+            SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Nombre='{0}',Habilitado={1} WHERE Id={2}", rolSel.getNombre, rolSel.getHabilitado ? "1" : "0",      rolSel.getId), con);
             updateRol.ExecuteNonQuery();
 
-            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Nombre='{1}'", string.Join("','", rolSel.getFuncionalidades), rolSel.getId), con);
+            SqlCommand deleteOldRol_Func = new SqlCommand(String.Format("DELETE FROM [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad]  where Rol={0}", rolSel.getId), con);
+            deleteOldRol_Func.ExecuteNonQuery();
+
+            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Id={1}", string.Join("','", rolSel.getFuncionalidades), rolSel.getId), con);
             insertRol_Func.ExecuteNonQuery();
             con.Close();
             }

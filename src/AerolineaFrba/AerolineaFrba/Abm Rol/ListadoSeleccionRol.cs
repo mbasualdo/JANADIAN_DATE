@@ -74,8 +74,9 @@ namespace AerolineaFrba.Abm_Rol
                     }
                     query += String.Format(andText + " r.Nombre like '%{0}%'", textNombre.Text);
                 }
-
-                    String andTextt = "";
+                if (checkBoxHabilitado.Checked)
+                {
+                    String andText = "";
                     if (conditions)
                     {
                         andText = " AND ";
@@ -85,19 +86,33 @@ namespace AerolineaFrba.Abm_Rol
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Habilitado = {0} ", checkBoxHabilitado.Checked ? "1" : "0");
+                    query += String.Format(andText + " r.Habilitado = 1");
                 }
-
+                else {
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + " r.Habilitado = 0");
+                }
                 Console.WriteLine(query);
-                MessageBox.Show(null, query, "Query");
+
                 dataGridRol1.Columns.Clear();
+
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
                 // Create a  button column
-                DataGridViewComboBoxColumn columnFunciones = new DataGridViewComboBoxColumn();
+                DataGridViewComboBoxColumn columnFunciones = new DataGridViewComboBoxColumn();    
 
                 List<List<String>> funciones = new List<List<String>>();
 
-                // Set column values
+
+                // Set column vcvxcvalues
                 columnFunciones.Name = "comboFuncionalidadRol";
                 columnFunciones.HeaderText = "Funcionalidades";
                 dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnFunciones);

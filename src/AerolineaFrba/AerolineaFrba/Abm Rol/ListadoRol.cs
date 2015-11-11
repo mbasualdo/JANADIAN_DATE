@@ -53,6 +53,8 @@ namespace AerolineaFrba.Abm_Rol
             comboFuncionalidad.Text = "";
             dataGridRol1.DataSource = null;
             dataGridRol1.Columns.Clear();
+            checkBoxHabilitado.Checked = false;
+
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)
@@ -95,8 +97,36 @@ namespace AerolineaFrba.Abm_Rol
                     }
                     query += String.Format(andText + " r.Nombre like '%{0}%'", textNombre.Text);
                 }
+                if (checkBoxHabilitado.Checked)
+                {
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + " r.Habilitado = 1");
+                }
+                else
+                {
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + " r.Habilitado = 0");
+                }
                 Console.WriteLine(query);
-                MessageBox.Show(null, query, "Query");
+                //MessageBox.Show(null, query, "Query");
                 dataGridRol1.Columns.Clear();
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
                 // Create a  button column

@@ -71,6 +71,7 @@ namespace AerolineaFrba.Abm_Rol
         private void BajaRol_Load(object sender, EventArgs e)
         {
             textNombre.Text = rolSel.getNombre;
+
             foreach (String s in rolSel.getFuncionalidades) {
                 listBoxFuncionalidades.SelectedItems.Add(s);
             }

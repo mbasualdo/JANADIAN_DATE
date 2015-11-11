@@ -37,13 +37,23 @@ namespace AerolineaFrba.Abm_Rol
         {
             try
             {
-                String query = "SELECT r.Id, r.Nombre,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Rol] r ";
+                String query = "SELECT r.Id, r.Nombre,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Rol] r";
                 bool conditions = false;
                 if (comboFuncionalidad.Text != null && comboFuncionalidad.Text.Trim() != "")
                 {
                     query += String.Format(" INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] rf ON (r.Id=rf.Rol)  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ON (f.Id=rf.Funcionalidad) WHERE f.Descripcion='{0}'", comboFuncionalidad.Text);
                     conditions = true;
                 }
+                
+                      if (conditions)
+                    {
+                         query += String.Format( " AND  r.Habilitado=1 ");
+                    }
+                    else
+                    {
+                        query += String.Format("  WHERE r.Habilitado=1 ");
+                        conditions = true;
+                    }
                 if (textId.Text != null && textId.Text.Trim() != "")
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
@@ -74,7 +84,7 @@ namespace AerolineaFrba.Abm_Rol
                     query += String.Format(andText + " r.Nombre like '%{0}%'", textNombre.Text);
                 }
                 Console.WriteLine(query);
-                MessageBox.Show(null, query, "Query");
+                //MessageBox.Show(null, query, "Query");
                 dataGridRol1.Columns.Clear();
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
                 // Create a  button column

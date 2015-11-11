@@ -38,12 +38,14 @@
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.dataGridRol1 = new System.Windows.Forms.DataGridView();
+            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxHabilitado);
             this.groupBox1.Controls.Add(this.labelFuncionalidad);
             this.groupBox1.Controls.Add(this.comboFuncionalidad);
             this.groupBox1.Controls.Add(this.labelNombre);
@@ -140,6 +142,17 @@
             this.dataGridRol1.Size = new System.Drawing.Size(552, 150);
             this.dataGridRol1.TabIndex = 3;
             // 
+            // checkBoxHabilitado
+            // 
+            this.checkBoxHabilitado.AutoSize = true;
+            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 58);
+            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
+            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxHabilitado.TabIndex = 7;
+            this.checkBoxHabilitado.Text = "Habilitado        ";
+            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
+            // 
             // ListadoRol
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -171,5 +184,6 @@
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.Button buttonBuscar;
         private System.Windows.Forms.DataGridView dataGridRol1;
+        private System.Windows.Forms.CheckBox checkBoxHabilitado;
     }
 }

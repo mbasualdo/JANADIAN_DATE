@@ -44,5 +44,18 @@ namespace AerolineaFrba
             this.habilitado = habilitado;
         }
 
+
+        internal void setNombre(string p)
+        {
+            this.nombre = p;
+        }
+        internal void setFuncionalidades( List<string> p)
+        {
+            this.funcionalidades = p;
+        }
+        internal void setHabilitado(Boolean p)
+        {
+            this.habilitado = p;
+        }
     }
 }
