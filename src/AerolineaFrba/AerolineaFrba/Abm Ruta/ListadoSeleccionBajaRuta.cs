@@ -171,7 +171,7 @@ namespace AerolineaFrba.Abm_Ruta
                 dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
 
             }
-            catch
+            catch (Exception exAlta)
             {
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;

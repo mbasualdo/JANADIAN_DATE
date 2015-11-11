@@ -62,13 +62,37 @@ namespace AerolineaFrba.Abm_Ruta
                 {
                     textoError += "El campo codigo es obligatorio\n";
                 }
+                else
+                {
+                    Decimal value;
+                    if (!Decimal.TryParse(textCodigo.Text, out value))
+                    {
+                        textoError += "El campo codigo no es valido\n";
+                    }
+                }
                 if (textBoxKG.Text == null || textBoxKG.Text.Trim() == "")
                 {
                     textoError += "El campo Precio Base KG es obligatorio\n";
                 }
+                else
+                {
+                    Double value;
+                    if (!Double.TryParse(textBoxKG.Text, out value))
+                    {
+                        textoError += "El campo Precio Base KG no es valido\n";
+                    }
+                }
                 if (textBoxPasaje.Text == null || textBoxPasaje.Text.Trim() == "")
                 {
                     textoError += "El campo Precio Base Pasaje es obligatorio\n";
+                }
+                else
+                {
+                    Double value;
+                    if (!Double.TryParse(textBoxPasaje.Text, out value))
+                    {
+                        textoError += "El campo Precio Base Pasaje no es valido\n";
+                    }
                 }
                 if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
                 {
@@ -103,7 +127,7 @@ namespace AerolineaFrba.Abm_Ruta
                 limpiarForm();
                 this.Close();
             }
-            catch
+            catch(Exception exAlta)
             {
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;

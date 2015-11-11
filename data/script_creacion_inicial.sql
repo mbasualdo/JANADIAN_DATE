@@ -1330,9 +1330,9 @@ BEGIN
 GO
 
 
-/*** trigger que cancela pasajes y encomiendas al dar de baja una ruta (inhabilitar) ****/
+/*** trigger que cancela pasajes al dar de baja una ruta (inhabilitar) ****/
 /***        ****/
-CREATE TRIGGER [JANADIAN_DATE].[trgInhabilitarRuta] ON  [JANADIAN_DATE].[Ruta]
+CREATE TRIGGER [JANADIAN_DATE].[trgInhabilitarPasajesRuta] ON  [JANADIAN_DATE].[Ruta]
 FOR UPDATE
 AS
 BEGIN
@@ -1348,10 +1348,45 @@ BEGIN
 		declare @codigo [numeric](18,0);
 
 		DECLARE ViajesEnRuta CURSOR FOR 
-		SELECT c.PNR, ISNULL(p.Codigo,x.Codigo) AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		SELECT c.PNR, p.Codigo AS codigo FROM [JANADIAN_DATE].[Ruta] r
 		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
 		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
+		WHERE r.Id=@Id and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0		
+
+		OPEN ViajesEnRuta 
+		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta'
+			FETCH NEXT FROM ViajesEnRuta
+		END
+		CLOSE ViajesEnRuta
+		DEALLOCATE ViajesEnRuta
+	end
+	
+GO
+/*** trigger que cancela encomiendas al dar de baja una ruta (inhabilitar) ****/
+/***        ****/
+CREATE TRIGGER [JANADIAN_DATE].[trgInhabilitarPaquetesRuta] ON  [JANADIAN_DATE].[Ruta]
+FOR UPDATE
+AS
+BEGIN
+	declare @habilitado  bit ;
+	declare @id int;
+
+	select @id=i.Id,@habilitado=i.Habilitado from inserted i;	
+	
+	if  @habilitado=0	
+			
+	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+		declare @pnr int;
+		declare @codigo [numeric](18,0);
+
+		DECLARE ViajesEnRuta CURSOR FOR 
+		SELECT c.PNR, x.Codigo AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
+		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
 		WHERE r.Id=@Id and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0		
 
@@ -1367,7 +1402,6 @@ BEGIN
 	end
 	
 GO
-
 EXEC [JANADIAN_DATE].[Insertar_Funcionalidades] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Roles] 

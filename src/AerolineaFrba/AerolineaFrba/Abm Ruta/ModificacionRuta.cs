@@ -72,10 +72,16 @@ namespace AerolineaFrba.Abm_Ruta
             {
 
                 String textoError = "";
+                 Double valueDou;
+                Decimal valueDec;
                 if (textCodigo.Text == null || textCodigo.Text.Trim() == "")
                 {
                     textoError += "El campo codigo es obligatorio\n";
                 }
+                 else if (!Decimal.TryParse(textCodigo.Text, out valueDec))
+                    {
+                        textoError += "El campo Codigo no es valido\n";
+                    }
                 else {
                     rutaSel.setCodigo(Convert.ToDecimal(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text)));
                 }
@@ -83,14 +89,22 @@ namespace AerolineaFrba.Abm_Ruta
                 {
                     textoError += "El campo Precio Base KG es obligatorio\n";
                 }
-                                else {
+                else if (!Double.TryParse(textBoxKG.Text, out valueDou))
+                {
+                    textoError += "El campo Precio Base KG no es valido\n";
+                }
+                else {
                     rutaSel.setPrecio_BaseKG(Convert.ToDouble(JanadianDateDB.RemoveSpecialCharacters(textBoxKG.Text)));
                 }
                 if (textBoxPasaje.Text == null || textBoxPasaje.Text.Trim() == "")
                 {
                     textoError += "El campo Precio Base Pasaje es obligatorio\n";
                 }
-                                else {
+                else if (!Double.TryParse(textBoxPasaje.Text, out valueDou))
+                {
+                    textoError += "El campo Precio Base Pasaje no es valido\n";
+                }
+                else {
                     rutaSel.setPrecio_BasePasaje(Convert.ToDouble(JanadianDateDB.RemoveSpecialCharacters(textBoxPasaje.Text)));
                 }
                 if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")

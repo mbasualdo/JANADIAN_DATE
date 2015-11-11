@@ -44,6 +44,7 @@ namespace AerolineaFrba
         internal Usuario getUsuario(string username, string password)
         {
             Usuario user = null;
+            try{
             string hash = GetSha256FromString(password);
             //
             // Open the SqlConnection.
@@ -86,7 +87,13 @@ namespace AerolineaFrba
 
             }
             con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception());
 
+            }
 
             return user;
         }
@@ -137,9 +144,11 @@ namespace AerolineaFrba
                 }
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
             return funcionalidades;
         }
@@ -172,9 +181,11 @@ namespace AerolineaFrba
                 }
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
             return funcionalidades;
         }
@@ -191,9 +202,11 @@ namespace AerolineaFrba
                 dt.Load(cmd.ExecuteReader());
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
             return dt;
         }
@@ -201,33 +214,36 @@ namespace AerolineaFrba
         internal List<string> getFuncionalidades()
         {
             List<String> funcionalidades = new List<String>();
-            try{
-            //
-            // Open the SqlConnection.
-            //
-            con.Open();
-            //
-            // The following code uses an SqlCommand based on the SqlConnection.
-            //
-            SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f "), con);
-            DataTable dt = new DataTable();
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f "), con);
+                DataTable dt = new DataTable();
 
-            dt.TableName = "Tabla";
-            dt.Load(cmd.ExecuteReader());
-            if (dt.Rows.Count == 0)
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Funcionalidades"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
             {
                 con.Close();
-                throw (new NoResultsException("No hay Funcionalidades"));
-            }
-            foreach (DataRow Fila in dt.Rows)
-            {
-                funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
-            }
-            con.Close();
-                        }
-            catch
-            {
-                con.Close();
+                throw (new Exception());
+
             }
             return funcionalidades;
         }
@@ -235,51 +251,57 @@ namespace AerolineaFrba
         internal Rol getRolByname(string nombreRol)
         {
             Rol rol = null;
-            try{
-            //
-            // Open the SqlConnection.
-            //
-            con.Open();
-            //
-            // The following code uses an SqlCommand based on the SqlConnection.
-            //
-            SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Id,Nombre,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Rol] r WHERE r.Nombre = '{0}'  ", nombreRol), con);
-            DataTable dt = new DataTable();
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Id,Nombre,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Rol] r WHERE r.Nombre = '{0}'  ", nombreRol), con);
+                DataTable dt = new DataTable();
 
-            dt.TableName = "Tabla";
-            dt.Load(cmd.ExecuteReader());
-            if (dt.Rows.Count == 0)
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    rol = new Rol(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Nombre"]), Convert.ToBoolean(Fila["Habilitado"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
             {
                 con.Close();
-                return null;
-            }
-            foreach (DataRow Fila in dt.Rows)
-            {
-                rol = new Rol(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Nombre"]), Convert.ToBoolean(Fila["Habilitado"]));
-            }
-            con.Close();
-            }
-            catch
-            {
-                con.Close();
+                throw (new Exception());
+
             }
             return rol;
         }
 
         internal void insertarRol(string p, List<string> list)
         {
-            try{
-            con.Open();
-            SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol] (Nombre) VALUES ('{0}')", p), con);
-            insertRol.ExecuteNonQuery();
+            try
+            {
+                con.Open();
+                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol] (Nombre) VALUES ('{0}')", p), con);
+                insertRol.ExecuteNonQuery();
 
-            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Nombre='{1}'", string.Join("','", list), p), con);
-            insertRol_Func.ExecuteNonQuery();
-            con.Close();
+                SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Nombre='{1}'", string.Join("','", list), p), con);
+                insertRol_Func.ExecuteNonQuery();
+                con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
 
         }
@@ -287,69 +309,78 @@ namespace AerolineaFrba
         internal List<String> getFuncionalidadesByRol(int id)
         {
             List<String> funcionalidades = new List<String>();
-            try{
-            //
-            // Open the SqlConnection.
-            //
-            con.Open();
-            //
-            // The following code uses an SqlCommand based on the SqlConnection.
-            //
-            SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f,[GD2C2015].[JANADIAN_DATE].[Rol] r,[GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] rf WHERE r.Id=rf.Rol AND f.Id=rf.Funcionalidad and r.Id={0}", id), con);
-            DataTable dt = new DataTable();
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT f.Descripcion FROM [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f,[GD2C2015].[JANADIAN_DATE].[Rol] r,[GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] rf WHERE r.Id=rf.Rol AND f.Id=rf.Funcionalidad and r.Id={0}", id), con);
+                DataTable dt = new DataTable();
 
-            dt.TableName = "Tabla";
-            dt.Load(cmd.ExecuteReader());
-            if (dt.Rows.Count == 0)
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Rol"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
             {
                 con.Close();
-                throw (new NoResultsException("No hay Rol"));
-            }
-            foreach (DataRow Fila in dt.Rows)
-            {
-                funcionalidades.Add(Convert.ToString(Fila["Descripcion"]));
-            }
-            con.Close();
-            }
-            catch
-            {
-                con.Close();
+                throw (new Exception());
+
             }
             return funcionalidades;
         }
 
         internal void bajaLogicaRol(int idRol)
         {
-            try{
-            con.Open();
-            SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Habilitado=0 WHERE Id ={0}", idRol), con);
-            updateRol.ExecuteNonQuery();
-            con.Close();
+            try
+            {
+                con.Open();
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Habilitado=0 WHERE Id ={0}", idRol), con);
+                updateRol.ExecuteNonQuery();
+                con.Close();
             }
-            catch(Exception eUpdate)
+            catch (Exception eUpdate)
             {
                 Console.WriteLine(eUpdate.ToString());
                 con.Close();
+                throw (new Exception());
+
             }
         }
 
         internal void modificarRol(Rol rolSel)
         {
-            try{
-            con.Open();
-            SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Nombre='{0}',Habilitado={1} WHERE Id={2}", rolSel.getNombre, rolSel.getHabilitado ? "1" : "0",      rolSel.getId), con);
-            updateRol.ExecuteNonQuery();
+            try
+            {
+                con.Open();
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Rol] SET Nombre='{0}',Habilitado={1} WHERE Id={2}", rolSel.getNombre, rolSel.getHabilitado ? "1" : "0", rolSel.getId), con);
+                updateRol.ExecuteNonQuery();
 
-            SqlCommand deleteOldRol_Func = new SqlCommand(String.Format("DELETE FROM [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad]  where Rol={0}", rolSel.getId), con);
-            deleteOldRol_Func.ExecuteNonQuery();
+                SqlCommand deleteOldRol_Func = new SqlCommand(String.Format("DELETE FROM [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad]  where Rol={0}", rolSel.getId), con);
+                deleteOldRol_Func.ExecuteNonQuery();
 
-            SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Id={1}", string.Join("','", rolSel.getFuncionalidades), rolSel.getId), con);
-            insertRol_Func.ExecuteNonQuery();
-            con.Close();
+                SqlCommand insertRol_Func = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Rol_Funcionalidad] (Rol,Funcionalidad) select r.Id,f.Id from  [GD2C2015].[JANADIAN_DATE].[Funcionalidad] f ,  [GD2C2015].[JANADIAN_DATE].[Rol] r  where f.Descripcion in ('{0}') and r.Id={1}", string.Join("','", rolSel.getFuncionalidades), rolSel.getId), con);
+                insertRol_Func.ExecuteNonQuery();
+                con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
         }
 
@@ -381,9 +412,11 @@ namespace AerolineaFrba
                 }
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
             return ciudades;
         }
@@ -416,9 +449,11 @@ namespace AerolineaFrba
                 }
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
             return tiposServicio;
         }
@@ -435,7 +470,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) WHERE Origen = '{0}' AND Destino = '{1}' AND Tipo_Servicio = '{2}'  ", origen,destino,tipoServicio), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) WHERE o.Nombre = '{0}' AND d.Nombre = '{1}' AND t.Nombre = '{2}'  ", origen, destino, tipoServicio), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -451,25 +486,29 @@ namespace AerolineaFrba
                 }
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
             return ruta;
         }
 
-        internal void insertarRuta(string codigo, string pBaseKG, string pBasePasaje, string tipoServicio,string origen, string destino)
+        internal void insertarRuta(string codigo, string pBaseKG, string pBasePasaje, string tipoServicio, string origen, string destino)
         {
             try
             {
                 con.Open();
-                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Ruta] (Codigo,Precio_BaseKG ,Precio_BasePasaje,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio) SELECT '{0}',{1},{2},o.Id,d.Id,t.Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Ciudad] o,[GD2C2015].[JANADIAN_DATE].[Ciudad] d WHERE o.Nombre='{3}' AND d.Nombre='{4}' AND t.Nombre='{5}'", codigo, pBaseKG, pBasePasaje,origen,destino,tipoServicio), con);
+                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Ruta] (Codigo,Precio_BaseKG ,Precio_BasePasaje,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio) SELECT '{0}',{1},{2},o.Id,d.Id,t.Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Ciudad] o,[GD2C2015].[JANADIAN_DATE].[Ciudad] d WHERE o.Nombre='{3}' AND d.Nombre='{4}' AND t.Nombre='{5}'", codigo, pBaseKG, pBasePasaje, origen, destino, tipoServicio), con);
                 insertRol.ExecuteNonQuery();
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
         }
 
@@ -486,6 +525,8 @@ namespace AerolineaFrba
             {
                 Console.WriteLine(eUpdate.ToString());
                 con.Close();
+                throw (new Exception());
+
             }
         }
 
@@ -494,13 +535,64 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Ruta] r SET r.Codigo={0},r.Habilitado={1} INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o (ON o.Nombre='{2}') INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d (ON d.Nombre='{3}') INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t (ON t.Nombre='{4}') WHERE r.Id={5}", rutaSel.getCodigo, rutaSel.getHabilitado ? "1" : "0",rutaSel.getOrigen,rutaSel.getDestino,rutaSel.getTipoServicio, rutaSel.getId), con);
+                int origen=0;
+                int destino = 0;
+                int tipoServ = 0;
+
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Id FROM [GD2C2015].[JANADIAN_DATE].[Ciudad]  WHERE Nombre='{0}'  ", rutaSel.getOrigen), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla1";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new Exception("No existe la ciudad Origen"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    origen = Convert.ToInt32(Fila["Id"]);
+                }
+
+                 cmd = new SqlCommand(String.Format("SELECT TOP 1 Id FROM [GD2C2015].[JANADIAN_DATE].[Ciudad]  WHERE Nombre='{0}'  ", rutaSel.getDestino), con);
+                 dt = new DataTable();
+
+                dt.TableName = "Tabla1";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new Exception("No existe la ciudad Destino"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    destino = Convert.ToInt32(Fila["Id"]);
+                }
+
+                cmd = new SqlCommand(String.Format("SELECT TOP 1 Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio]  WHERE Nombre='{0}'  ", rutaSel.getTipoServicio), con);
+                dt = new DataTable();
+
+                dt.TableName = "Tabla1";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new Exception("No existe el tipo de servicio"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    tipoServ = Convert.ToInt32(Fila["Id"]);
+                }
+                
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Ruta]  SET Codigo={0},Habilitado={1},Ciudad_Origen={2},Ciudad_Destino={3},Tipo_Servicio={4} WHERE Id={5}", rutaSel.getCodigo, rutaSel.getHabilitado ? "1" : "0", origen, destino, tipoServ, rutaSel.getId), con);
                 updateRol.ExecuteNonQuery();
                 con.Close();
             }
-            catch
+            catch (Exception exAlta)
             {
                 con.Close();
+                throw (new Exception());
+
             }
         }
     }

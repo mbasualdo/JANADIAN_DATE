@@ -77,7 +77,7 @@ namespace AerolineaFrba.Abm_Ruta
                 limpiarForm();
                 this.Close();
             }
-            catch
+            catch (Exception exBaja)
             {
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
