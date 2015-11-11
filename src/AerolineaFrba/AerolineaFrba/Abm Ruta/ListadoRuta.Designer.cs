@@ -117,6 +117,7 @@
             // 
             // comboBoxTipoServicio
             // 
+            this.comboBoxTipoServicio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipoServicio.FormattingEnabled = true;
             this.comboBoxTipoServicio.Location = new System.Drawing.Point(371, 85);
             this.comboBoxTipoServicio.Name = "comboBoxTipoServicio";
@@ -134,6 +135,7 @@
             // 
             // comboDestino
             // 
+            this.comboDestino.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboDestino.FormattingEnabled = true;
             this.comboDestino.Location = new System.Drawing.Point(371, 53);
             this.comboDestino.Name = "comboDestino";
@@ -175,6 +177,8 @@
             // checkBoxHabilitado
             // 
             this.checkBoxHabilitado.AutoSize = true;
+            this.checkBoxHabilitado.Checked = true;
+            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 117);
             this.checkBoxHabilitado.Name = "checkBoxHabilitado";
             this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -194,6 +198,7 @@
             // 
             // comboOrigen
             // 
+            this.comboOrigen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboOrigen.FormattingEnabled = true;
             this.comboOrigen.Location = new System.Drawing.Point(371, 26);
             this.comboOrigen.Name = "comboOrigen";
@@ -243,6 +248,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "ListadoRuta";
             this.Text = "Listado";
+            this.Load += new System.EventHandler(this.ListadoRuta_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

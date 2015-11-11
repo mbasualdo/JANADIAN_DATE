@@ -32,7 +32,6 @@
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.comboBoxTipoServicio = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -47,6 +46,7 @@
             this.textCodigo = new System.Windows.Forms.TextBox();
             this.labelId = new System.Windows.Forms.Label();
             this.textId = new System.Windows.Forms.TextBox();
+            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -107,19 +107,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtros de bùsqueda";
             // 
-            // checkBoxHabilitado
-            // 
-            this.checkBoxHabilitado.AutoSize = true;
-            this.checkBoxHabilitado.Checked = true;
-            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 121);
-            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
-            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
-            this.checkBoxHabilitado.TabIndex = 6;
-            this.checkBoxHabilitado.Text = "Habilitado        ";
-            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -131,6 +118,7 @@
             // 
             // comboBoxTipoServicio
             // 
+            this.comboBoxTipoServicio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTipoServicio.FormattingEnabled = true;
             this.comboBoxTipoServicio.Location = new System.Drawing.Point(383, 77);
             this.comboBoxTipoServicio.Name = "comboBoxTipoServicio";
@@ -148,6 +136,7 @@
             // 
             // comboDestino
             // 
+            this.comboDestino.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboDestino.FormattingEnabled = true;
             this.comboDestino.Location = new System.Drawing.Point(383, 45);
             this.comboDestino.Name = "comboDestino";
@@ -197,6 +186,7 @@
             // 
             // comboOrigen
             // 
+            this.comboOrigen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboOrigen.FormattingEnabled = true;
             this.comboOrigen.Location = new System.Drawing.Point(383, 18);
             this.comboOrigen.Name = "comboOrigen";
@@ -234,6 +224,19 @@
             this.textId.Name = "textId";
             this.textId.Size = new System.Drawing.Size(185, 20);
             this.textId.TabIndex = 16;
+            // 
+            // checkBoxHabilitado
+            // 
+            this.checkBoxHabilitado.AutoSize = true;
+            this.checkBoxHabilitado.Checked = true;
+            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 121);
+            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
+            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxHabilitado.TabIndex = 6;
+            this.checkBoxHabilitado.Text = "Habilitado        ";
+            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
             // 
             // ListadoSeleccionRuta
             // 

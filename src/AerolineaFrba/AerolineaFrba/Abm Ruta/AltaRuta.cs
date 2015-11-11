@@ -46,9 +46,9 @@ namespace AerolineaFrba.Abm_Ruta
             textCodigo.Text = "";
             textBoxKG.Text = "";
             textBoxPasaje.Text = "";
-            comboOrigen.Text = "";
-            comboDestino.Text = "";
-            comboBoxTipoServicio.Text = "";
+            comboOrigen.SelectedItem = null;
+            comboDestino.SelectedItem = null;
+            comboBoxTipoServicio.SelectedItem = null;
 
         }
 

@@ -60,9 +60,9 @@ namespace AerolineaFrba.Abm_Ruta
             textCodigo.Text = "";
             textBoxKG.Text = "";
             textBoxPasaje.Text = "";
-            comboOrigen.Text = "";
-            comboDestino.Text = "";
-            comboBoxTipoServicio.Text = "";
+            comboOrigen.SelectedItem = null;
+            comboDestino.SelectedItem = null;
+            comboBoxTipoServicio.SelectedItem = null;
             checkBoxHabilitado.Checked = false;
         }
 
@@ -98,14 +98,14 @@ namespace AerolineaFrba.Abm_Ruta
                     textoError += "El campo Origen es obligatorio\n";
                 }
                                 else {
-                    rutaSel.setOrigen(JanadianDateDB.RemoveSpecialCharacters(comboOrigen.Text));
+                    rutaSel.setOrigen(comboOrigen.Text);
                 }
                 if (comboDestino.Text == null || comboDestino.Text.Trim() == "")
                 {
                     textoError += "El campo Destino es obligatorio\n";
                 }
                                 else {
-                    rutaSel.setDestino(JanadianDateDB.RemoveSpecialCharacters(comboDestino.Text));
+                    rutaSel.setDestino(comboDestino.Text);
                 }
                 if (comboOrigen.Text.Equals(comboDestino.Text))
                 {
@@ -118,7 +118,7 @@ namespace AerolineaFrba.Abm_Ruta
                     textoError += "El campo Tipo de servicio es obligatorio\n";
                 }
                                 else {
-                    rutaSel.setTipoServicio(JanadianDateDB.RemoveSpecialCharacters(comboBoxTipoServicio.Text));
+                    rutaSel.setTipoServicio(comboBoxTipoServicio.Text);
                 }
                 rutaSel.setHabilitado(checkBoxHabilitado.Checked);
                 if (textoError.Length != 0)

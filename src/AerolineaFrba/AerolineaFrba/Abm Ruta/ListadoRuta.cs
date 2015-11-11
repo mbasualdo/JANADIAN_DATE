@@ -37,12 +37,12 @@ namespace AerolineaFrba.Abm_Ruta
             textCodigo.Text = "";
             textBoxKG.Text = "";
             textBoxPasaje.Text = "";
-            comboOrigen.Text = "";
-            comboDestino.Text = "";
-            comboBoxTipoServicio.Text = "";
+            comboOrigen.SelectedItem = null;
+            comboDestino.SelectedItem = null;
+            comboBoxTipoServicio.SelectedItem = null;
             dataGridRol1.DataSource = null;
             dataGridRol1.Columns.Clear();
-            checkBoxHabilitado.Checked = false;
+            checkBoxHabilitado.Checked = true;
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)
@@ -53,7 +53,7 @@ namespace AerolineaFrba.Abm_Ruta
                 bool conditions = false;
                 if (comboOrigen.Text != null && comboOrigen.Text.Trim() != "")
                 {
-                    query += String.Format(" WHERE Origen='{0}'", comboOrigen.Text);
+                    query += String.Format(" WHERE o.Nombre='{0}'", comboOrigen.Text);
                     conditions = true;
                 }
                 if (comboDestino.Text != null && comboDestino.Text.Trim() != "")
@@ -69,7 +69,7 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + "  Destino='{0}'", comboDestino.Text);
+                    query += String.Format(andText + "  d.Nombre='{0}'", comboDestino.Text);
                     conditions = true;
                 }
                 if (comboBoxTipoServicio.Text != null && comboBoxTipoServicio.Text.Trim() != "")
@@ -85,7 +85,7 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + "  Tipo_Servicio='{0}'", comboBoxTipoServicio.Text);
+                    query += String.Format(andText + "  t.Nombre='{0}'", comboBoxTipoServicio.Text);
                     conditions = true;
                 }
                 if (textId.Text != null && textId.Text.Trim() != "")
@@ -187,6 +187,11 @@ namespace AerolineaFrba.Abm_Ruta
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
             }
+        }
+
+        private void ListadoRuta_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

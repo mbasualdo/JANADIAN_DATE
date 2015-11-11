@@ -28,7 +28,7 @@ namespace AerolineaFrba.Abm_Rol
         {
             textId.Text = "";
             textNombre.Text = "";
-            comboFuncionalidad.Text = "";
+            comboFuncionalidad.SelectedItem = null;
             dataGridRol1.DataSource = null;
             dataGridRol1.Columns.Clear();
         }

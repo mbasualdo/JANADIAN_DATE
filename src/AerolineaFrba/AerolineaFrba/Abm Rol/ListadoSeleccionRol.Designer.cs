@@ -32,13 +32,13 @@
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             this.labelFuncionalidad = new System.Windows.Forms.Label();
             this.comboFuncionalidad = new System.Windows.Forms.ComboBox();
             this.labelNombre = new System.Windows.Forms.Label();
             this.textNombre = new System.Windows.Forms.TextBox();
             this.labelId = new System.Windows.Forms.Label();
             this.textId = new System.Windows.Forms.TextBox();
-            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -91,6 +91,19 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtros de bùsqueda";
             // 
+            // checkBoxHabilitado
+            // 
+            this.checkBoxHabilitado.AutoSize = true;
+            this.checkBoxHabilitado.Checked = true;
+            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 58);
+            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
+            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxHabilitado.TabIndex = 6;
+            this.checkBoxHabilitado.Text = "Habilitado        ";
+            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
+            // 
             // labelFuncionalidad
             // 
             this.labelFuncionalidad.AutoSize = true;
@@ -102,6 +115,7 @@
             // 
             // comboFuncionalidad
             // 
+            this.comboFuncionalidad.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboFuncionalidad.FormattingEnabled = true;
             this.comboFuncionalidad.Location = new System.Drawing.Point(371, 26);
             this.comboFuncionalidad.Name = "comboFuncionalidad";
@@ -139,19 +153,6 @@
             this.textId.Name = "textId";
             this.textId.Size = new System.Drawing.Size(185, 20);
             this.textId.TabIndex = 0;
-            // 
-            // checkBoxHabilitado
-            // 
-            this.checkBoxHabilitado.AutoSize = true;
-            this.checkBoxHabilitado.Checked = true;
-            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 58);
-            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
-            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
-            this.checkBoxHabilitado.TabIndex = 6;
-            this.checkBoxHabilitado.Text = "Habilitado        ";
-            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
             // 
             // ListadoSeleccionRol
             // 
