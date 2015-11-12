@@ -452,19 +452,6 @@ CREATE TABLE [JANADIAN_DATE].[Millas_Canjeadas](
 GO
 
 
- /** Creacion de tabla log  ***/
-IF OBJECT_ID('[JANADIAN_DATE].[Log]') IS NULL
-CREATE TABLE [JANADIAN_DATE].[Log](
-	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Step] [nvarchar](255),
-	[Date] [nvarchar](255)  DEFAULT CURRENT_TIMESTAMP,
-	[Status] int,
-	[Message] [nvarchar](4000)
-) ON [PRIMARY]
-
-GO
-
-
 /*******************************************************************************/
 /******************** CREACION DE VISTAS ***************************************/
 /*******************************************************************************/
@@ -547,7 +534,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('CANCELAR PASAJE',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
 
 
@@ -582,7 +568,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR FUNCIONALIDADES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -608,7 +593,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR ROLES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -638,7 +622,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR USUARIOS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -697,7 +680,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR ROL FUNC',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -729,7 +711,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR CIUDADES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -760,7 +741,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR TIPO SERVICIO',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -790,7 +770,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR FABRICANTES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -829,7 +808,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR PRODUCTOS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 
 END CATCH;
@@ -864,7 +842,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR CLIENTES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -934,7 +911,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR RUTAS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -988,7 +964,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR AERONAVES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1064,7 +1039,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR VIAJES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1107,7 +1081,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR BUTACAS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1138,7 +1111,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR BUTACA VIAJES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1173,7 +1145,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR COMPRAS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1208,7 +1179,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR PAQUETES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1246,7 +1216,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR PASAJES',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 
@@ -1286,7 +1255,6 @@ BEGIN CATCH
   -- INFO DE ERROR.
   DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
   SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  INSERT INTO Log (Step,Status,Message) VALUES ('INSERTAR MILLAS',@ErrorSeverity,@ErrorMessage);
   RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH  
 

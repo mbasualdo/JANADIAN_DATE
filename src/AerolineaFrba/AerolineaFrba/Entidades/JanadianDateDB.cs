@@ -17,7 +17,7 @@ namespace AerolineaFrba
     {
         private static readonly JanadianDateDB instance = new JanadianDateDB();
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["GD2C2015"].ConnectionString);
-
+        private readonly DateTime fechaSistema = Convert.ToDateTime(ConfigurationManager.AppSettings["DefaultDate"]);
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
         static JanadianDateDB()
@@ -43,6 +43,7 @@ namespace AerolineaFrba
 
         internal Usuario getUsuario(string username, string password)
         {
+            //this.fechaSistema.ToString();
             Usuario user = null;
             try{
             string hash = GetSha256FromString(password);
