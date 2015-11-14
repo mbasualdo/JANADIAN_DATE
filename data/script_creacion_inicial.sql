@@ -203,8 +203,6 @@ CREATE TABLE [JANADIAN_DATE].[Aeronave](
 		/**Por defecto sin bajas ***/
 	[Baja_Fuera_Servicio] [bit] NOT NULL DEFAULT 0,
 	[Baja_Vida_Util] [bit] NOT NULL DEFAULT 0,
-	[Fecha_Fuera_Servicio] [datetime],
-	[Fecha_Reinicio_Servicio] [datetime],
 	[Fecha_Baja_Definitiva] [datetime],
 	[Cant_Butacas_Ventanilla] [int]  NOT NULL  CHECK([Cant_Butacas_Ventanilla]>=0),
 	[Cant_Butacas_Pasillo] [int]  NOT NULL  CHECK([Cant_Butacas_Pasillo]>=0),

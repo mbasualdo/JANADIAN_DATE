@@ -45,12 +45,12 @@
             this.comboFabricante = new System.Windows.Forms.ComboBox();
             this.labelNombre = new System.Windows.Forms.Label();
             this.textMatricula = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonOutService = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.monthCalendar1 = new System.Windows.Forms.MonthCalendar();
-            this.button2 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.buttonLimpiar2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVentanilla)).BeginInit();
@@ -229,14 +229,15 @@
             this.textMatricula.Size = new System.Drawing.Size(185, 20);
             this.textMatricula.TabIndex = 44;
             // 
-            // button1
+            // buttonOutService
             // 
-            this.button1.Location = new System.Drawing.Point(453, 523);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(122, 23);
-            this.button1.TabIndex = 15;
-            this.button1.Text = "Fuera Servicio";
-            this.button1.UseVisualStyleBackColor = true;
+            this.buttonOutService.Location = new System.Drawing.Point(453, 507);
+            this.buttonOutService.Name = "buttonOutService";
+            this.buttonOutService.Size = new System.Drawing.Size(122, 23);
+            this.buttonOutService.TabIndex = 15;
+            this.buttonOutService.Text = "Fuera Servicio";
+            this.buttonOutService.UseVisualStyleBackColor = true;
+            this.buttonOutService.Click += new System.EventHandler(this.buttonOutService_Click);
             // 
             // groupBox2
             // 
@@ -250,15 +251,11 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Fuera de Servicio";
             // 
-            // label26
+            // monthCalendar1
             // 
-            this.label26.AutoSize = true;
-            this.label26.ForeColor = System.Drawing.Color.Red;
-            this.label26.Location = new System.Drawing.Point(183, 28);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(62, 13);
-            this.label26.TabIndex = 46;
-            this.label26.Text = "* obligatorio";
+            this.monthCalendar1.Location = new System.Drawing.Point(257, 14);
+            this.monthCalendar1.Name = "monthCalendar1";
+            this.monthCalendar1.TabIndex = 66;
             // 
             // label1
             // 
@@ -269,28 +266,33 @@
             this.label1.TabIndex = 65;
             this.label1.Text = "Fecha Reinicio servicio";
             // 
-            // monthCalendar1
+            // label26
             // 
-            this.monthCalendar1.Location = new System.Drawing.Point(257, 14);
-            this.monthCalendar1.Name = "monthCalendar1";
-            this.monthCalendar1.TabIndex = 66;
+            this.label26.AutoSize = true;
+            this.label26.ForeColor = System.Drawing.Color.Red;
+            this.label26.Location = new System.Drawing.Point(183, 28);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(62, 13);
+            this.label26.TabIndex = 46;
+            this.label26.Text = "* obligatorio";
             // 
-            // button2
+            // buttonLimpiar2
             // 
-            this.button2.Location = new System.Drawing.Point(25, 523);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 16;
-            this.button2.Text = "Limpiar";
-            this.button2.UseVisualStyleBackColor = true;
+            this.buttonLimpiar2.Location = new System.Drawing.Point(25, 507);
+            this.buttonLimpiar2.Name = "buttonLimpiar2";
+            this.buttonLimpiar2.Size = new System.Drawing.Size(75, 23);
+            this.buttonLimpiar2.TabIndex = 16;
+            this.buttonLimpiar2.Text = "Limpiar";
+            this.buttonLimpiar2.UseVisualStyleBackColor = true;
+            this.buttonLimpiar2.Click += new System.EventHandler(this.buttonLimpiar2_Click);
             // 
             // BajaAeronave
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(629, 561);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonLimpiar2);
+            this.Controls.Add(this.buttonOutService);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonGuardar);
             this.Controls.Add(this.buttonLimpiar);
@@ -328,11 +330,11 @@
         private System.Windows.Forms.ComboBox comboFabricante;
         private System.Windows.Forms.Label labelNombre;
         private System.Windows.Forms.TextBox textMatricula;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonOutService;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.MonthCalendar monthCalendar1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonLimpiar2;
     }
 }

@@ -17,31 +17,29 @@ namespace AerolineaFrba.Abm_Aeronave
         public BajaAeronave()
         {
             InitializeComponent();
-            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
+            List<String> fabricantes = JanadianDateDB.Instance.getFabricantes();
 
-            foreach (String f in ciudades)
+            foreach (String f in fabricantes)
             {
-                comboOrigen.Items.Add(f);
-                comboDestino.Items.Add(f);
+                comboFabricante.Items.Add(f);
             }
             List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
 
             foreach (String f in tiposServicio)
             {
                 comboBoxTipoServicio.Items.Add(f);
-            }
+            } 
         }
         public BajaAeronave(Aeronave aeronaveSel)
         {
             // TODO: Complete member initialization
             InitializeComponent();
             this.aeronaveSel = aeronaveSel;
-            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
+            List<String> fabricantes = JanadianDateDB.Instance.getFabricantes();
 
-            foreach (String f in ciudades)
+            foreach (String f in fabricantes)
             {
-                comboOrigen.Items.Add(f);
-                comboDestino.Items.Add(f);
+                comboFabricante.Items.Add(f);
             }
             List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
 
@@ -58,13 +56,13 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void limpiarForm()
         {
-            textCodigo.Text = "";
-            textBoxKG.Text = "";
-            textBoxPasaje.Text = "";
-            comboOrigen.SelectedItem = null;
-            comboDestino.SelectedItem = null;
+            textMatricula.Text = "";
+            textBoxModelo.Text = "";
+            numericUpDownKG.Value = 0.00M;
+            numericUpDownVentanilla.Value = 0.00M;
+            numericUpDownPasillo.Value = 0.00M;
+            comboFabricante.SelectedItem = null;
             comboBoxTipoServicio.SelectedItem = null;
-
         }
 
         private void buttonGuardar_Click(object sender, EventArgs e)
@@ -72,8 +70,19 @@ namespace AerolineaFrba.Abm_Aeronave
             try
             {
 
-                JanadianDateDB.Instance.bajaLogicaRuta(aeronaveSel.getId);
-                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la ruta con Id {0}", aeronaveSel.getId), "Baja de Ruta");
+                JanadianDateDB.Instance.bajaLogicaAeronave(aeronaveSel.getId);
+                DialogResult dialogResult = MessageBox.Show("Que desea hacer con los pasajes/paquetes reservados?. Los cancela -> Presione YES. o reemplaza la aeronave por otra -> Presione NO", "Baja Aeronave", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    JanadianDateDB.Instance.cancelarPasajeYPaquetesDeAeronave(aeronaveSel.getId);
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId);
+                }
+
+
+                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la aeronave con Id {0}", aeronaveSel.getId), "Baja de Aeronave");
                 limpiarForm();
                 this.Close();
             }
@@ -88,12 +97,23 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void BajaAeronave_Load(object sender, EventArgs e)
         {
-            textCodigo.Text = aeronaveSel.getCodigo.ToString();
-            textBoxKG.Text = aeronaveSel.getPrecio_BaseKG.ToString();
-            textBoxPasaje.Text = aeronaveSel.getPrecio_BasePasaje.ToString();
-            comboOrigen.SelectedItem = aeronaveSel.getOrigen;
-            comboDestino.Text = aeronaveSel.getDestino;
-            comboBoxTipoServicio.Text = aeronaveSel.getTipoServicio;
+            textMatricula.Text = aeronaveSel.getMatricula;
+            textBoxModelo.Text = aeronaveSel.getModelo;
+            numericUpDownKG.Value = aeronaveSel.getKGDisponibles;
+            numericUpDownVentanilla.Value = aeronaveSel.getCantidadButacasVentanilla;
+            numericUpDownPasillo.Value = aeronaveSel.getCantidadButacasPasillo;
+            comboFabricante.SelectedItem = aeronaveSel.getFabricante;
+            comboBoxTipoServicio.SelectedItem = aeronaveSel.getTipoServicio;
+        }
+
+        private void buttonLimpiar2_Click(object sender, EventArgs e)
+        {
+            monthCalendar1.ResetText();
+        }
+
+        private void buttonOutService_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

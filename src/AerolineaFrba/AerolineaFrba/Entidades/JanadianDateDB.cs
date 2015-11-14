@@ -727,7 +727,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand insertAeronave = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Aeronave] (Matricula,Modelo ,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla,Fabricante,Tipo_Servicio) SELECT '{0}',{1},{2},{3},{4},f.Id,t.Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Fabricante] f WHERE f.Nombre='{5}'  AND t.Nombre='{6}'", matricula, modelo, kg_disponibles, butacasPasillo, butacasVentanilla, fabricante,tipoServicio), con);
+                SqlCommand insertAeronave = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Aeronave] (Matricula,Modelo ,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla,Fabricante,Tipo_Servicio,Fecha_Alta) SELECT '{0}',{1},{2},{3},{4},f.Id,t.Id,{7} FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Fabricante] f WHERE f.Nombre='{5}'  AND t.Nombre='{6}'", matricula, modelo, kg_disponibles, butacasPasillo, butacasVentanilla, fabricante,tipoServicio,this.fechaSistema), con);
                 insertAeronave.ExecuteNonQuery();
                 con.Close();
             }
@@ -737,6 +737,34 @@ namespace AerolineaFrba
                 throw (new Exception(exAlta.ToString()));
 
             }
+        }
+
+        internal void bajaLogicaAeronave(int idAeronave)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave] SET Habilitado=0,Baja_Vida_Util=1,Fecha_Baja_Definitiva={1} WHERE Id ={0}", idAeronave,this.fechaSistema), con);
+                updateAeronave.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
+        }
+
+        internal void cancelarPasajeYPaquetesDeAeronave(int p)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void reemplazarAeronave(int p)
+        {
+            throw new NotImplementedException();
         }
     }
 }
