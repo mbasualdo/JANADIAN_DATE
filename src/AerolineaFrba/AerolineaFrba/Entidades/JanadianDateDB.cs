@@ -41,6 +41,11 @@ namespace AerolineaFrba
             return con;
         }
 
+        public DateTime getFechaSistema()
+        {
+            return this.fechaSistema;
+        }
+
         internal Usuario getUsuario(string username, string password)
         {
             //this.fechaSistema.ToString();
@@ -496,12 +501,12 @@ namespace AerolineaFrba
             return ruta;
         }
 
-        internal void insertarRuta(string codigo, string pBaseKG, string pBasePasaje, string tipoServicio, string origen, string destino)
+        internal void insertarRuta(string codigo, Decimal pBaseKG, Decimal pBasePasaje, string tipoServicio, string origen, string destino)
         {
             try
             {
                 con.Open();
-                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Ruta] (Codigo,Precio_BaseKG ,Precio_BasePasaje,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio) SELECT '{0}',{1},{2},o.Id,d.Id,t.Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Ciudad] o,[GD2C2015].[JANADIAN_DATE].[Ciudad] d WHERE o.Nombre='{3}' AND d.Nombre='{4}' AND t.Nombre='{5}'", codigo, pBaseKG, pBasePasaje, origen, destino, tipoServicio), con);
+                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Ruta] (Codigo,Precio_BaseKG ,Precio_BasePasaje,Ciudad_Origen,Ciudad_Destino,Tipo_Servicio) SELECT '{0}',{1:0.00},{2:0.00},o.Id,d.Id,t.Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Ciudad] o,[GD2C2015].[JANADIAN_DATE].[Ciudad] d WHERE o.Nombre='{3}' AND d.Nombre='{4}' AND t.Nombre='{5}'", codigo, pBaseKG.ToString().Replace(",", "."), pBasePasaje.ToString().Replace(",", "."), origen, destino, tipoServicio), con);
                 insertRol.ExecuteNonQuery();
                 con.Close();
             }
@@ -584,8 +589,8 @@ namespace AerolineaFrba
                 {
                     tipoServ = Convert.ToInt32(Fila["Id"]);
                 }
-                
-                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Ruta]  SET Codigo={0},Habilitado={1},Ciudad_Origen={2},Ciudad_Destino={3},Tipo_Servicio={4} WHERE Id={5}", rutaSel.getCodigo, rutaSel.getHabilitado ? "1" : "0", origen, destino, tipoServ, rutaSel.getId), con);
+
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Ruta]  SET Codigo={0},Habilitado={1},Ciudad_Origen={2},Ciudad_Destino={3},Tipo_Servicio={4},Precio_BaseKG={6:0.00},Precio_BasePasaje={7:0.00} WHERE Id={5}", rutaSel.getCodigo, rutaSel.getHabilitado ? "1" : "0", origen, destino, tipoServ, rutaSel.getId, rutaSel.getPrecio_BaseKG.ToString().Replace(",", "."), rutaSel.getPrecio_BasePasaje.ToString().Replace(",", ".")), con);
                 updateRol.ExecuteNonQuery();
                 con.Close();
             }
@@ -696,7 +701,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 a.Id,a.Matricula,a.Modelo ,	a.KG_Disponibles,	f.Nombre as Fabricante,	t.Nombre as Tipo_Servicio,	Fecha_Alta,	Baja_Fuera_Servicio,	Baja_Vida_Util,	Fecha_Fuera_Servicio,	Fecha_Reinicio_Servicio,	Fecha_Baja_Definitiva,	Cant_Butacas_Ventanilla,	Cant_Butacas_Pasillo,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)   WHERE a.Matricula = '{0}'  ", matricula), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 a.Id,a.Matricula,a.Modelo ,	a.KG_Disponibles,	f.Nombre as Fabricante,	t.Nombre as Tipo_Servicio,	Fecha_Alta,	Baja_Fuera_Servicio,	Baja_Vida_Util,	Fecha_Baja_Definitiva,	Cant_Butacas_Ventanilla,	Cant_Butacas_Pasillo,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)   WHERE a.Matricula = '{0}'  ", matricula), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -722,7 +727,7 @@ namespace AerolineaFrba
             return aeronave;
         }
 
-        internal void insertarAeronave(string matricula, string modelo, string fabricante, string tipoServicio, string kg_disponibles, string butacasPasillo, string butacasVentanilla)
+        internal void insertarAeronave(string matricula, string modelo, string fabricante, string tipoServicio, decimal kg_disponibles, decimal butacasPasillo, decimal butacasVentanilla)
         {
             try
             {
@@ -763,6 +768,39 @@ namespace AerolineaFrba
         }
 
         internal void reemplazarAeronave(int p)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void bajaFueraServicioAeronave(int idAeronave, string dateOut)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave] SET Habilitado=0,Baja_Fuera_Servicio=1 WHERE Id ={0}", idAeronave), con);
+                updateAeronave.ExecuteNonQuery();
+
+                //creo una baja
+                SqlCommand outOfServiceInsert = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] (Fecha_Baja,Fecha_Reinicio,Aeronave) VALUES ({0},{1},{2})", this.fechaSistema,dateOut,idAeronave), con);
+                outOfServiceInsert.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
+        }
+
+        internal void cancelarPasajeYPaquetesDeAeronave(int p1, string p2)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void reemplazarAeronave(int p1, string p2)
         {
             throw new NotImplementedException();
         }

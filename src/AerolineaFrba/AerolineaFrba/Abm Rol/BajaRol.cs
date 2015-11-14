@@ -44,11 +44,14 @@ namespace AerolineaFrba.Abm_Rol
         {
             try
             {
-
-                JanadianDateDB.Instance.bajaLogicaRol(rolSel.getId);
-                MessageBox.Show(null,String.Format("Se ha dado de baja correctamente el Rol con Id {0}", rolSel.getId), "Baja de Rol");
-                limpiarForm();
-                this.Close();
+                DialogResult dialogResult1 = MessageBox.Show("Esta Seguro", "Baja Rol", MessageBoxButtons.YesNo);
+                if (dialogResult1 == DialogResult.Yes)
+                {
+                    JanadianDateDB.Instance.bajaLogicaRol(rolSel.getId);
+                    MessageBox.Show(null, String.Format("Se ha dado de baja correctamente el Rol con Id {0}", rolSel.getId), "Baja de Rol");
+                    limpiarForm();
+                    this.Close();
+                }
             }
             catch
             {

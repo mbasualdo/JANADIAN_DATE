@@ -99,7 +99,7 @@ namespace AerolineaFrba.Abm_Ruta
                 {
                     textoError += "El campo Precio Base Pasaje es obligatorio\n";
                 }
-                else if (numericUpDownKG.Value<=0.00M)
+                else if (numericUpDownPasaje.Value <= 0.00M)
                 {
                     textoError += "El campo Precio Base Pasaje no es valido\n";
                 }

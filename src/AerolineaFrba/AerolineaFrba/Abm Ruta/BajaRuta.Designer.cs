@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.buttonGuardar = new System.Windows.Forms.Button();
-            this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.comboBoxTipoServicio = new System.Windows.Forms.ComboBox();
@@ -48,23 +47,13 @@
             // 
             // buttonGuardar
             // 
-            this.buttonGuardar.Location = new System.Drawing.Point(505, 285);
+            this.buttonGuardar.Location = new System.Drawing.Point(273, 285);
             this.buttonGuardar.Name = "buttonGuardar";
             this.buttonGuardar.Size = new System.Drawing.Size(75, 23);
             this.buttonGuardar.TabIndex = 10;
             this.buttonGuardar.Text = "Eliminar";
             this.buttonGuardar.UseVisualStyleBackColor = true;
             this.buttonGuardar.Click += new System.EventHandler(this.buttonGuardar_Click);
-            // 
-            // buttonLimpiar
-            // 
-            this.buttonLimpiar.Location = new System.Drawing.Point(28, 285);
-            this.buttonLimpiar.Name = "buttonLimpiar";
-            this.buttonLimpiar.Size = new System.Drawing.Size(75, 23);
-            this.buttonLimpiar.TabIndex = 9;
-            this.buttonLimpiar.Text = "Limpiar";
-            this.buttonLimpiar.UseVisualStyleBackColor = true;
-            this.buttonLimpiar.Click += new System.EventHandler(this.buttonLimpiar_Click);
             // 
             // groupBox1
             // 
@@ -201,7 +190,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(619, 392);
             this.Controls.Add(this.buttonGuardar);
-            this.Controls.Add(this.buttonLimpiar);
             this.Controls.Add(this.groupBox1);
             this.Name = "BajaRuta";
             this.Text = "Baja";
@@ -215,7 +203,6 @@
         #endregion
 
         private System.Windows.Forms.Button buttonGuardar;
-        private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;

@@ -71,11 +71,14 @@ namespace AerolineaFrba.Abm_Ruta
         {
             try
             {
-
-                JanadianDateDB.Instance.bajaLogicaRuta(rutaSel.getId);
-                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la ruta con Id {0}", rutaSel.getId), "Baja de Ruta");
-                limpiarForm();
-                this.Close();
+                 DialogResult dialogResult1 = MessageBox.Show("Esta Seguro", "Baja Ruta", MessageBoxButtons.YesNo);
+                 if (dialogResult1 == DialogResult.Yes)
+                 {
+                     JanadianDateDB.Instance.bajaLogicaRuta(rutaSel.getId);
+                     MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la ruta con Id {0}", rutaSel.getId), "Baja de Ruta");
+                     limpiarForm();
+                     this.Close();
+                 }
             }
             catch (Exception exBaja)
             {

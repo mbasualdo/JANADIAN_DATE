@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.buttonGuardar = new System.Windows.Forms.Button();
-            this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.numericUpDownKG = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownVentanilla = new System.Windows.Forms.NumericUpDown();
@@ -60,23 +59,13 @@
             // 
             // buttonGuardar
             // 
-            this.buttonGuardar.Location = new System.Drawing.Point(500, 277);
+            this.buttonGuardar.Location = new System.Drawing.Point(259, 277);
             this.buttonGuardar.Name = "buttonGuardar";
             this.buttonGuardar.Size = new System.Drawing.Size(75, 23);
             this.buttonGuardar.TabIndex = 13;
             this.buttonGuardar.Text = "Eliminar";
             this.buttonGuardar.UseVisualStyleBackColor = true;
             this.buttonGuardar.Click += new System.EventHandler(this.buttonGuardar_Click);
-            // 
-            // buttonLimpiar
-            // 
-            this.buttonLimpiar.Location = new System.Drawing.Point(23, 277);
-            this.buttonLimpiar.Name = "buttonLimpiar";
-            this.buttonLimpiar.Size = new System.Drawing.Size(75, 23);
-            this.buttonLimpiar.TabIndex = 12;
-            this.buttonLimpiar.Text = "Limpiar";
-            this.buttonLimpiar.UseVisualStyleBackColor = true;
-            this.buttonLimpiar.Click += new System.EventHandler(this.buttonLimpiar_Click);
             // 
             // groupBox1
             // 
@@ -295,7 +284,6 @@
             this.Controls.Add(this.buttonOutService);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonGuardar);
-            this.Controls.Add(this.buttonLimpiar);
             this.Controls.Add(this.groupBox1);
             this.Name = "BajaAeronave";
             this.Text = "Baja";
@@ -314,7 +302,6 @@
         #endregion
 
         private System.Windows.Forms.Button buttonGuardar;
-        private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.NumericUpDown numericUpDownKG;
         private System.Windows.Forms.NumericUpDown numericUpDownVentanilla;

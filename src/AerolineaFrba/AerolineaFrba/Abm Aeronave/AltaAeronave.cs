@@ -95,7 +95,7 @@ namespace AerolineaFrba.Abm_Aeronave
                     return;
 
                 }
-                JanadianDateDB.Instance.insertarAeronave(JanadianDateDB.RemoveSpecialCharacters(textMatricula.Text), JanadianDateDB.RemoveSpecialCharacters(textBoxModelo.Text), JanadianDateDB.RemoveSpecialCharacters(comboFabricante.SelectedItem.ToString()), JanadianDateDB.RemoveSpecialCharacters(comboBoxTipoServicio.SelectedItem.ToString()), numericUpDownKG.Value.ToString(),numericUpDownPasillo.Value.ToString(),numericUpDownVentanilla.Value.ToString());
+                JanadianDateDB.Instance.insertarAeronave(JanadianDateDB.RemoveSpecialCharacters(textMatricula.Text), JanadianDateDB.RemoveSpecialCharacters(textBoxModelo.Text), JanadianDateDB.RemoveSpecialCharacters(comboFabricante.SelectedItem.ToString()), JanadianDateDB.RemoveSpecialCharacters(comboBoxTipoServicio.SelectedItem.ToString()), numericUpDownKG.Value,numericUpDownPasillo.Value,numericUpDownVentanilla.Value);
                 MessageBox.Show(null, "Se ha insertado correctamente la nueva aeronave", "Alta de Aeronave");
                 limpiarForm();
                 this.Close();

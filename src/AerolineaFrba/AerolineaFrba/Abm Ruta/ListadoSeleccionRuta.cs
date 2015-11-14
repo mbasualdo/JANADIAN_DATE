@@ -118,7 +118,7 @@ namespace AerolineaFrba.Abm_Ruta
                     }
                     query += String.Format(andText + " r.Codigo like '%{0}%'", textCodigo.Text);
                 }
-                if (numericUpDownPasaje.Text != null && numericUpDownPasaje.Text.Trim() != "")
+                if (numericUpDownPasaje.Text != null && numericUpDownPasaje.Text.Trim() != "" && numericUpDownPasaje.Value>0)
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -131,9 +131,9 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Precio_BasePasaje={0}", numericUpDownPasaje.Text);
+                    query += String.Format(andText + " r.Precio_BasePasaje={0:0.00}", numericUpDownPasaje.Value.ToString().Replace(",", "."));
                 }
-                if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "")
+                if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "" && numericUpDownKG.Value > 0)
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -146,7 +146,7 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Precio_BaseKG={0}", numericUpDownKG.Text);
+                    query += String.Format(andText + " r.Precio_BaseKG={0:0.00}", numericUpDownKG.Value.ToString().Replace(",", "."));
                 }
                 if (checkBoxHabilitado.Checked)
                 {

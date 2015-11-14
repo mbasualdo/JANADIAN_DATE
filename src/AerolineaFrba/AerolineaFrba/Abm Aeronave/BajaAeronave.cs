@@ -69,22 +69,25 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             try
             {
-
-                JanadianDateDB.Instance.bajaLogicaAeronave(aeronaveSel.getId);
-                DialogResult dialogResult = MessageBox.Show("Que desea hacer con los pasajes/paquetes reservados?. Los cancela -> Presione YES. o reemplaza la aeronave por otra -> Presione NO", "Baja Aeronave", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
+                DialogResult dialogResult1 = MessageBox.Show("Esta Seguro", "Baja Aeronave", MessageBoxButtons.YesNo);
+                if (dialogResult1 == DialogResult.Yes)
                 {
-                    JanadianDateDB.Instance.cancelarPasajeYPaquetesDeAeronave(aeronaveSel.getId);
-                }
-                else if (dialogResult == DialogResult.No)
-                {
-                    JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId);
-                }
 
+                    JanadianDateDB.Instance.bajaLogicaAeronave(aeronaveSel.getId);
+                    DialogResult dialogResult = MessageBox.Show("Que desea hacer con los pasajes/paquetes reservados?. Los cancela -> Presione YES. o reemplaza la aeronave por otra -> Presione NO", "Baja Aeronave", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        JanadianDateDB.Instance.cancelarPasajeYPaquetesDeAeronave(aeronaveSel.getId);
+                    }
+                    else if (dialogResult == DialogResult.No)
+                    {
+                        JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId);
+                    }
 
-                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la aeronave con Id {0}", aeronaveSel.getId), "Baja de Aeronave");
-                limpiarForm();
-                this.Close();
+                    MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la aeronave con Id {0}", aeronaveSel.getId), "Baja de Aeronave");
+                    limpiarForm();
+                    this.Close();
+                }
             }
             catch (Exception exBaja)
             {
@@ -104,6 +107,7 @@ namespace AerolineaFrba.Abm_Aeronave
             numericUpDownPasillo.Value = aeronaveSel.getCantidadButacasPasillo;
             comboFabricante.SelectedItem = aeronaveSel.getFabricante;
             comboBoxTipoServicio.SelectedItem = aeronaveSel.getTipoServicio;
+            monthCalendar1.MinDate = JanadianDateDB.Instance.getFechaSistema();
         }
 
         private void buttonLimpiar2_Click(object sender, EventArgs e)
@@ -113,7 +117,44 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void buttonOutService_Click(object sender, EventArgs e)
         {
+            try
+            {
+                String textoError = "";
+                if (monthCalendar1.Text == null || monthCalendar1.Text.Trim() == "")
+                {
+                    textoError += "El campo fecha de reinicio es obligatorio\n";
+                }
+                if (monthCalendar1.SelectionRange.Start.CompareTo(JanadianDateDB.Instance.getFechaSistema())>0)
+                {
+                    textoError += "El campo fecha de reinicio debe ser mayor a la fecha actual\n";
+                }
+                if (textoError.Length != 0)
+                {
+                    MessageBox.Show(null, textoError, "Error de Validacion");
+                    return;
 
+                }
+
+                JanadianDateDB.Instance.bajaFueraServicioAeronave(aeronaveSel.getId, monthCalendar1.SelectionRange.Start.ToShortDateString());
+            DialogResult dialogResult = MessageBox.Show("Que desea hacer con los pasajes/paquetes reservados?. Los cancela -> Presione YES. o reemplaza la aeronave por otra -> Presione NO", "Fuera de Servicio Aeronave", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                JanadianDateDB.Instance.cancelarPasajeYPaquetesDeAeronave(aeronaveSel.getId, monthCalendar1.SelectionRange.Start.ToShortDateString());
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId, monthCalendar1.SelectionRange.Start.ToShortDateString());
+            }
+
+            MessageBox.Show(null, String.Format("Se ha puesto fuera de servicio correctamente la aeronave con Id {0}", aeronaveSel.getId), "Fuera de servicio Aeronave");
+            limpiarForm();
+            this.Close();
+            }
+            catch (Exception exAlta){
+                Console.WriteLine(exAlta.ToString());
+                MessageBox.Show(null, "Intente de nuevo", "Error");
+                return;
+            }
         }
     }
 }

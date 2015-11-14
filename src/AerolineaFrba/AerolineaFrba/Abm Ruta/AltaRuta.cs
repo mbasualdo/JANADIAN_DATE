@@ -105,9 +105,12 @@ namespace AerolineaFrba.Abm_Ruta
                     textoError += "Origen y Destino no deben ser iguales\n";
 
                 }
-                if (JanadianDateDB.Instance.getRutaBySameConditions(comboOrigen.SelectedItem.ToString(),comboDestino.SelectedItem.ToString(),comboBoxTipoServicio.SelectedItem.ToString()) != null)
+                if (comboOrigen.SelectedItem != null && comboDestino.SelectedItem != null && comboBoxTipoServicio.SelectedItem != null)
                 {
-                    textoError += "Ya existe una ruta para los mismos destinos y tipo de servicio\n";
+                    if (JanadianDateDB.Instance.getRutaBySameConditions(comboOrigen.SelectedItem.ToString(), comboDestino.SelectedItem.ToString(), comboBoxTipoServicio.SelectedItem.ToString()) != null)
+                    {
+                        textoError += "Ya existe una ruta para los mismos destinos y tipo de servicio\n";
+                    }
                 }
                 if (comboBoxTipoServicio.Text == null || comboBoxTipoServicio.Text.Trim() == "")
                 {
@@ -120,7 +123,7 @@ namespace AerolineaFrba.Abm_Ruta
                     return;
 
                 }
-                JanadianDateDB.Instance.insertarRuta(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), numericUpDownKG.Value.ToString(), numericUpDownPasaje.Value.ToString(), comboBoxTipoServicio.Text.ToString(), comboOrigen.Text.ToString(), comboDestino.Text.ToString());
+                JanadianDateDB.Instance.insertarRuta(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), numericUpDownKG.Value, numericUpDownPasaje.Value, comboBoxTipoServicio.Text.ToString(), comboOrigen.Text.ToString(), comboDestino.Text.ToString());
                 MessageBox.Show(null, "Se ha insertado correctamente la nueva ruta", "Alta de Ruta");
                 limpiarForm();
                 this.Close();
