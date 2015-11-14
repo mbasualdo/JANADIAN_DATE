@@ -86,7 +86,7 @@ namespace AerolineaFrba.Abm_Aeronave
                     }
                     query += String.Format(andText + " a.Modelo like '%{0}%'", textBoxModelo.Text);
                 }
-                if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "")
+                if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "" && numericUpDownKG.Value > 0)
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -99,9 +99,9 @@ namespace AerolineaFrba.Abm_Aeronave
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " a.KG_Disponibles={0}", numericUpDownKG.Text);
+                    query += String.Format(andText + " a.KG_Disponibles={0}", numericUpDownKG.Value);
                 }
-                if (numericUpDownVentanilla.Text != null && numericUpDownVentanilla.Text.Trim() != "")
+                if (numericUpDownVentanilla.Text != null && numericUpDownVentanilla.Text.Trim() != "" && numericUpDownVentanilla.Value > 0)
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -114,9 +114,9 @@ namespace AerolineaFrba.Abm_Aeronave
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " a.Cant_Butacas_Ventanilla={0}", numericUpDownVentanilla.Text);
+                    query += String.Format(andText + " a.Cant_Butacas_Ventanilla={0}", numericUpDownVentanilla.Value);
                 }
-                if (numericUpDownPasillo.Text != null && numericUpDownPasillo.Text.Trim() != "")
+                if (numericUpDownPasillo.Text != null && numericUpDownPasillo.Text.Trim() != "" && numericUpDownPasillo.Value > 0)
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -129,7 +129,7 @@ namespace AerolineaFrba.Abm_Aeronave
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " a.Cant_Butacas_Pasillo={0}", numericUpDownPasillo.Text);
+                    query += String.Format(andText + " a.Cant_Butacas_Pasillo={0}", numericUpDownPasillo.Value);
                 }
                 if (checkBoxHabilitado.Checked)
                 {

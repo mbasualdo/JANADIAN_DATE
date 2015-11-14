@@ -639,7 +639,7 @@ namespace AerolineaFrba
                 {
                     tipoServ = Convert.ToInt32(Fila["Id"]);
                 }
-                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave]  SET Modelo={0},Habilitado={1},Matricula={2},KG_Disponibles={3},Tipo_Servicio={4},Fabricante={5},Cant_Butacas_Ventanilla={6},Cant_Butacas_Pasillo={7} WHERE Id={8}", aeronaveSel.getModelo, aeronaveSel.getHabilitado ? "1" : "0", aeronaveSel.getMatricula, aeronaveSel.getKGDisponibles, aeronaveSel.getTipoServicio, aeronaveSel.getFabricante, aeronaveSel.getCantidadButacasVentanilla, aeronaveSel.getCantidadButacasPasillo, aeronaveSel.getId), con);
+                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave]  SET Modelo='{0}',Habilitado={1},Matricula='{2}',KG_Disponibles={3},Tipo_Servicio={4},Fabricante={5},Cant_Butacas_Ventanilla={6},Cant_Butacas_Pasillo={7} WHERE Id={8}", aeronaveSel.getModelo, aeronaveSel.getHabilitado ? "1" : "0", aeronaveSel.getMatricula, aeronaveSel.getKGDisponibles, aeronaveSel.getTipoServicio, aeronaveSel.getFabricante, aeronaveSel.getCantidadButacasVentanilla, aeronaveSel.getCantidadButacasPasillo, aeronaveSel.getId), con);
                 updateAeronave.ExecuteNonQuery();
                 con.Close();
             }
@@ -732,7 +732,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand insertAeronave = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Aeronave] (Matricula,Modelo ,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla,Fabricante,Tipo_Servicio,Fecha_Alta) SELECT '{0}',{1},{2},{3},{4},f.Id,t.Id,{7} FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Fabricante] f WHERE f.Nombre='{5}'  AND t.Nombre='{6}'", matricula, modelo, kg_disponibles, butacasPasillo, butacasVentanilla, fabricante,tipoServicio,this.fechaSistema), con);
+                SqlCommand insertAeronave = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Aeronave] (Matricula,Modelo ,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla,Fabricante,Tipo_Servicio,Fecha_Alta) SELECT '{0}','{1}',{2},{3},{4},f.Id,t.Id,'{7}' FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Fabricante] f WHERE f.Nombre='{5}'  AND t.Nombre='{6}'", matricula, modelo, kg_disponibles, butacasPasillo, butacasVentanilla, fabricante,tipoServicio,this.fechaSistema), con);
                 insertAeronave.ExecuteNonQuery();
                 con.Close();
             }
@@ -749,7 +749,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave] SET Habilitado=0,Baja_Vida_Util=1,Fecha_Baja_Definitiva={1} WHERE Id ={0}", idAeronave,this.fechaSistema), con);
+                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave] SET Habilitado=0,Baja_Vida_Util=1,Fecha_Baja_Definitiva='{1}' WHERE Id ={0}", idAeronave,this.fechaSistema), con);
                 updateAeronave.ExecuteNonQuery();
                 con.Close();
             }
@@ -781,7 +781,7 @@ namespace AerolineaFrba
                 updateAeronave.ExecuteNonQuery();
 
                 //creo una baja
-                SqlCommand outOfServiceInsert = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] (Fecha_Baja,Fecha_Reinicio,Aeronave) VALUES ({0},{1},{2})", this.fechaSistema,dateOut,idAeronave), con);
+                SqlCommand outOfServiceInsert = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] (Fecha_Baja,Fecha_Reinicio,Aeronave) VALUES ('{0}','{1}',{2})", this.fechaSistema,dateOut,idAeronave), con);
                 outOfServiceInsert.ExecuteNonQuery();
 
                 con.Close();
