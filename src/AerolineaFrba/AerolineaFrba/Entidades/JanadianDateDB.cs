@@ -92,7 +92,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
 
@@ -148,7 +148,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return funcionalidades;
@@ -185,7 +185,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return funcionalidades;
@@ -206,7 +206,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return dt;
@@ -243,7 +243,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return funcionalidades;
@@ -280,7 +280,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return rol;
@@ -301,7 +301,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
 
@@ -338,7 +338,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return funcionalidades;
@@ -380,7 +380,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
         }
@@ -416,7 +416,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return ciudades;
@@ -453,7 +453,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return tiposServicio;
@@ -490,7 +490,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
             return ruta;
@@ -508,7 +508,7 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
 
             }
         }
@@ -592,7 +592,149 @@ namespace AerolineaFrba
             catch (Exception exAlta)
             {
                 con.Close();
-                throw (new Exception());
+                throw (new Exception(exAlta.ToString()));
+
+            }
+        }
+
+        internal void modificarAeronave(Aeronave aeronaveSel)
+        {
+            try
+            {
+                con.Open();
+                int fabricante = 0;
+                int tipoServ = 0;
+
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Id FROM [GD2C2015].[JANADIAN_DATE].[Fabricante]  WHERE Nombre='{0}'  ", aeronaveSel.getFabricante), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla1";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new Exception("No existe el fabricante"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    fabricante = Convert.ToInt32(Fila["Id"]);
+                }
+
+                cmd = new SqlCommand(String.Format("SELECT TOP 1 Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio]  WHERE Nombre='{0}'  ", aeronaveSel.getTipoServicio), con);
+                dt = new DataTable();
+
+                dt.TableName = "Tabla1";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new Exception("No existe el tipo de servicio"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    tipoServ = Convert.ToInt32(Fila["Id"]);
+                }
+                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave]  SET Modelo={0},Habilitado={1},Matricula={2},KG_Disponibles={3},Tipo_Servicio={4},Fabricante={5},Cant_Butacas_Ventanilla={6},Cant_Butacas_Pasillo={7} WHERE Id={8}", aeronaveSel.getModelo, aeronaveSel.getHabilitado ? "1" : "0", aeronaveSel.getMatricula, aeronaveSel.getKGDisponibles, aeronaveSel.getTipoServicio, aeronaveSel.getFabricante, aeronaveSel.getCantidadButacasVentanilla, aeronaveSel.getCantidadButacasPasillo, aeronaveSel.getId), con);
+                updateAeronave.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+        }
+
+        internal List<string> getFabricantes()
+        {
+
+            List<String> fabricantes = new List<String>();
+
+            try{
+    //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT c.Nombre FROM [GD2C2015].[JANADIAN_DATE].[Fabricante] c "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Fabricantes"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    fabricantes.Add(Convert.ToString(Fila["Nombre"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return fabricantes;
+}
+
+        internal Aeronave getAeronaveByMatricula(string matricula)
+        {
+            Aeronave aeronave = null;
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 a.Id,a.Matricula,a.Modelo ,	a.KG_Disponibles,	f.Nombre as Fabricante,	t.Nombre as Tipo_Servicio,	Fecha_Alta,	Baja_Fuera_Servicio,	Baja_Vida_Util,	Fecha_Fuera_Servicio,	Fecha_Reinicio_Servicio,	Fecha_Baja_Definitiva,	Cant_Butacas_Ventanilla,	Cant_Butacas_Pasillo,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)   WHERE a.Matricula = '{0}'  ", matricula), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+
+                    aeronave = new Aeronave(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Matricula"]), Convert.ToString(Fila["Modelo"]), Convert.ToDecimal(Fila["KG_Disponibles"]), Convert.ToString(Fila["Fabricante"]), Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]), Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]), Convert.ToBoolean(Fila["Habilitado"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return aeronave;
+        }
+
+        internal void insertarAeronave(string matricula, string modelo, string fabricante, string tipoServicio, string kg_disponibles, string butacasPasillo, string butacasVentanilla)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand insertAeronave = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Aeronave] (Matricula,Modelo ,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla,Fabricante,Tipo_Servicio) SELECT '{0}',{1},{2},{3},{4},f.Id,t.Id FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Fabricante] f WHERE f.Nombre='{5}'  AND t.Nombre='{6}'", matricula, modelo, kg_disponibles, butacasPasillo, butacasVentanilla, fabricante,tipoServicio), con);
+                insertAeronave.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
 
             }
         }

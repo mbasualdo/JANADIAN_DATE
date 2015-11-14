@@ -1,6 +1,6 @@
-﻿namespace AerolineaFrba.Abm_Ruta
+﻿namespace AerolineaFrba.Abm_Aeronave
 {
-    partial class ListadoSeleccionBajaRuta
+    partial class ListadoSeleccionBajaAeronave
     {
         /// <summary>
         /// Required designer variable.
@@ -37,19 +37,17 @@
             this.label3 = new System.Windows.Forms.Label();
             this.comboDestino = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.textBoxKG = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.textBoxPasaje = new System.Windows.Forms.TextBox();
             this.labelFuncionalidad = new System.Windows.Forms.Label();
             this.comboOrigen = new System.Windows.Forms.ComboBox();
             this.labelCodigo = new System.Windows.Forms.Label();
             this.textCodigo = new System.Windows.Forms.TextBox();
             this.labelId = new System.Windows.Forms.Label();
             this.textId = new System.Windows.Forms.TextBox();
-            this.numericUpDownKG = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownPasaje = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKG)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPasaje)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridRol1
@@ -57,53 +55,53 @@
             this.dataGridRol1.AllowUserToAddRows = false;
             this.dataGridRol1.AllowUserToDeleteRows = false;
             this.dataGridRol1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridRol1.Location = new System.Drawing.Point(12, 191);
+            this.dataGridRol1.Location = new System.Drawing.Point(30, 206);
             this.dataGridRol1.Name = "dataGridRol1";
             this.dataGridRol1.ReadOnly = true;
             this.dataGridRol1.Size = new System.Drawing.Size(552, 150);
-            this.dataGridRol1.TabIndex = 15;
+            this.dataGridRol1.TabIndex = 19;
             this.dataGridRol1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridRol1_CellContentClick);
             // 
             // buttonBuscar
             // 
-            this.buttonBuscar.Location = new System.Drawing.Point(489, 162);
+            this.buttonBuscar.Location = new System.Drawing.Point(507, 177);
             this.buttonBuscar.Name = "buttonBuscar";
             this.buttonBuscar.Size = new System.Drawing.Size(75, 23);
-            this.buttonBuscar.TabIndex = 14;
+            this.buttonBuscar.TabIndex = 18;
             this.buttonBuscar.Text = "Buscar";
             this.buttonBuscar.UseVisualStyleBackColor = true;
             this.buttonBuscar.Click += new System.EventHandler(this.buttonBuscar_Click);
             // 
             // buttonLimpiar
             // 
-            this.buttonLimpiar.Location = new System.Drawing.Point(12, 162);
+            this.buttonLimpiar.Location = new System.Drawing.Point(30, 177);
             this.buttonLimpiar.Name = "buttonLimpiar";
             this.buttonLimpiar.Size = new System.Drawing.Size(75, 23);
-            this.buttonLimpiar.TabIndex = 13;
+            this.buttonLimpiar.TabIndex = 17;
             this.buttonLimpiar.Text = "Limpiar";
             this.buttonLimpiar.UseVisualStyleBackColor = true;
             this.buttonLimpiar.Click += new System.EventHandler(this.buttonLimpiar_Click);
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.numericUpDownKG);
-            this.groupBox1.Controls.Add(this.numericUpDownPasaje);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.comboBoxTipoServicio);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.comboDestino);
             this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.textBoxKG);
             this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.textBoxPasaje);
             this.groupBox1.Controls.Add(this.labelFuncionalidad);
             this.groupBox1.Controls.Add(this.comboOrigen);
             this.groupBox1.Controls.Add(this.labelCodigo);
             this.groupBox1.Controls.Add(this.textCodigo);
             this.groupBox1.Controls.Add(this.labelId);
             this.groupBox1.Controls.Add(this.textId);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(30, 27);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(552, 144);
-            this.groupBox1.TabIndex = 12;
+            this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtros de bùsqueda";
             // 
@@ -152,6 +150,13 @@
             this.label2.TabIndex = 26;
             this.label2.Text = "Precio Base KG";
             // 
+            // textBoxKG
+            // 
+            this.textBoxKG.Location = new System.Drawing.Point(116, 114);
+            this.textBoxKG.Name = "textBoxKG";
+            this.textBoxKG.Size = new System.Drawing.Size(130, 20);
+            this.textBoxKG.TabIndex = 25;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -160,6 +165,13 @@
             this.label1.Size = new System.Drawing.Size(99, 13);
             this.label1.TabIndex = 24;
             this.label1.Text = "Precio Base Pasaje";
+            // 
+            // textBoxPasaje
+            // 
+            this.textBoxPasaje.Location = new System.Drawing.Point(116, 84);
+            this.textBoxPasaje.Name = "textBoxPasaje";
+            this.textBoxPasaje.Size = new System.Drawing.Size(130, 20);
+            this.textBoxPasaje.TabIndex = 23;
             // 
             // labelFuncionalidad
             // 
@@ -211,48 +223,20 @@
             this.textId.Size = new System.Drawing.Size(185, 20);
             this.textId.TabIndex = 16;
             // 
-            // numericUpDownKG
-            // 
-            this.numericUpDownKG.DecimalPlaces = 2;
-            this.numericUpDownKG.Location = new System.Drawing.Point(116, 115);
-            this.numericUpDownKG.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numericUpDownKG.Name = "numericUpDownKG";
-            this.numericUpDownKG.Size = new System.Drawing.Size(130, 20);
-            this.numericUpDownKG.TabIndex = 38;
-            // 
-            // numericUpDownPasaje
-            // 
-            this.numericUpDownPasaje.DecimalPlaces = 2;
-            this.numericUpDownPasaje.Location = new System.Drawing.Point(116, 89);
-            this.numericUpDownPasaje.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numericUpDownPasaje.Name = "numericUpDownPasaje";
-            this.numericUpDownPasaje.Size = new System.Drawing.Size(130, 20);
-            this.numericUpDownPasaje.TabIndex = 37;
-            // 
-            // ListadoSeleccionBajaRuta
+            // ListadoSeleccionBajaAeronave
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(583, 460);
+            this.ClientSize = new System.Drawing.Size(626, 489);
             this.Controls.Add(this.dataGridRol1);
             this.Controls.Add(this.buttonBuscar);
             this.Controls.Add(this.buttonLimpiar);
             this.Controls.Add(this.groupBox1);
-            this.Name = "ListadoSeleccionBajaRuta";
-            this.Text = "ListadoSeleccionBajaRuta";
+            this.Name = "ListadoSeleccionBajaAeronave";
+            this.Text = "ListadoSeleccionBajaAeronave";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKG)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPasaje)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -268,14 +252,14 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox comboDestino;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxKG;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxPasaje;
         private System.Windows.Forms.Label labelFuncionalidad;
         private System.Windows.Forms.ComboBox comboOrigen;
         private System.Windows.Forms.Label labelCodigo;
         private System.Windows.Forms.TextBox textCodigo;
         private System.Windows.Forms.Label labelId;
         private System.Windows.Forms.TextBox textId;
-        private System.Windows.Forms.NumericUpDown numericUpDownKG;
-        private System.Windows.Forms.NumericUpDown numericUpDownPasaje;
     }
 }

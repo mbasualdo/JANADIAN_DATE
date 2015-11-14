@@ -44,8 +44,8 @@ namespace AerolineaFrba.Abm_Ruta
         {
             textCodigo.Text = "";
             textCodigo.Text = "";
-            textBoxKG.Text = "";
-            textBoxPasaje.Text = "";
+            numericUpDownKG.Value = 0.00M;
+            numericUpDownPasaje.Value = 0.00M;
             comboOrigen.SelectedItem = null;
             comboDestino.SelectedItem = null;
             comboBoxTipoServicio.SelectedItem = null;
@@ -70,26 +70,24 @@ namespace AerolineaFrba.Abm_Ruta
                         textoError += "El campo codigo no es valido\n";
                     }
                 }
-                if (textBoxKG.Text == null || textBoxKG.Text.Trim() == "")
+                if (numericUpDownKG.Text == null || numericUpDownKG.Text.Trim() == "")
                 {
                     textoError += "El campo Precio Base KG es obligatorio\n";
                 }
                 else
                 {
-                    Double value;
-                    if (!Double.TryParse(textBoxKG.Text, out value))
+                    if (numericUpDownKG.Value <= 0.00M)
                     {
                         textoError += "El campo Precio Base KG no es valido\n";
                     }
                 }
-                if (textBoxPasaje.Text == null || textBoxPasaje.Text.Trim() == "")
+                if (numericUpDownPasaje.Text == null || numericUpDownPasaje.Text.Trim() == "")
                 {
                     textoError += "El campo Precio Base Pasaje es obligatorio\n";
                 }
                 else
                 {
-                    Double value;
-                    if (!Double.TryParse(textBoxPasaje.Text, out value))
+                    if (numericUpDownPasaje.Value <= 0.00M)
                     {
                         textoError += "El campo Precio Base Pasaje no es valido\n";
                     }
@@ -122,13 +120,15 @@ namespace AerolineaFrba.Abm_Ruta
                     return;
 
                 }
-                JanadianDateDB.Instance.insertarRuta(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), JanadianDateDB.RemoveSpecialCharacters(textBoxKG.Text), JanadianDateDB.RemoveSpecialCharacters(textBoxPasaje.Text), comboBoxTipoServicio.Text.ToString(), comboOrigen.Text.ToString(), comboDestino.Text.ToString());
+                JanadianDateDB.Instance.insertarRuta(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), numericUpDownKG.Value.ToString(), numericUpDownPasaje.Value.ToString(), comboBoxTipoServicio.Text.ToString(), comboOrigen.Text.ToString(), comboDestino.Text.ToString());
                 MessageBox.Show(null, "Se ha insertado correctamente la nueva ruta", "Alta de Ruta");
                 limpiarForm();
                 this.Close();
             }
             catch(Exception exAlta)
             {
+                Console.WriteLine(exAlta.ToString());
+
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
             }

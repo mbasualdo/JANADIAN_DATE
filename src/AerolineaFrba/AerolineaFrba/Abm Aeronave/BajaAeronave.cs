@@ -8,12 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AerolineaFrba.Abm_Ruta
+namespace AerolineaFrba.Abm_Aeronave
 {
-    public partial class BajaRuta : Form
+    public partial class BajaAeronave : Form
     {
-        private Ruta rutaSel;
-        public BajaRuta()
+       private Aeronave aeronaveSel;
+
+        public BajaAeronave()
         {
             InitializeComponent();
             List<String> ciudades = JanadianDateDB.Instance.getCiudades();
@@ -30,11 +31,11 @@ namespace AerolineaFrba.Abm_Ruta
                 comboBoxTipoServicio.Items.Add(f);
             }
         }
-       public BajaRuta(Ruta rutaSel)
+        public BajaAeronave(Aeronave aeronaveSel)
         {
             // TODO: Complete member initialization
             InitializeComponent();
-            this.rutaSel = rutaSel;
+            this.aeronaveSel = aeronaveSel;
             List<String> ciudades = JanadianDateDB.Instance.getCiudades();
 
             foreach (String f in ciudades)
@@ -48,7 +49,6 @@ namespace AerolineaFrba.Abm_Ruta
             {
                 comboBoxTipoServicio.Items.Add(f);
             }
-
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
@@ -72,8 +72,8 @@ namespace AerolineaFrba.Abm_Ruta
             try
             {
 
-                JanadianDateDB.Instance.bajaLogicaRuta(rutaSel.getId);
-                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la ruta con Id {0}", rutaSel.getId), "Baja de Ruta");
+                JanadianDateDB.Instance.bajaLogicaRuta(aeronaveSel.getId);
+                MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la ruta con Id {0}", aeronaveSel.getId), "Baja de Ruta");
                 limpiarForm();
                 this.Close();
             }
@@ -86,16 +86,14 @@ namespace AerolineaFrba.Abm_Ruta
             }
         }
 
-        private void BajaRuta_Load(object sender, EventArgs e)
+        private void BajaAeronave_Load(object sender, EventArgs e)
         {
-            textCodigo.Text = rutaSel.getCodigo.ToString();
-            textBoxKG.Text = rutaSel.getPrecio_BaseKG.ToString();
-            textBoxPasaje.Text = rutaSel.getPrecio_BasePasaje.ToString();
-            comboOrigen.SelectedItem = rutaSel.getOrigen;
-            comboDestino.Text = rutaSel.getDestino;
-            comboBoxTipoServicio.Text = rutaSel.getTipoServicio;
-
-
+            textCodigo.Text = aeronaveSel.getCodigo.ToString();
+            textBoxKG.Text = aeronaveSel.getPrecio_BaseKG.ToString();
+            textBoxPasaje.Text = aeronaveSel.getPrecio_BasePasaje.ToString();
+            comboOrigen.SelectedItem = aeronaveSel.getOrigen;
+            comboDestino.Text = aeronaveSel.getDestino;
+            comboBoxTipoServicio.Text = aeronaveSel.getTipoServicio;
         }
     }
 }

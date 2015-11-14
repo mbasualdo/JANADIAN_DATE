@@ -9,11 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AerolineaFrba.Abm_Ruta
+namespace AerolineaFrba.Abm_Aeronave
 {
-    public partial class ListadoSeleccionRuta : Form
+    public partial class ListadoSeleccionAeronave : Form
     {
-        public ListadoSeleccionRuta()
+        public ListadoSeleccionAeronave()
         {
             InitializeComponent();
             List<String> ciudades = JanadianDateDB.Instance.getCiudades();
@@ -29,21 +29,6 @@ namespace AerolineaFrba.Abm_Ruta
             {
                 comboBoxTipoServicio.Items.Add(f);
             }
-        }
-
-        private void buttonLimpiar_Click(object sender, EventArgs e)
-        {
-
-            textId.Text = "";
-            textCodigo.Text = "";
-            numericUpDownKG.Value = 0.00M;
-            numericUpDownPasaje.Value = 0.00M;
-            comboOrigen.SelectedItem = null;
-            comboDestino.SelectedItem = null;
-            comboBoxTipoServicio.SelectedItem = null;
-            dataGridRol1.DataSource = null;
-            dataGridRol1.Columns.Clear();
-            checkBoxHabilitado.Checked = true;
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)
@@ -118,7 +103,7 @@ namespace AerolineaFrba.Abm_Ruta
                     }
                     query += String.Format(andText + " r.Codigo like '%{0}%'", textCodigo.Text);
                 }
-                if (numericUpDownPasaje.Text != null && numericUpDownPasaje.Text.Trim() != "")
+                if (textBoxPasaje.Text != null && textBoxPasaje.Text.Trim() != "")
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -131,9 +116,9 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Precio_BasePasaje={0}", numericUpDownPasaje.Text);
+                    query += String.Format(andText + " r.Precio_BasePasaje={0}", textBoxPasaje.Text);
                 }
-                if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "")
+                if (textBoxKG.Text != null && textBoxKG.Text.Trim() != "")
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -146,7 +131,7 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Precio_BaseKG={0}", numericUpDownKG.Text);
+                    query += String.Format(andText + " r.Precio_BaseKG={0}", textBoxKG.Text);
                 }
                 if (checkBoxHabilitado.Checked)
                 {
@@ -195,6 +180,21 @@ namespace AerolineaFrba.Abm_Ruta
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
             }
+
+        }
+
+        private void buttonLimpiar_Click(object sender, EventArgs e)
+        {
+            textId.Text = "";
+            textCodigo.Text = "";
+            textBoxKG.Text = "";
+            textBoxPasaje.Text = "";
+            comboOrigen.SelectedItem = null;
+            comboDestino.SelectedItem = null;
+            comboBoxTipoServicio.SelectedItem = null;
+            dataGridRol1.DataSource = null;
+            dataGridRol1.Columns.Clear();
+            checkBoxHabilitado.Checked = true;
         }
 
         private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -202,8 +202,8 @@ namespace AerolineaFrba.Abm_Ruta
             // Ignore clicks that are not in our 
             if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
             {
-                Ruta rutaSel = new Ruta(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Origen"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Destino"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BaseKG"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BasePasaje"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo_Servicio"].Value), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
-                Form frm = new ModificacionRuta(rutaSel);
+                Aeronave aeronaveSel = new Aeronave(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Origen"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Destino"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BaseKG"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BasePasaje"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo_Servicio"].Value), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
+                Form frm = new ModificacionAeronave(aeronaveSel);
                 frm.Show(this);
             }
         }

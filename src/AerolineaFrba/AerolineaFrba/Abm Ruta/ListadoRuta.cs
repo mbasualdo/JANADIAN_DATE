@@ -35,8 +35,8 @@ namespace AerolineaFrba.Abm_Ruta
         {
             textId.Text = "";
             textCodigo.Text = "";
-            textBoxKG.Text = "";
-            textBoxPasaje.Text = "";
+            numericUpDownKG.Value = 0.00M;
+            numericUpDownPasaje.Value = 0.00M;
             comboOrigen.SelectedItem = null;
             comboDestino.SelectedItem = null;
             comboBoxTipoServicio.SelectedItem = null;
@@ -117,7 +117,7 @@ namespace AerolineaFrba.Abm_Ruta
                     }
                     query += String.Format(andText + " r.Codigo like '%{0}%'", textCodigo.Text);
                 }
-                if (textBoxPasaje.Text != null && textBoxPasaje.Text.Trim() != "")
+                if (numericUpDownPasaje.Text != null && numericUpDownPasaje.Text.Trim() != "")
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -130,9 +130,9 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Precio_BasePasaje={0}", textBoxPasaje.Text);
+                    query += String.Format(andText + " r.Precio_BasePasaje={0}", numericUpDownPasaje.Text);
                 }
-                if (textBoxKG.Text != null && textBoxKG.Text.Trim() != "")
+                if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "")
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                     String andText = "";
@@ -145,7 +145,7 @@ namespace AerolineaFrba.Abm_Ruta
                         query += String.Format(" WHERE ");
                         conditions = true;
                     }
-                    query += String.Format(andText + " r.Precio_BaseKG={0}", textBoxKG.Text);
+                    query += String.Format(andText + " r.Precio_BaseKG={0}", numericUpDownKG.Text);
                 }
                 if (checkBoxHabilitado.Checked)
                 {

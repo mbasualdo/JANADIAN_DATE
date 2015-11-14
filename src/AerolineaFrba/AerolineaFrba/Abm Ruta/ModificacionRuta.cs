@@ -58,8 +58,8 @@ namespace AerolineaFrba.Abm_Ruta
         {
             textCodigo.Text = "";
             textCodigo.Text = "";
-            textBoxKG.Text = "";
-            textBoxPasaje.Text = "";
+            numericUpDownKG.Value = 0.00M;
+            numericUpDownPasaje.Value = 0.00M;
             comboOrigen.SelectedItem = null;
             comboDestino.SelectedItem = null;
             comboBoxTipoServicio.SelectedItem = null;
@@ -72,7 +72,6 @@ namespace AerolineaFrba.Abm_Ruta
             {
 
                 String textoError = "";
-                 Double valueDou;
                 Decimal valueDec;
                 if (textCodigo.Text == null || textCodigo.Text.Trim() == "")
                 {
@@ -85,27 +84,27 @@ namespace AerolineaFrba.Abm_Ruta
                 else {
                     rutaSel.setCodigo(Convert.ToDecimal(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text)));
                 }
-                if (textBoxKG.Text == null || textBoxKG.Text.Trim() == "")
+                if (numericUpDownKG.Text == null || numericUpDownKG.Text.Trim() == "")
                 {
                     textoError += "El campo Precio Base KG es obligatorio\n";
                 }
-                else if (!Double.TryParse(textBoxKG.Text, out valueDou))
+                else if (numericUpDownKG.Value <= 0.00M)
                 {
                     textoError += "El campo Precio Base KG no es valido\n";
                 }
                 else {
-                    rutaSel.setPrecio_BaseKG(Convert.ToDouble(JanadianDateDB.RemoveSpecialCharacters(textBoxKG.Text)));
+                    rutaSel.setPrecio_BaseKG(Convert.ToDouble(numericUpDownKG.Value));
                 }
-                if (textBoxPasaje.Text == null || textBoxPasaje.Text.Trim() == "")
+                if (numericUpDownPasaje.Text == null || numericUpDownPasaje.Text.Trim() == "")
                 {
                     textoError += "El campo Precio Base Pasaje es obligatorio\n";
                 }
-                else if (!Double.TryParse(textBoxPasaje.Text, out valueDou))
+                else if (numericUpDownKG.Value<=0.00M)
                 {
                     textoError += "El campo Precio Base Pasaje no es valido\n";
                 }
                 else {
-                    rutaSel.setPrecio_BasePasaje(Convert.ToDouble(JanadianDateDB.RemoveSpecialCharacters(textBoxPasaje.Text)));
+                    rutaSel.setPrecio_BasePasaje(Convert.ToDouble(numericUpDownPasaje.Value));
                 }
                 if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
                 {
@@ -157,8 +156,8 @@ namespace AerolineaFrba.Abm_Ruta
         private void ModificacionRuta_Load(object sender, EventArgs e)
         {
             textCodigo.Text = rutaSel.getCodigo.ToString();
-            textBoxKG.Text = rutaSel.getPrecio_BaseKG.ToString();
-            textBoxPasaje.Text = rutaSel.getPrecio_BasePasaje.ToString();
+            numericUpDownKG.Value = (decimal) rutaSel.getPrecio_BaseKG;
+            numericUpDownPasaje.Value = (decimal) rutaSel.getPrecio_BasePasaje;
             comboOrigen.SelectedItem = rutaSel.getOrigen;
             comboDestino.Text = rutaSel.getDestino;
             comboBoxTipoServicio.Text = rutaSel.getTipoServicio;
