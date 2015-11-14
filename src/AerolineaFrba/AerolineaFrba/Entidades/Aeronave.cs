@@ -25,7 +25,7 @@ namespace AerolineaFrba
 
         Boolean habilitado;
 
-        public Aeronave(int id, string matricula, string modelo, decimal kdDispo, string fabricante, int butacasVent, int butacasPas, bool habilitado)
+        public Aeronave(int id, string matricula, string modelo, decimal kdDispo, string fabricante, int butacasVent, int butacasPas,string tipoServicio, bool habilitado)
         {
             // TODO: Complete member initialization
             this.id = id;
@@ -35,6 +35,7 @@ namespace AerolineaFrba
             this.fabricante = fabricante;
             this.cantButacasPasillo = butacasPas;
             this.cantButacasVentanilla = butacasVent;
+            this.tipoServicio = tipoServicio;
             this.habilitado = habilitado;
 
         }

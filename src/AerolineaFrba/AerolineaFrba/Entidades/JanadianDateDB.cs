@@ -709,7 +709,7 @@ namespace AerolineaFrba
                 foreach (DataRow Fila in dt.Rows)
                 {
 
-                    aeronave = new Aeronave(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Matricula"]), Convert.ToString(Fila["Modelo"]), Convert.ToDecimal(Fila["KG_Disponibles"]), Convert.ToString(Fila["Fabricante"]), Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]), Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]), Convert.ToBoolean(Fila["Habilitado"]));
+                    aeronave = new Aeronave(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Matricula"]), Convert.ToString(Fila["Modelo"]), Convert.ToDecimal(Fila["KG_Disponibles"]), Convert.ToString(Fila["Fabricante"]), Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]), Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]), Convert.ToString(Fila["Tipo_Servicio"]), Convert.ToBoolean(Fila["Habilitado"]));
                 }
                 con.Close();
             }

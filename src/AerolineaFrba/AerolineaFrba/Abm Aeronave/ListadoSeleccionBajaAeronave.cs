@@ -15,19 +15,18 @@ namespace AerolineaFrba.Abm_Aeronave
         public ListadoSeleccionBajaAeronave()
         {
             InitializeComponent();
-            List<String> ciudades = JanadianDateDB.Instance.getCiudades();
+            List<String> fabricantes = JanadianDateDB.Instance.getFabricantes();
 
-            foreach (String f in ciudades)
+            foreach (String f in fabricantes)
             {
-                comboOrigen.Items.Add(f);
-                comboDestino.Items.Add(f);
+                comboFabricante.Items.Add(f);
             }
             List<String> tiposServicio = JanadianDateDB.Instance.getTiposServicio();
 
             foreach (String f in tiposServicio)
             {
                 comboBoxTipoServicio.Items.Add(f);
-            }
+            } 
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)
@@ -35,37 +34,20 @@ namespace AerolineaFrba.Abm_Aeronave
             {
                 try
                 {
-                    String query = "SELECT r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id)  ";
+                    String query = "SELECT a.Id,a.Modelo,a.Habilitado,a.Matricula,a.KG_Disponibles,t.Nombre as Tipo_Servicio,f.Nombre as Fabricante,a.Cant_Butacas_Ventanilla,a.Cant_Butacas_Pasillo FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f on (a.Fabricante=f.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (a.Tipo_Servicio=t.Id)  ";
                     bool conditions = false;
-
-                    if (comboOrigen.Text != null && comboOrigen.Text.Trim() != "")
+                    if (comboFabricante.Text != null && comboFabricante.Text.Trim() != "")
                     {
-                        query += String.Format(" WHERE o.Nombre='{0}'", comboOrigen.Text);
+                        query += String.Format(" WHERE f.Nombre='{0}'", comboFabricante.Text);
                         conditions = true;
                     }
                     if (conditions)
                     {
-                        query += String.Format(" AND  r.Habilitado=1 ");
+                        query += String.Format(" AND  a.Habilitado=1 ");
                     }
                     else
                     {
-                        query += String.Format("  WHERE r.Habilitado=1 ");
-                        conditions = true;
-                    }
-                    if (comboDestino.Text != null && comboDestino.Text.Trim() != "")
-                    {
-                        // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
-                        String andText = "";
-                        if (conditions)
-                        {
-                            andText = " AND ";
-                        }
-                        else
-                        {
-                            query += String.Format(" WHERE ");
-                            conditions = true;
-                        }
-                        query += String.Format(andText + "  d.Nombre='{0}'", comboDestino.Text);
+                        query += String.Format("  WHERE a.Habilitado=1 ");
                         conditions = true;
                     }
                     if (comboBoxTipoServicio.Text != null && comboBoxTipoServicio.Text.Trim() != "")
@@ -84,7 +66,7 @@ namespace AerolineaFrba.Abm_Aeronave
                         query += String.Format(andText + "  t.Nombre='{0}'", comboBoxTipoServicio.Text);
                         conditions = true;
                     }
-                    if (textId.Text != null && textId.Text.Trim() != "")
+                    if (textBoxId.Text != null && textBoxId.Text.Trim() != "")
                     {
                         // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                         String andText = "";
@@ -97,9 +79,9 @@ namespace AerolineaFrba.Abm_Aeronave
                             query += String.Format(" WHERE ");
                             conditions = true;
                         }
-                        query += String.Format(andText + " r.Id={0}", textId.Text);
+                        query += String.Format(andText + " a.Id={0}", textBoxId.Text);
                     }
-                    if (textCodigo.Text != null && textCodigo.Text.Trim() != "")
+                    if (textBoxModelo.Text != null && textBoxModelo.Text.Trim() != "")
                     {
                         String andText = "";
                         if (conditions)
@@ -111,24 +93,9 @@ namespace AerolineaFrba.Abm_Aeronave
                             query += String.Format(" WHERE ");
                             conditions = true;
                         }
-                        query += String.Format(andText + " r.Codigo like '%{0}%'", textCodigo.Text);
+                        query += String.Format(andText + " a.Modelo like '%{0}%'", textBoxModelo.Text);
                     }
-                    if (textBoxPasaje.Text != null && textBoxPasaje.Text.Trim() != "")
-                    {
-                        // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
-                        String andText = "";
-                        if (conditions)
-                        {
-                            andText = " AND ";
-                        }
-                        else
-                        {
-                            query += String.Format(" WHERE ");
-                            conditions = true;
-                        }
-                        query += String.Format(andText + " r.Precio_BasePasaje={0}", textBoxPasaje.Text);
-                    }
-                    if (textBoxKG.Text != null && textBoxKG.Text.Trim() != "")
+                    if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "")
                     {
                         // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
                         String andText = "";
@@ -141,7 +108,37 @@ namespace AerolineaFrba.Abm_Aeronave
                             query += String.Format(" WHERE ");
                             conditions = true;
                         }
-                        query += String.Format(andText + " r.Precio_BaseKG={0}", textBoxKG.Text);
+                        query += String.Format(andText + " a.KG_Disponibles={0}", numericUpDownKG.Text);
+                    }
+                    if (numericUpDownVentanilla.Text != null && numericUpDownVentanilla.Text.Trim() != "")
+                    {
+                        // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
+                        String andText = "";
+                        if (conditions)
+                        {
+                            andText = " AND ";
+                        }
+                        else
+                        {
+                            query += String.Format(" WHERE ");
+                            conditions = true;
+                        }
+                        query += String.Format(andText + " a.Cant_Butacas_Ventanilla={0}", numericUpDownVentanilla.Text);
+                    }
+                    if (numericUpDownPasillo.Text != null && numericUpDownPasillo.Text.Trim() != "")
+                    {
+                        // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
+                        String andText = "";
+                        if (conditions)
+                        {
+                            andText = " AND ";
+                        }
+                        else
+                        {
+                            query += String.Format(" WHERE ");
+                            conditions = true;
+                        }
+                        query += String.Format(andText + " a.Cant_Butacas_Pasillo={0}", numericUpDownPasillo.Text);
                     }
 
                     Console.WriteLine(query);
@@ -170,12 +167,13 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
-            textId.Text = "";
-            textCodigo.Text = "";
-            textBoxKG.Text = "";
-            textBoxPasaje.Text = "";
-            comboOrigen.SelectedItem = null;
-            comboDestino.SelectedItem = null;
+            textBoxId.Text = "";
+            textMatricula.Text = "";
+            textBoxModelo.Text = "";
+            numericUpDownKG.Value = 0.00M;
+            numericUpDownVentanilla.Value = 0.00M;
+            numericUpDownPasillo.Value = 0.00M;
+            comboFabricante.SelectedItem = null;
             comboBoxTipoServicio.SelectedItem = null;
             dataGridRol1.DataSource = null;
             dataGridRol1.Columns.Clear();
@@ -186,7 +184,7 @@ namespace AerolineaFrba.Abm_Aeronave
             // Ignore clicks that are not in our 
             if (e.ColumnIndex == dataGridRol1.Columns["buttonEliminar"].Index && e.RowIndex >= 0)
             {
-                Aeronave aeronaveSel = new Aeronave(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Origen"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Destino"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BaseKG"].Value), Convert.ToDouble(dataGridRol1.Rows[e.RowIndex].Cells["Precio_BasePasaje"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo_Servicio"].Value), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
+                Aeronave aeronaveSel = new Aeronave(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Matricula"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Modelo"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Fabricante"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Cant_Butacas_Ventanilla"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Cant_Butacas_Pasillo"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo_Servicio"].Value), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
                 Form frm = new BajaAeronave(aeronaveSel);
                 frm.Show(this);
             }
