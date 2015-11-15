@@ -538,6 +538,130 @@ BEGIN CATCH
 END CATCH;
 GO
 
+
+/*** trigger que cancela pasajes al dar de baja una aeronave (inhabilitar) - si tiene fecha maxima es baja fuera de servicio sino baja por fin de vida util ****/
+/***        ****/
+CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPasajesAeronave]
+@Id_Aeronave int,
+@Fecha_maxima datetime
+AS
+BEGIN TRY
+			
+	/***   RECORRER TODO LO ASOCIADO A LA AERONAVE Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+		declare @pnr int;
+		declare @codigo [numeric](18,0);
+
+		BEGIN TRANSACTION
+			IF (@Fecha_maxima IS NULL)
+			BEGIN
+				DECLARE ViajesEnAeronave CURSOR FOR 
+
+					SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
+					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
+					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
+					WHERE a.Id=@Id_Aeronave and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	
+
+			END
+			ELSE
+			BEGIN
+
+			DECLARE ViajesEnAeronave CURSOR FOR 
+			SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
+					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
+					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
+					WHERE a.Id=@Id_Aeronave and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	AND DATEDIFF(day,@Fecha_maxima,v.FechaSalida)<0
+
+			END
+
+		OPEN ViajesEnAeronave 
+		FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave'
+			FETCH NEXT FROM ViajesEnAeronave
+		END
+		CLOSE ViajesEnAeronave
+		DEALLOCATE ViajesEnAeronave
+		/** aplicamos los cambios **/
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
+
+END CATCH;
+GO
+
+/*** procedure que cancela paquetes al dar de baja una aeronave (inhabilitar) - si tiene fecha maxima es baja fuera de servicio sino baja por fin de vida util****/
+/***        ****/
+CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPaquetesAeronave]
+@Id_Aeronave int,
+@Fecha_maxima datetime
+AS
+BEGIN TRY
+			
+	/***   RECORRER TODO LO ASOCIADO A LA AERONAVE Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+		declare @pnr int;
+		declare @codigo [numeric](18,0);
+
+		BEGIN TRANSACTION
+			IF (@Fecha_maxima IS NULL)
+			BEGIN
+				DECLARE ViajesEnAeronave CURSOR FOR 
+
+
+			SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
+					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
+					INNER JOIN [JANADIAN_DATE].[Paquete] p ON (p.Compra = c.PNR)
+					WHERE a.Id=@Id_Aeronave and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	
+
+			END
+			ELSE
+			BEGIN
+
+			DECLARE ViajesEnAeronave CURSOR FOR 
+			SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
+					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
+					INNER JOIN [JANADIAN_DATE].[Paquete] p ON (p.Compra = c.PNR)
+					WHERE a.Id=@Id_Aeronave and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	AND DATEDIFF(day,@Fecha_maxima,v.FechaSalida)<0
+
+			END
+
+		OPEN ViajesEnAeronave 
+		FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave'
+			FETCH NEXT FROM ViajesEnAeronave
+		END
+		CLOSE ViajesEnAeronave
+		DEALLOCATE ViajesEnAeronave
+		/** aplicamos los cambios **/
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
+
+END CATCH;
+GO
+
 /***   Insert de funcionalidades ***/
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Funcionalidades] 
 AS

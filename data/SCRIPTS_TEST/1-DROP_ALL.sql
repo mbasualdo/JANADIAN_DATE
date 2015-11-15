@@ -5,6 +5,8 @@ DROP VIEW JANADIAN_DATE.Itinerario_Aeronave
 DROP VIEW JANADIAN_DATE.Viaje_Disponible
 
 DROP PROCEDURE JANADIAN_DATE.Cancelar_Pasaje
+DROP PROCEDURE JANADIAN_DATE.inhabilitarPaquetesAeronave
+DROP PROCEDURE JANADIAN_DATE.inhabilitarPasajesAeronave
 DROP PROCEDURE JANADIAN_DATE.Insertar_Funcionalidades
 DROP PROCEDURE JANADIAN_DATE.Insertar_Roles
 DROP PROCEDURE JANADIAN_DATE.Insertar_Rol_Funcionalidades
