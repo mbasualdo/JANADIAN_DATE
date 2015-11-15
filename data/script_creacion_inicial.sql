@@ -538,65 +538,6 @@ BEGIN CATCH
 END CATCH;
 GO
 
-/***   habilita las aeronaves que estaban fuera de servicio hasta el dia de hoy ***/
-CREATE PROCEDURE [JANADIAN_DATE].[HabilitarAeronavesFueraServicio] 
-	@Fecha_hoy datetime
-AS
-BEGIN TRY
-	declare @butacaPasaje int;
-	declare @kg_pasaje numeric(18,0);
-
-	BEGIN TRANSACTION
-	/** consultar**/
-	SELECT  @butacaPasaje=Butaca FROM [JANADIAN_DATE].[Pasaje] WHERE Id=@cod_pasaje
-	SELECT  @kg_pasaje=KG FROM [JANADIAN_DATE].[Paquete] WHERE Id=@cod_pasaje
-
-	/** verificar si es pasaje o paquete**/
-	IF  @kg_pasaje IS NOT NULL
-		BEGIN
-		 /** Liberar los KG **/
-			/** Marcamos el paquete como cancelado **/
-			UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1 WHERE Id=@cod_pasaje
-
-			/** grabamos la cancelacion en la tabla correspondiente **/
-				INSERT INTO Cancelacion 
-				(PNR,Codigo_Paquete,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
-				VALUES
-				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
-				END
-			ELSE IF  @butacaPasaje IS NOT NULL
-		BEGIN
-		/** Liberar la butaca **/
-		 DELETE Butaca_Viaje WHERE Butaca=@butacaPasaje
-		/** Marcamos el pasaje como cancelado **/
-			UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1 WHERE Id=@cod_pasaje
-					/** grabamos la cancelacion en la tabla correspondiente **/
-				INSERT INTO Cancelacion 
-				(PNR,Codigo_Pasaje,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
-				VALUES
-				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
-		END
-
-
-	/** aplicamos los cambios **/
-	COMMIT TRANSACTION
-END TRY
-BEGIN CATCH
-  IF @@TRANCOUNT > 0
-     ROLLBACK
-
-  -- INFO DE ERROR.
-  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
-  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
-  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
-
-
-END CATCH;
-GO
-
- /********************************************************************************/
-/******************** MIGRACION TABLA MAESTRA ***************************************/
-/*********************************************************************************/
 /***   Insert de funcionalidades ***/
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Funcionalidades] 
 AS
