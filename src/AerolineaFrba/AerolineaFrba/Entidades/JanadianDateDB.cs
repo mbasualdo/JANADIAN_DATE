@@ -762,9 +762,25 @@ namespace AerolineaFrba
             }
         }
 
-        internal void cancelarPasajeYPaquetesDeAeronave(int p)
+        internal void cancelarPasajeYPaquetesDeAeronave(int idAeronave)
         {
-            throw new NotImplementedException();
+            try
+            {
+                con.Open();
+                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPasajesAeronave] {0},null", idAeronave), con);
+                updateAeronave.ExecuteNonQuery();
+                SqlCommand updatePaqAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPaquetesAeronave] {0},null", idAeronave), con);
+                updateAeronave.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
         }
 
         internal void reemplazarAeronave(int p)
@@ -795,9 +811,25 @@ namespace AerolineaFrba
             }
         }
 
-        internal void cancelarPasajeYPaquetesDeAeronave(int p1, string p2)
+        internal void cancelarPasajeYPaquetesDeAeronave(int idAeronave, string fechaMaxima)
         {
-            throw new NotImplementedException();
+            try
+            {
+                con.Open();
+                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPasajesAeronave] {0},'{1}'", idAeronave, fechaMaxima), con);
+                updateAeronave.ExecuteNonQuery();
+                SqlCommand updatePaqAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPaquetesAeronave] {0},'{1}'", idAeronave, fechaMaxima), con);
+                updateAeronave.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
         }
 
         internal void reemplazarAeronave(int p1, string p2)
