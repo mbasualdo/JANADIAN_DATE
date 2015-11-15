@@ -488,27 +488,13 @@ CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Pasaje]
 AS
 BEGIN TRY
 	declare @butacaPasaje int;
-	declare @kg_pasaje numeric(18,0);
 
 	BEGIN TRANSACTION
 	/** consultar**/
 	SELECT  @butacaPasaje=Butaca FROM [JANADIAN_DATE].[Pasaje] WHERE Id=@cod_pasaje
-	SELECT  @kg_pasaje=KG FROM [JANADIAN_DATE].[Paquete] WHERE Id=@cod_pasaje
 
 	/** verificar si es pasaje o paquete**/
-	IF  @kg_pasaje IS NOT NULL
-		BEGIN
-		 /** Liberar los KG **/
-			/** Marcamos el paquete como cancelado **/
-			UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1 WHERE Id=@cod_pasaje
-
-			/** grabamos la cancelacion en la tabla correspondiente **/
-				INSERT INTO Cancelacion 
-				(PNR,Codigo_Paquete,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
-				VALUES
-				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
-				END
-			ELSE IF  @butacaPasaje IS NOT NULL
+	 IF  @butacaPasaje IS NOT NULL
 		BEGIN
 		/** Liberar la butaca **/
 		 DELETE Butaca_Viaje WHERE Butaca=@butacaPasaje
@@ -518,7 +504,7 @@ BEGIN TRY
 				INSERT INTO Cancelacion 
 				(PNR,Codigo_Pasaje,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
 				VALUES
-				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
+				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PASAJE')	
 		END
 
 
@@ -537,7 +523,50 @@ BEGIN CATCH
 
 END CATCH;
 GO
+/***   cancelar un pasaje  necesito pnr cod paquete y motivo , obtengo la fecha y guardo con la relacion a id de la tabla paquete ***/
+CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Paquete] 
+	@PNR_compra int,
+	@cod_paquete [numeric](18,0),
+	@motivo nvarchar(255) 
 
+AS
+BEGIN TRY
+	declare @kg_paquete numeric(18,0);
+
+	BEGIN TRANSACTION
+	/** consultar**/
+	SELECT  @kg_paquete=KG FROM [JANADIAN_DATE].[Paquete] WHERE Id=@cod_paquete
+
+	/** verificar si es pasaje o paquete**/
+	IF  @kg_paquete IS NOT NULL
+		BEGIN
+		 /** Liberar los KG **/
+			/** Marcamos el paquete como cancelado **/
+			UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1 WHERE Id=@cod_paquete
+
+			/** grabamos la cancelacion en la tabla correspondiente **/
+				INSERT INTO Cancelacion 
+				(PNR,Codigo_Paquete,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
+				VALUES
+				(@PNR_compra,@cod_paquete,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
+				END
+
+
+	/** aplicamos los cambios **/
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
+
+END CATCH;
+GO
 
 /*** trigger que cancela pasajes al dar de baja una aeronave (inhabilitar) - si tiene fecha maxima es baja fuera de servicio sino baja por fin de vida util ****/
 /***        ****/
@@ -580,7 +609,8 @@ BEGIN TRY
 		WHILE @@FETCH_STATUS=0
 		BEGIN
 			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave'
-			FETCH NEXT FROM ViajesEnAeronave
+
+			FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
 		END
 		CLOSE ViajesEnAeronave
 		DEALLOCATE ViajesEnAeronave
@@ -608,7 +638,7 @@ CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPaquetesAeronave]
 AS
 BEGIN TRY
 			
-	/***   RECORRER TODO LO ASOCIADO A LA AERONAVE Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+	/***   RECORRER TODO LO ASOCIADO A LA AERONAVE Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Paquete] ***/
 		declare @pnr int;
 		declare @codigo [numeric](18,0);
 
@@ -641,8 +671,8 @@ BEGIN TRY
 		FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave'
-			FETCH NEXT FROM ViajesEnAeronave
+			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Aeronave'
+			FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
 		END
 		CLOSE ViajesEnAeronave
 		DEALLOCATE ViajesEnAeronave
@@ -1449,7 +1479,7 @@ BEGIN
 		WHILE @@FETCH_STATUS=0
 		BEGIN
 			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta'
-			FETCH NEXT FROM ViajesEnRuta
+			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
 		END
 		CLOSE ViajesEnRuta
 		DEALLOCATE ViajesEnRuta
@@ -1469,7 +1499,7 @@ BEGIN
 	
 	if  @habilitado=0	
 			
-	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Paquete] ***/
 		declare @pnr int;
 		declare @codigo [numeric](18,0);
 
@@ -1484,8 +1514,8 @@ BEGIN
 		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta'
-			FETCH NEXT FROM ViajesEnRuta
+			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Ruta'
+			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
 		END
 		CLOSE ViajesEnRuta
 		DEALLOCATE ViajesEnRuta
