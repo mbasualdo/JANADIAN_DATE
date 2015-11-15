@@ -818,7 +818,7 @@ namespace AerolineaFrba
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
                // and a.Baja_Vida_Util=0 
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT Distinct a.Id,fs.Fecha_Reinicio FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] fs ON (a.Id=fs.Aeronave) WHERE a.Habilitado=0 and a.Baja_Fuera_Servicio=1   order by fs.Fecha_Reinicio desc "), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT Distinct a.Id,fs.Fecha_Reinicio FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] fs ON (a.Id=fs.Aeronave) WHERE a.Habilitado=0 and a.Baja_Fuera_Servicio=1 and a.Baja_Vida_Util=0  order by fs.Fecha_Reinicio desc "), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
