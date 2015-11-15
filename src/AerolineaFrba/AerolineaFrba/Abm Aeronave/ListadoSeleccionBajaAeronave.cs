@@ -34,20 +34,11 @@ namespace AerolineaFrba.Abm_Aeronave
             {
                 try
                 {
-                    String query = "SELECT a.Id,a.Modelo,a.Habilitado,a.Matricula,a.KG_Disponibles,t.Nombre as Tipo_Servicio,f.Nombre as Fabricante,a.Cant_Butacas_Ventanilla,a.Cant_Butacas_Pasillo FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f on (a.Fabricante=f.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (a.Tipo_Servicio=t.Id)  ";
-                    bool conditions = false;
+                    String query = "SELECT a.Id,a.Modelo,a.Matricula,a.KG_Disponibles,t.Nombre as Tipo_Servicio,f.Nombre as Fabricante,a.Cant_Butacas_Ventanilla,a.Cant_Butacas_Pasillo FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f on (a.Fabricante=f.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (a.Tipo_Servicio=t.Id) WHERE a.Habilitado=1 ";
+                    bool conditions = true;
                     if (comboFabricante.Text != null && comboFabricante.Text.Trim() != "")
                     {
-                        query += String.Format(" WHERE f.Nombre='{0}'", comboFabricante.Text);
-                        conditions = true;
-                    }
-                    if (conditions)
-                    {
-                        query += String.Format(" AND  a.Habilitado=1 ");
-                    }
-                    else
-                    {
-                        query += String.Format("  WHERE a.Habilitado=1 ");
+                        query += String.Format(" AND f.Nombre='{0}'", comboFabricante.Text);
                         conditions = true;
                     }
                     if (comboBoxTipoServicio.Text != null && comboBoxTipoServicio.Text.Trim() != "")
@@ -184,7 +175,7 @@ namespace AerolineaFrba.Abm_Aeronave
             // Ignore clicks that are not in our 
             if (e.ColumnIndex == dataGridRol1.Columns["buttonEliminar"].Index && e.RowIndex >= 0)
             {
-                Aeronave aeronaveSel = new Aeronave(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Matricula"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Modelo"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Fabricante"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Cant_Butacas_Ventanilla"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Cant_Butacas_Pasillo"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo_Servicio"].Value), Convert.ToBoolean(dataGridRol1.Rows[e.RowIndex].Cells["Habilitado"].Value));
+                Aeronave aeronaveSel = new Aeronave(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Matricula"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Modelo"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Fabricante"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Cant_Butacas_Ventanilla"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Cant_Butacas_Pasillo"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo_Servicio"].Value));
                 Form frm = new BajaAeronave(aeronaveSel);
                 frm.Show(this);
             }

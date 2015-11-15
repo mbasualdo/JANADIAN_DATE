@@ -639,7 +639,7 @@ namespace AerolineaFrba
                 {
                     tipoServ = Convert.ToInt32(Fila["Id"]);
                 }
-                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave]  SET Modelo='{0}',Habilitado={1},Matricula='{2}',KG_Disponibles={3},Tipo_Servicio={4},Fabricante={5},Cant_Butacas_Ventanilla={6},Cant_Butacas_Pasillo={7} WHERE Id={8}", aeronaveSel.getModelo, aeronaveSel.getHabilitado ? "1" : "0", aeronaveSel.getMatricula, aeronaveSel.getKGDisponibles, aeronaveSel.getTipoServicio, aeronaveSel.getFabricante, aeronaveSel.getCantidadButacasVentanilla, aeronaveSel.getCantidadButacasPasillo, aeronaveSel.getId), con);
+                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave]  SET Modelo='{0}',Matricula='{2}',KG_Disponibles={3},Tipo_Servicio={4},Fabricante={5},Cant_Butacas_Ventanilla={6},Cant_Butacas_Pasillo={7} WHERE Id={8}", aeronaveSel.getModelo, aeronaveSel.getHabilitado ? "1" : "0", aeronaveSel.getMatricula, aeronaveSel.getKGDisponibles, tipoServ, fabricante, aeronaveSel.getCantidadButacasVentanilla, aeronaveSel.getCantidadButacasPasillo, aeronaveSel.getId), con);
                 updateAeronave.ExecuteNonQuery();
                 con.Close();
             }
@@ -714,7 +714,7 @@ namespace AerolineaFrba
                 foreach (DataRow Fila in dt.Rows)
                 {
 
-                    aeronave = new Aeronave(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Matricula"]), Convert.ToString(Fila["Modelo"]), Convert.ToDecimal(Fila["KG_Disponibles"]), Convert.ToString(Fila["Fabricante"]), Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]), Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]), Convert.ToString(Fila["Tipo_Servicio"]), Convert.ToBoolean(Fila["Habilitado"]));
+                    aeronave = new Aeronave(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Matricula"]), Convert.ToString(Fila["Modelo"]), Convert.ToDecimal(Fila["KG_Disponibles"]), Convert.ToString(Fila["Fabricante"]), Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]), Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]), Convert.ToString(Fila["Tipo_Servicio"]));
                 }
                 con.Close();
             }
@@ -803,6 +803,51 @@ namespace AerolineaFrba
         internal void reemplazarAeronave(int p1, string p2)
         {
             throw new NotImplementedException();
+        }
+
+        internal void habilitarAeronavesQueSalenDelFueraDeServicio()
+        {
+            List<int> aeronavesFueraDeServicio = new List<int>();
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+               // and a.Baja_Vida_Util=0 
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT Distinct a.Id,fs.Fecha_Reinicio FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] fs ON (a.Id=fs.Aeronave) WHERE a.Habilitado=0 and a.Baja_Fuera_Servicio=1   order by fs.Fecha_Reinicio desc "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    Console.WriteLine("No hay aeronaves a habilitar");
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    if (Convert.ToDateTime(Fila["Fecha_Reinicio"]).CompareTo(this.fechaSistema) >= 0)
+                    {
+                        aeronavesFueraDeServicio.Add(Convert.ToInt32(Fila["Id"]));
+                    }
+                    else if (!aeronavesFueraDeServicio.Contains(Convert.ToInt32(Fila["Id"])))
+                    {
+                        SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave] SET Habilitado=1,Baja_Fuera_Servicio=0 WHERE Id ={0}", Convert.ToInt32(Fila["Id"])), con);
+                        updateAeronave.ExecuteNonQuery();
+                    }
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
         }
     }
 }

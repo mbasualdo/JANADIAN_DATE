@@ -31,7 +31,6 @@
             this.buttonGuardar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
             this.numericUpDownKG = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownVentanilla = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownPasillo = new System.Windows.Forms.NumericUpDown();
@@ -102,24 +101,12 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.labelNombre);
             this.groupBox1.Controls.Add(this.textMatricula);
-            this.groupBox1.Controls.Add(this.checkBoxHabilitado);
             this.groupBox1.Location = new System.Drawing.Point(26, 24);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(552, 270);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Campos Aeronave";
-            // 
-            // checkBoxHabilitado
-            // 
-            this.checkBoxHabilitado.AutoSize = true;
-            this.checkBoxHabilitado.Location = new System.Drawing.Point(113, 220);
-            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
-            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxHabilitado.Size = new System.Drawing.Size(73, 17);
-            this.checkBoxHabilitado.TabIndex = 8;
-            this.checkBoxHabilitado.Text = "Habilitado";
-            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
             // 
             // numericUpDownKG
             // 
@@ -337,7 +324,6 @@
         private System.Windows.Forms.Button buttonGuardar;
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox checkBoxHabilitado;
         private System.Windows.Forms.NumericUpDown numericUpDownKG;
         private System.Windows.Forms.NumericUpDown numericUpDownVentanilla;
         private System.Windows.Forms.NumericUpDown numericUpDownPasillo;

@@ -32,28 +32,27 @@
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
-            this.numericUpDownKG = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownPasillo = new System.Windows.Forms.NumericUpDown();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.labelNombre = new System.Windows.Forms.Label();
-            this.textMatricula = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxId = new System.Windows.Forms.TextBox();
             this.numericUpDownVentanilla = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.comboBoxTipoServicio = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.comboFabricante = new System.Windows.Forms.ComboBox();
+            this.numericUpDownKG = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownPasillo = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.textBoxModelo = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxId = new System.Windows.Forms.TextBox();
+            this.labelNombre = new System.Windows.Forms.Label();
+            this.textMatricula = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVentanilla)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPasillo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVentanilla)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridRol1
@@ -105,7 +104,6 @@
             this.groupBox1.Controls.Add(this.textBoxModelo);
             this.groupBox1.Controls.Add(this.labelNombre);
             this.groupBox1.Controls.Add(this.textMatricula);
-            this.groupBox1.Controls.Add(this.checkBoxHabilitado);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(552, 144);
@@ -113,80 +111,21 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtros de bùsqueda";
             // 
-            // checkBoxHabilitado
+            // label1
             // 
-            this.checkBoxHabilitado.AutoSize = true;
-            this.checkBoxHabilitado.Checked = true;
-            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 117);
-            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
-            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
-            this.checkBoxHabilitado.TabIndex = 7;
-            this.checkBoxHabilitado.Text = "Habilitado        ";
-            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 13);
+            this.label1.TabIndex = 100;
+            this.label1.Text = "Id";
             // 
-            // numericUpDownKG
+            // textBoxId
             // 
-            this.numericUpDownKG.Location = new System.Drawing.Point(114, 92);
-            this.numericUpDownKG.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numericUpDownKG.Name = "numericUpDownKG";
-            this.numericUpDownKG.Size = new System.Drawing.Size(109, 20);
-            this.numericUpDownKG.TabIndex = 76;
-            // 
-            // numericUpDownPasillo
-            // 
-            this.numericUpDownPasillo.Location = new System.Drawing.Point(114, 118);
-            this.numericUpDownPasillo.Name = "numericUpDownPasillo";
-            this.numericUpDownPasillo.Size = new System.Drawing.Size(109, 20);
-            this.numericUpDownPasillo.TabIndex = 75;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(13, 118);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(79, 13);
-            this.label13.TabIndex = 73;
-            this.label13.Text = "Butacas Pasillo";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(13, 92);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 13);
-            this.label5.TabIndex = 71;
-            this.label5.Text = "KG Disponibles";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(13, 68);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(42, 13);
-            this.label6.TabIndex = 70;
-            this.label6.Text = "Modelo";
-            // 
-            // labelNombre
-            // 
-            this.labelNombre.AutoSize = true;
-            this.labelNombre.Location = new System.Drawing.Point(13, 44);
-            this.labelNombre.Name = "labelNombre";
-            this.labelNombre.Size = new System.Drawing.Size(50, 13);
-            this.labelNombre.TabIndex = 66;
-            this.labelNombre.Text = "Matricula";
-            // 
-            // textMatricula
-            // 
-            this.textMatricula.Location = new System.Drawing.Point(114, 44);
-            this.textMatricula.Name = "textMatricula";
-            this.textMatricula.Size = new System.Drawing.Size(109, 20);
-            this.textMatricula.TabIndex = 65;
+            this.textBoxId.Location = new System.Drawing.Point(114, 19);
+            this.textBoxId.Name = "textBoxId";
+            this.textBoxId.Size = new System.Drawing.Size(109, 20);
+            this.textBoxId.TabIndex = 99;
             // 
             // numericUpDownVentanilla
             // 
@@ -240,6 +179,52 @@
             this.comboFabricante.Size = new System.Drawing.Size(151, 21);
             this.comboFabricante.TabIndex = 77;
             // 
+            // numericUpDownKG
+            // 
+            this.numericUpDownKG.Location = new System.Drawing.Point(114, 92);
+            this.numericUpDownKG.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numericUpDownKG.Name = "numericUpDownKG";
+            this.numericUpDownKG.Size = new System.Drawing.Size(109, 20);
+            this.numericUpDownKG.TabIndex = 76;
+            // 
+            // numericUpDownPasillo
+            // 
+            this.numericUpDownPasillo.Location = new System.Drawing.Point(114, 118);
+            this.numericUpDownPasillo.Name = "numericUpDownPasillo";
+            this.numericUpDownPasillo.Size = new System.Drawing.Size(109, 20);
+            this.numericUpDownPasillo.TabIndex = 75;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(13, 118);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(79, 13);
+            this.label13.TabIndex = 73;
+            this.label13.Text = "Butacas Pasillo";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(13, 92);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(79, 13);
+            this.label5.TabIndex = 71;
+            this.label5.Text = "KG Disponibles";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(13, 68);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(42, 13);
+            this.label6.TabIndex = 70;
+            this.label6.Text = "Modelo";
+            // 
             // textBoxModelo
             // 
             this.textBoxModelo.Location = new System.Drawing.Point(114, 68);
@@ -247,21 +232,21 @@
             this.textBoxModelo.Size = new System.Drawing.Size(109, 20);
             this.textBoxModelo.TabIndex = 69;
             // 
-            // label1
+            // labelNombre
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 13);
-            this.label1.TabIndex = 100;
-            this.label1.Text = "Id";
+            this.labelNombre.AutoSize = true;
+            this.labelNombre.Location = new System.Drawing.Point(13, 44);
+            this.labelNombre.Name = "labelNombre";
+            this.labelNombre.Size = new System.Drawing.Size(50, 13);
+            this.labelNombre.TabIndex = 66;
+            this.labelNombre.Text = "Matricula";
             // 
-            // textBoxId
+            // textMatricula
             // 
-            this.textBoxId.Location = new System.Drawing.Point(114, 19);
-            this.textBoxId.Name = "textBoxId";
-            this.textBoxId.Size = new System.Drawing.Size(109, 20);
-            this.textBoxId.TabIndex = 99;
+            this.textMatricula.Location = new System.Drawing.Point(114, 44);
+            this.textMatricula.Name = "textMatricula";
+            this.textMatricula.Size = new System.Drawing.Size(109, 20);
+            this.textMatricula.TabIndex = 65;
             // 
             // ListadoAeronave
             // 
@@ -277,9 +262,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVentanilla)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPasillo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVentanilla)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -290,7 +275,6 @@
         private System.Windows.Forms.Button buttonBuscar;
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox checkBoxHabilitado;
         private System.Windows.Forms.NumericUpDown numericUpDownKG;
         private System.Windows.Forms.NumericUpDown numericUpDownPasillo;
         private System.Windows.Forms.Label label13;

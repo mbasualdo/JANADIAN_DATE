@@ -25,7 +25,8 @@ namespace AerolineaFrba
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            //al iniciar la app habilitamos las aeronaves que han salido del fuera de servicio
+            JanadianDateDB.Instance.habilitarAeronavesQueSalenDelFueraDeServicio();
 
         }
 

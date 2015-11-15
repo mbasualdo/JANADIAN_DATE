@@ -110,10 +110,6 @@ namespace AerolineaFrba.Abm_Aeronave
                     aeronaveSel.setButacasVentanilla(Convert.ToInt32(numericUpDownVentanilla.Value));
                 }
 
-                if (JanadianDateDB.Instance.getAeronaveByMatricula(textMatricula.Text) != null)
-                {
-                    textoError += "Ya existe una aeronave con esa matricula\n";
-                }
                 if (comboFabricante.Text == null || comboFabricante.Text.Trim() == "")
                 {
                     textoError += "El campo Fabricante es obligatorio\n";
@@ -131,7 +127,6 @@ namespace AerolineaFrba.Abm_Aeronave
                 {
                     aeronaveSel.setTipoServicio(comboBoxTipoServicio.Text);
                 }
-                aeronaveSel.setHabilitado(checkBoxHabilitado.Checked);
                 if (textoError.Length != 0)
                 {
                     MessageBox.Show(null, textoError, "Error de Validacion");
@@ -165,7 +160,6 @@ namespace AerolineaFrba.Abm_Aeronave
             numericUpDownPasillo.Value = 0.00M;
             comboFabricante.SelectedItem = null;
             comboBoxTipoServicio.SelectedItem = null;
-            checkBoxHabilitado.Checked = false;
         }
 
         private void ModificacionAeronave_Load(object sender, EventArgs e)
@@ -178,7 +172,6 @@ namespace AerolineaFrba.Abm_Aeronave
             numericUpDownPasillo.Value = aeronaveSel.getCantidadButacasPasillo;
             comboFabricante.SelectedItem = aeronaveSel.getFabricante;
             comboBoxTipoServicio.SelectedItem = aeronaveSel.getTipoServicio;
-            checkBoxHabilitado.Checked = aeronaveSel.getHabilitado;
         }
     }
 }

@@ -32,7 +32,8 @@
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBoxHabilitado = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxId = new System.Windows.Forms.TextBox();
             this.numericUpDownVentanilla = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -47,8 +48,6 @@
             this.textBoxModelo = new System.Windows.Forms.TextBox();
             this.labelNombre = new System.Windows.Forms.Label();
             this.textMatricula = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxId = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVentanilla)).BeginInit();
@@ -106,7 +105,6 @@
             this.groupBox1.Controls.Add(this.textBoxModelo);
             this.groupBox1.Controls.Add(this.labelNombre);
             this.groupBox1.Controls.Add(this.textMatricula);
-            this.groupBox1.Controls.Add(this.checkBoxHabilitado);
             this.groupBox1.Location = new System.Drawing.Point(42, 25);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(552, 144);
@@ -114,18 +112,21 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtros de bùsqueda";
             // 
-            // checkBoxHabilitado
+            // label1
             // 
-            this.checkBoxHabilitado.AutoSize = true;
-            this.checkBoxHabilitado.Checked = true;
-            this.checkBoxHabilitado.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxHabilitado.Location = new System.Drawing.Point(289, 121);
-            this.checkBoxHabilitado.Name = "checkBoxHabilitado";
-            this.checkBoxHabilitado.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxHabilitado.Size = new System.Drawing.Size(97, 17);
-            this.checkBoxHabilitado.TabIndex = 6;
-            this.checkBoxHabilitado.Text = "Habilitado        ";
-            this.checkBoxHabilitado.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(25, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 13);
+            this.label1.TabIndex = 98;
+            this.label1.Text = "Id";
+            // 
+            // textBoxId
+            // 
+            this.textBoxId.Location = new System.Drawing.Point(126, 16);
+            this.textBoxId.Name = "textBoxId";
+            this.textBoxId.Size = new System.Drawing.Size(109, 20);
+            this.textBoxId.TabIndex = 97;
             // 
             // numericUpDownVentanilla
             // 
@@ -248,22 +249,6 @@
             this.textMatricula.Size = new System.Drawing.Size(109, 20);
             this.textMatricula.TabIndex = 83;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 13);
-            this.label1.TabIndex = 98;
-            this.label1.Text = "Id";
-            // 
-            // textBoxId
-            // 
-            this.textBoxId.Location = new System.Drawing.Point(126, 16);
-            this.textBoxId.Name = "textBoxId";
-            this.textBoxId.Size = new System.Drawing.Size(109, 20);
-            this.textBoxId.TabIndex = 97;
-            // 
             // ListadoSeleccionAeronave
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -291,7 +276,6 @@
         private System.Windows.Forms.Button buttonBuscar;
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox checkBoxHabilitado;
         private System.Windows.Forms.NumericUpDown numericUpDownVentanilla;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label4;
