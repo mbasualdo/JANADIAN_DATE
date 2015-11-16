@@ -693,6 +693,129 @@ BEGIN CATCH
 END CATCH;
 GO
 
+
+/***  liberar las butacas_viajes con butacas viejas y 
+	crear las butacas_viajes con las butacas nuevas, 
+	cambiar los pasajes de esa compra para ese viaje a la butaca nueva 
+	reemplaza el id aeronave en viaje ****/
+/***        ****/
+CREATE PROCEDURE [JANADIAN_DATE].[reemplazarAeronaveViaje]
+@Id_Aeronave int,
+@Id_Viaje int,
+@Id_Aeronave_Reemplazo int
+AS
+BEGIN TRY
+			
+	/***   RECORRER TODAS LAS BUTACAS PARA EL VIAJE***/
+		declare @butaca_anterior int;
+		declare @butaca_viaje int;
+		declare @num numeric(18,0);
+		declare @tipo nvarchar(255);
+		declare @piso numeric(18,0);
+		declare @butaca_nueva int;
+
+		BEGIN TRANSACTION
+			BEGIN
+				DECLARE ButacasViaje CURSOR FOR 
+			SELECT  b.Id as butaca,bv.Id as butaca_viaje,b.Numero,b.Tipo,b.Piso
+				FROM [GD2C2015].[JANADIAN_DATE].[Butaca_Viaje] bv 
+				INNER JOIN  [GD2C2015].[JANADIAN_DATE].[Butaca] b 
+				ON (b.Id = bv.Butaca AND b.Aeronave=@Id_Aeronave) WHERE Viaje=@Id_Viaje
+
+			END			
+
+		OPEN ButacasViaje 
+		FETCH NEXT FROM ButacasViaje INTO @butaca_anterior,@butaca_viaje,@num,@tipo,@piso
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+
+		--crear las butacas_viajes con las butacas nuevas, 
+		SELECT @butaca_nueva=Id from JANADIAN_DATE.Butaca WHERE Numero=@num AND Tipo =@tipo and Piso=@piso and Aeronave=@Id_Aeronave_Reemplazo
+		INSERT INTO JANADIAN_DATE.Butaca_Viaje(Butaca,Viaje) VALUES (@butaca_nueva,@Id_Viaje) 
+		
+		-- liberar las butacas_viajes con butacas viejas 
+		DELETE FROM JANADIAN_DATE.Butaca_Viaje WHERE Id=@butaca_viaje
+
+	     --cambiar los pasajes de esa compra para ese viaje a la butaca nueva 
+		  UPDATE JANADIAN_DATE.Pasaje SET Butaca=@butaca_nueva WHERE Butaca=@butaca_anterior AND Compra IN (  select PNR from JANADIAN_DATE.Compra WHERE Viaje=@Id_Viaje)
+
+
+			FETCH NEXT FROM ButacasViaje INTO @butaca_anterior,@butaca_viaje,@num,@tipo,@piso
+		END
+		CLOSE ButacasViaje
+		DEALLOCATE ButacasViaje
+
+		-- Actualizar el ID de aeronave en el viaje
+		UPDATE JANADIAN_DATE.Viaje SET Aeronave=@Id_Aeronave_Reemplazo WHERE Id=@Id_Viaje;
+		/** aplicamos los cambios **/
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
+
+END CATCH;
+GO
+
+/***  //crear nueva aeronave
+		    // copia butacas
+                    // llamar a reemplazar viaje ****/
+/***        ****/
+CREATE PROCEDURE [JANADIAN_DATE].[crearNuevaAeronave]
+@Id_Aeronave int,
+@naveMat nvarchar(255),
+@Id_Viaje int
+AS
+BEGIN TRY
+
+		BEGIN TRANSACTION
+		declare @Aeronave int;
+		IF ( [JANADIAN_DATE].[Aeronave_Habilitada_Por_Matricula](@naveMat + '_2')=0)
+		BEGIN
+			INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) 
+			SELECT @naveMat + '_2' ,Fabricante,Modelo , Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla FROM Aeronave WHERE id=@Id_Aeronave
+			SELECT @Aeronave=Id FROM [JANADIAN_DATE].[Aeronave] where Matricula=(@naveMat + '_2')
+		END
+		ELSE
+		BEGIN
+			INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) 
+			SELECT @naveMat + '_3' ,Fabricante,Modelo , Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla FROM Aeronave WHERE id=@Id_Aeronave
+			SELECT @Aeronave=Id FROM [JANADIAN_DATE].[Aeronave] where Matricula=(@naveMat + '_3')
+
+		END
+
+			INSERT INTO JANADIAN_DATE.Butaca (Numero,Tipo,Piso,Aeronave)
+			select Numero,Tipo,Piso,@Aeronave from JANADIAN_DATE.Butaca WHERE AERONAVE=@Id_Aeronave
+		--copiar butacas
+
+
+	/** aplicamos los cambios **/
+	COMMIT TRANSACTION
+	
+	--reemplazamos aeronave con la nueva
+	EXEC [JANADIAN_DATE].[reemplazarAeronaveViaje] @Id_Aeronave,@Id_Viaje,@Aeronave
+
+
+
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
+
+END CATCH;
+GO
 /***   Insert de funcionalidades ***/
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Funcionalidades] 
 AS

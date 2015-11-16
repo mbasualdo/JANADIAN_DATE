@@ -81,7 +81,7 @@ namespace AerolineaFrba.Abm_Aeronave
                     }
                     else if (dialogResult == DialogResult.No)
                     {
-                        JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId);
+                        JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId,aeronaveSel.getMatricula);
                     }
 
                     MessageBox.Show(null, String.Format("Se ha dado de baja correctamente la aeronave con Id {0}", aeronaveSel.getId), "Baja de Aeronave");

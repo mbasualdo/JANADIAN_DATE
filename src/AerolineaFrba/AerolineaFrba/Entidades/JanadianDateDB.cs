@@ -783,7 +783,7 @@ namespace AerolineaFrba
             }
         }
 
-        internal void reemplazarAeronave(int idAeronave)
+        internal void reemplazarAeronave(int idAeronave,string matricula)
         {
             // sacar los datos de la aeronave
 
@@ -799,16 +799,133 @@ namespace AerolineaFrba
             // verificar si estan disponibles las fechas de cada  recorrido programado
             // si hay disponible, se reemplaza la aeronave
             // si no hay disponible se crea una nueva aeronave con las mismas caracteristicas
-            reemplazarOCrearNuevaAeronave(idAeronave,viajesAeronave,aeronavesSimilares);
+            reemplazarOCrearNuevaAeronave(idAeronave, viajesAeronave, aeronavesSimilares, matricula);
 
         }
 
-        private void reemplazarOCrearNuevaAeronave(int idAeronave, List<Viaje> viajesAeronave, List<Aeronave> aeronavesSimilares)
+        private void reemplazarOCrearNuevaAeronave(int idAeronave, List<Viaje> viajesAeronave, List<Aeronave> aeronavesSimilares,string matricula)
         {
             // [JANADIAN_DATE].[Viajes_Fecha_Aeronave]@id int,@fecha datetime
 
             foreach(Viaje v in viajesAeronave){
+                Boolean reemplazoEncontrado = false;
+                try
+                {
+                    foreach(Aeronave otraNave in aeronavesSimilares){
+                    int cantViajesFecha = getCantViajesFecha(otraNave,v);
 
+                    if (cantViajesFecha == 0) {
+                        migrarViajeAOtraAeronave(idAeronave,v, otraNave);
+                        reemplazoEncontrado = true;
+                    }
+                    break;
+                    }
+
+                    if (!reemplazoEncontrado)
+                    {
+                        //crear nueva aeronave
+                        // copiar butacas
+                        // liberar las butacas_viajes y crear las butacas_viajes con las butacas nuevas
+                        crearNuevaAeronaveParaSatisfacerViaje(idAeronave, matricula,v);
+
+                        //se vuelve a pedir aeronaves similares ya que ahora se agrega la nueva
+                        Dictionary<string, object> dict = obtenerDatosAeronave(idAeronave);
+                        aeronavesSimilares = obtenerAeronavesSimilares(Convert.ToString(dict["modelo"]), Convert.ToInt32(dict["fabricante"]), Convert.ToInt32(dict["tipoServicio"]), Convert.ToDecimal(dict["kgDisponibles"]), Convert.ToInt32(dict["butacasVentanilla"]), Convert.ToInt32(dict["butacasPasillo"]), idAeronave);
+                
+                    }
+                }
+                catch (Exception e ){
+                    e.ToString();
+                    con.Close();
+                    //crear nueva aeronave
+                    // copiar butacas
+                    // liberar las butacas_viajes y crear las butacas_viajes con las butacas nuevas
+                    crearNuevaAeronaveParaSatisfacerViaje(idAeronave,matricula, v);
+
+                    //se vuelve a pedir aeronaves similares ya que ahora se agrega la nueva
+                    Dictionary<string, object> dict = obtenerDatosAeronave(idAeronave);
+                    aeronavesSimilares = obtenerAeronavesSimilares(Convert.ToString(dict["modelo"]), Convert.ToInt32(dict["fabricante"]), Convert.ToInt32(dict["tipoServicio"]), Convert.ToDecimal(dict["kgDisponibles"]), Convert.ToInt32(dict["butacasVentanilla"]), Convert.ToInt32(dict["butacasPasillo"]), idAeronave);
+                
+
+                }
+            }
+
+        }
+
+        private void crearNuevaAeronaveParaSatisfacerViaje(int idAeronave,string matricula, Viaje v)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[crearNuevaAeronave] {0},'{1}',{2}", idAeronave,matricula, v.getId), con);
+                updateAeronave.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
+        }
+
+        private int getCantViajesFecha(Aeronave otraNave,Viaje v)
+        {
+            int cant = 1;
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [GD2C2015].[JANADIAN_DATE].[Viajes_Fecha_Aeronave] ({0},'{1}') as Cant", otraNave.getId, v.getFechaSalida), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return 1;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+
+                    return Convert.ToInt32(Fila["Cant"]);
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                exAlta.ToString();
+                con.Close();
+                return 1;
+
+            }
+            return 1;
+        }
+
+        private void migrarViajeAOtraAeronave(int idAeronave, Viaje v, Aeronave otraNave)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[reemplazarAeronaveViaje] {0},{1},{2}", idAeronave,v.getId,otraNave.getId), con);
+                updateAeronave.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
 
             }
         }
@@ -979,7 +1096,7 @@ namespace AerolineaFrba
             }
         }
 
-        internal void reemplazarAeronave(int idAeronave, string fechaReinicio)
+        internal void reemplazarAeronave(int idAeronave,string matricula, string fechaReinicio)
         {
             throw new NotImplementedException();
         }
