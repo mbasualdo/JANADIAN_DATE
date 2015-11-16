@@ -144,7 +144,7 @@ namespace AerolineaFrba.Abm_Aeronave
             }
             else if (dialogResult == DialogResult.No)
             {
-                JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId, monthCalendar1.SelectionRange.Start.ToShortDateString());
+                JanadianDateDB.Instance.reemplazarAeronave(aeronaveSel.getId,aeronaveSel.getMatricula, monthCalendar1.SelectionRange.Start);
             }
 
             MessageBox.Show(null, String.Format("Se ha puesto fuera de servicio correctamente la aeronave con Id {0}", aeronaveSel.getId), "Fuera de servicio Aeronave");

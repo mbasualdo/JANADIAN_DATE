@@ -873,7 +873,6 @@ namespace AerolineaFrba
 
         private int getCantViajesFecha(Aeronave otraNave,Viaje v)
         {
-            int cant = 1;
             try
             {
                 //
@@ -896,8 +895,11 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
+                    int count = Convert.ToInt32(Fila["Cant"]);
+                    con.Close();
 
-                    return Convert.ToInt32(Fila["Cant"]);
+                    return count;
+
                 }
                 con.Close();
             }
@@ -1096,9 +1098,62 @@ namespace AerolineaFrba
             }
         }
 
-        internal void reemplazarAeronave(int idAeronave,string matricula, string fechaReinicio)
+        internal void reemplazarAeronave(int idAeronave,string matricula, DateTime fechaReinicio)
         {
-            throw new NotImplementedException();
+            // sacar los datos de la aeronave
+
+            Dictionary<string, object> dict = obtenerDatosAeronave(idAeronave);
+
+            // buscar todas las aeronaves con las mismas caracteristicas
+
+            List<Aeronave> aeronavesSimilares = obtenerAeronavesSimilares(Convert.ToString(dict["modelo"]), Convert.ToInt32(dict["fabricante"]), Convert.ToInt32(dict["tipoServicio"]), Convert.ToDecimal(dict["kgDisponibles"]), Convert.ToInt32(dict["butacasVentanilla"]), Convert.ToInt32(dict["butacasPasillo"]), idAeronave);
+
+            //traigo todos los viajes a reemplazar
+            List<Viaje> viajesAeronave = obtenerViajesIntervaloAeronave(idAeronave, fechaReinicio);
+
+            // verificar si estan disponibles las fechas de cada  recorrido programado
+            // si hay disponible, se reemplaza la aeronave
+            // si no hay disponible se crea una nueva aeronave con las mismas caracteristicas
+            reemplazarOCrearNuevaAeronave(idAeronave, viajesAeronave, aeronavesSimilares, matricula);
+        }
+
+        private List<Viaje> obtenerViajesIntervaloAeronave(int idAeronave, DateTime fechaReinicio)
+        {
+            List<Viaje> viajes = new List<Viaje>();
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] WHERE Aeronave={0} AND  DATEDIFF(SECOND,'{1}',[FechaSalida]) >0 AND DATEDIFF(SECOND,'{2}',ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) < 0", idAeronave, this.fechaSistema, fechaReinicio), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return viajes;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    Viaje viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                    viajes.Add(viaje);
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+            }
+
+            return viajes;
         }
 
         internal void habilitarAeronavesQueSalenDelFueraDeServicio()
