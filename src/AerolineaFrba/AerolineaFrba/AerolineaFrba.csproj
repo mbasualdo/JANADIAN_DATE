@@ -243,6 +243,7 @@
       <DependentUpon>FormDevolucion.cs</DependentUpon>
     </Compile>
     <Compile Include="Entidades\Aeronave.cs" />
+    <Compile Include="Entidades\Viaje.cs" />
     <Compile Include="Entidades\Ruta.cs" />
     <Compile Include="Excepciones\PasswordMismatchException.cs" />
     <Compile Include="Excepciones\UnavailableException.cs" />

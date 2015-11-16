@@ -783,9 +783,156 @@ namespace AerolineaFrba
             }
         }
 
-        internal void reemplazarAeronave(int p)
+        internal void reemplazarAeronave(int idAeronave)
         {
-            throw new NotImplementedException();
+            // sacar los datos de la aeronave
+
+            Dictionary<string, object> dict = obtenerDatosAeronave(idAeronave);
+
+            // buscar todas las aeronaves con las mismas caracteristicas
+
+            List<Aeronave> aeronavesSimilares = obtenerAeronavesSimilares(Convert.ToString(dict["modelo"]), Convert.ToInt32(dict["fabricante"]), Convert.ToInt32(dict["tipoServicio"]), Convert.ToDecimal(dict["kgDisponibles"]), Convert.ToInt32(dict["butacasVentanilla"]), Convert.ToInt32(dict["butacasPasillo"]), idAeronave);
+                
+            //traigo todos los viajes a reemplazar
+            List<Viaje> viajesAeronave = obtenerViajesFuturosAeronave(idAeronave);
+
+            // verificar si estan disponibles las fechas de cada  recorrido programado
+            // si hay disponible, se reemplaza la aeronave
+            // si no hay disponible se crea una nueva aeronave con las mismas caracteristicas
+            reemplazarOCrearNuevaAeronave(idAeronave,viajesAeronave,aeronavesSimilares);
+
+        }
+
+        private void reemplazarOCrearNuevaAeronave(int idAeronave, List<Viaje> viajesAeronave, List<Aeronave> aeronavesSimilares)
+        {
+            // [JANADIAN_DATE].[Viajes_Fecha_Aeronave]@id int,@fecha datetime
+
+            foreach(Viaje v in viajesAeronave){
+
+
+            }
+        }
+
+        private List<Viaje> obtenerViajesFuturosAeronave(int idAeronave)
+        {
+            List<Viaje> viajes = new List<Viaje>();
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] WHERE Aeronave={0} AND  DATEDIFF(SECOND,'{1}',[FechaSalida]) >0", idAeronave, this.fechaSistema), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return viajes;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    Viaje viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                    viajes.Add(viaje);
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+            }
+
+            return viajes;
+        }
+
+        private List<Aeronave> obtenerAeronavesSimilares(string modelo, int fabricante, int tipoServicio,Decimal kgDisponibles,int butacasVentanilla,int butacasPasillo, int idAeronave)
+        {
+            List<Aeronave> aeronavesSimilares = new List<Aeronave>();
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT a.Id,a.Matricula,a.Modelo,a.KG_Disponibles,f.Nombre as Fabricante,t.Nombre as Tipo_Servicio,Fecha_Alta,Baja_Fuera_Servicio,Baja_Vida_Util,Fecha_Baja_Definitiva,Cant_Butacas_Ventanilla,Cant_Butacas_Pasillo,Habilitado FROM JANADIAN_DATE.Aeronave a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)  WHERE a.ID<>{0} AND a.Fabricante={1} AND a.Tipo_Servicio={2} AND a.Modelo='{3}' AND a.Habilitado=1 and KG_Disponibles>={4} and Cant_Butacas_Ventanilla>={5} and Cant_Butacas_Pasillo>={6}", idAeronave, fabricante, tipoServicio, modelo,kgDisponibles,butacasVentanilla,butacasPasillo), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return aeronavesSimilares;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    Aeronave aeronave = new Aeronave(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Matricula"]), Convert.ToString(Fila["Modelo"]), Convert.ToDecimal(Fila["KG_Disponibles"]), Convert.ToString(Fila["Fabricante"]), Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]), Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]), Convert.ToString(Fila["Tipo_Servicio"]));
+                    aeronavesSimilares.Add(aeronave);
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+            }
+
+            return aeronavesSimilares;
+        }
+
+        private Dictionary<String, object> obtenerDatosAeronave(int idAeronave)
+        {
+
+            Dictionary<String, object>  dic = new Dictionary<String, object>();
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 a.Modelo,a.Fabricante,a.Tipo_Servicio,a.KG_Disponibles,a.Cant_Butacas_Ventanilla,a.Cant_Butacas_Pasillo FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a  WHERE a.Id = {0}  ", idAeronave), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    dic.Add("modelo", Convert.ToString(Fila["Modelo"]));
+                    dic.Add("fabricante", Convert.ToInt32(Fila["Fabricante"]));
+                    dic.Add("tipoServicio", Convert.ToInt32(Fila["Tipo_Servicio"]));
+                    dic.Add("kgDisponibles", Convert.ToInt32(Fila["KG_Disponibles"]));
+                    dic.Add("butacasVentanilla", Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]));
+                    dic.Add("butacasPasillo", Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]));
+
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+            }
+
+            return dic;
         }
 
         internal void bajaFueraServicioAeronave(int idAeronave, string dateOut)
@@ -832,7 +979,7 @@ namespace AerolineaFrba
             }
         }
 
-        internal void reemplazarAeronave(int p1, string p2)
+        internal void reemplazarAeronave(int idAeronave, string fechaReinicio)
         {
             throw new NotImplementedException();
         }
