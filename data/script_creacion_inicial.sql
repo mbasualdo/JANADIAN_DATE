@@ -64,7 +64,7 @@ RETURNS  int
 AS 
 BEGIN
    DECLARE @count int
-   SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] WHERE Aeronave=@id AND DATEDIFF(SECOND,@fecha,[FechaSalida]) <=0 AND DATEDIFF(SECOND,@fecha,ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) >= 0
+SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] WHERE Aeronave=@id AND DATEDIFF(SECOND,@fecha,[FechaSalida]) >=0 AND DATEDIFF(SECOND,@fecha,ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) <= 0
    RETURN  ISNULL ( @count , 0 )
 END
 GO
@@ -1248,62 +1248,24 @@ GO
 	  /*****Inserts Viajes ****/
 CREATE PROCEDURE [JANADIAN_DATE].[Insertar_Viajes] 
 AS
-BEGIN TRANSACTION
+BEGIN TRY
 	print ' '
 	print 'Insertar Viajes'
-BEGIN TRY
+BEGIN TRANSACTION
 
-DECLARE @Salida datetime
-DECLARE @Llegada datetime
-DECLARE @Estimada datetime
-DECLARE @Aeronave int
-DECLARE @Ruta int
-DECLARE @naveMat nvarchar(255)
-
-DECLARE db_cursor_viajes CURSOR FOR  
 /****** S ******/
+INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) 
  SELECT distinct
        t1.[FechaSalida]	   
-	  ,t2.Id as aeronave
-	  ,t1.[Fecha_LLegada_Estimada] 
 	  ,t1.[FechaLLegada] 
+	  ,t1.[Fecha_LLegada_Estimada] 
+	  ,t2.Id as aeronave
 	 , t3.id as ruta
-	 ,t1.Aeronave_Matricula
   FROM [GD2C2015].[gd_esquema].[Maestra] t1
   inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 on (t1.Aeronave_Matricula=t2.Matricula)
     inner join [GD2C2015].[JANADIAN_DATE].[Ruta] t3 on (t3.Codigo=t1.Ruta_Codigo and Ciudad_Origen in (select c.id from JANADIAN_DATE.ciudad c where t1.Ruta_Ciudad_Origen=c.nombre) and Ciudad_Destino in (select c.id from JANADIAN_DATE.ciudad c where t1.Ruta_Ciudad_Destino=c.nombre))
 
-OPEN db_cursor_viajes   
-FETCH NEXT FROM db_cursor_viajes INTO @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
 
-WHILE @@FETCH_STATUS = 0   
-BEGIN   
-	--print CAST(@Salida as nvarchar(255)) + ',' + CAST(@Aeronave as nvarchar(255)) + ',' +CAST(@Estimada as nvarchar(255)) + ',' +CAST(@Llegada as nvarchar(255)) + ',' +CAST(@Ruta as nvarchar(255)) + ',' +CAST(@naveMat as nvarchar(255)) 
-	-- SI ESTA DIPONIBLE LA AERONAVE
-	IF  ([JANADIAN_DATE].[Aeronave_Habilitada](@Aeronave)=1 AND [JANADIAN_DATE].[Viajes_Fecha_Aeronave](@Aeronave,@Salida)<=0)
-   BEGIN
-	INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES (   @Salida ,@Llegada,@Estimada , @Aeronave,@Ruta );
-   END
-   ELSE
-   -- la aeronave no esta disponible
-   --Crear nueva aeronave con las mismas condiciones de la que esta ocupada
-   BEGIN
-
-		IF ( [JANADIAN_DATE].[Aeronave_Habilitada_Por_Matricula](@naveMat + '_2')=0)
-		
-		INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) 
-		SELECT @naveMat + '_2' ,Fabricante,Modelo , Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla FROM Aeronave WHERE id=@Aeronave
-
-		SELECT @Aeronave=Id FROM [JANADIAN_DATE].[Aeronave] where Matricula=(@naveMat + '_2')
-		INSERT INTO JANADIAN_DATE.Viaje(FechaSalida,FechaLlegada,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES (   @Salida ,@Llegada,@Estimada , @Aeronave,@Ruta );
-
-   END
-
-    FETCH NEXT FROM db_cursor_viajes INTO  @Salida ,@Aeronave,@Estimada,@Llegada,@Ruta,@naveMat
-END   
-
-CLOSE db_cursor_viajes  	
-DEALLOCATE db_cursor_viajes
 
 COMMIT TRANSACTION
 
@@ -1338,15 +1300,6 @@ SELECT distinct
   FROM [GD2C2015].[gd_esquema].[Maestra] t
   inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 ON (t.Aeronave_Matricula=t2.Matricula)
   where Butaca_Piso<>0
-  UNION
-  	  select distinct
-      [Butaca_Nro]
-      ,[Butaca_Tipo]
-      ,[Butaca_Piso]
-      ,t2.id as Aeronave
-  FROM [GD2C2015].[gd_esquema].[Maestra] t
-  inner join [GD2C2015].[JANADIAN_DATE].[Aeronave] t2 ON (t.Aeronave_Matricula +'_2'=t2.Matricula)
-  where Butaca_Piso<>0 --Piso =1 Butaca Piso = 0 paquete
 
 COMMIT TRANSACTION
 END TRY
@@ -1373,7 +1326,7 @@ BEGIN TRY
 INSERT INTO JANADIAN_DATE.Butaca_Viaje(Butaca,Viaje)
 SELECT distinct b.Id,v.Id
   FROM [GD2C2015].[gd_esquema].[Maestra] m
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula OR a.Matricula=m.Aeronave_Matricula + '_2')
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Butaca] b ON (b.Numero=m.Butaca_Nro and b.Aeronave=a.id)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id)
 
@@ -1404,7 +1357,7 @@ BEGIN TRY
 INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago,Codigo) 
 SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.iD as Viaje,'EFECTIVO',IIF(m.Pasaje_Precio=0, m.Paquete_Codigo,m.Pasaje_Codigo) as Codigo
 	 FROM [GD2C2015].[gd_esquema].[Maestra] m
-	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula  OR a.Matricula=m.Aeronave_Matricula + '_2')
+	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c1 ON (c1.Nombre=m.Ruta_Ciudad_Origen)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (c2.Nombre=m.Ruta_Ciudad_Destino)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t ON (t.Nombre=m.Tipo_Servicio)
@@ -1478,7 +1431,7 @@ INSERT INTO JANADIAN_DATE.Pasaje(Codigo,Precio,Butaca,Compra,Cliente)
   FROM [GD2C2015].[gd_esquema].[Maestra] m
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] cli ON (cli.Nombre=m.Cli_Nombre AND cli.Apellido=m.Cli_Apellido and cli.Dni=m.Cli_Dni)
     INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Codigo=m.Pasaje_Codigo)
-	 INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula  OR a.Matricula=m.Aeronave_Matricula + '_2')
+	 INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v  ON (c.Viaje=v.Id AND a.Id=v.Aeronave)
   INNER JOIN  [GD2C2015].[JANADIAN_DATE].Butaca b ON ( a.Id=b.Aeronave and b.Numero=m.Butaca_Nro and b.Tipo=m.Butaca_Tipo )
 

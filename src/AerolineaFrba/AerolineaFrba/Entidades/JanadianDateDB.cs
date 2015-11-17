@@ -1130,7 +1130,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT [Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] WHERE Aeronave={0} AND  DATEDIFF(SECOND,'{1}',[FechaSalida]) >0 AND DATEDIFF(SECOND,'{2}',ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) < 0", idAeronave, this.fechaSistema, fechaReinicio), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] WHERE Aeronave={0} AND  DATEDIFF(SECOND,'{1}',[FechaSalida]) >=0 AND DATEDIFF(SECOND,'{2}',ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) <= 0", idAeronave, this.fechaSistema, fechaReinicio), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
