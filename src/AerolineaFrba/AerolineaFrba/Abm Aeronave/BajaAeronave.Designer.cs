@@ -46,10 +46,10 @@
             this.textMatricula = new System.Windows.Forms.TextBox();
             this.buttonOutService = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.monthCalendar1 = new System.Windows.Forms.MonthCalendar();
             this.label1 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.buttonLimpiar2 = new System.Windows.Forms.Button();
+            this.dateTimeFechaReinicio = new System.Windows.Forms.DateTimePicker();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVentanilla)).BeginInit();
@@ -220,7 +220,7 @@
             // 
             // buttonOutService
             // 
-            this.buttonOutService.Location = new System.Drawing.Point(453, 507);
+            this.buttonOutService.Location = new System.Drawing.Point(453, 392);
             this.buttonOutService.Name = "buttonOutService";
             this.buttonOutService.Size = new System.Drawing.Size(122, 23);
             this.buttonOutService.TabIndex = 15;
@@ -230,21 +230,15 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.monthCalendar1);
+            this.groupBox2.Controls.Add(this.dateTimeFechaReinicio);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.label26);
             this.groupBox2.Location = new System.Drawing.Point(25, 306);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(552, 195);
+            this.groupBox2.Size = new System.Drawing.Size(552, 68);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Fuera de Servicio";
-            // 
-            // monthCalendar1
-            // 
-            this.monthCalendar1.Location = new System.Drawing.Point(257, 14);
-            this.monthCalendar1.Name = "monthCalendar1";
-            this.monthCalendar1.TabIndex = 66;
             // 
             // label1
             // 
@@ -267,13 +261,20 @@
             // 
             // buttonLimpiar2
             // 
-            this.buttonLimpiar2.Location = new System.Drawing.Point(25, 507);
+            this.buttonLimpiar2.Location = new System.Drawing.Point(25, 380);
             this.buttonLimpiar2.Name = "buttonLimpiar2";
             this.buttonLimpiar2.Size = new System.Drawing.Size(75, 23);
             this.buttonLimpiar2.TabIndex = 16;
             this.buttonLimpiar2.Text = "Limpiar";
             this.buttonLimpiar2.UseVisualStyleBackColor = true;
             this.buttonLimpiar2.Click += new System.EventHandler(this.buttonLimpiar2_Click);
+            // 
+            // dateTimeFechaReinicio
+            // 
+            this.dateTimeFechaReinicio.Location = new System.Drawing.Point(285, 27);
+            this.dateTimeFechaReinicio.Name = "dateTimeFechaReinicio";
+            this.dateTimeFechaReinicio.Size = new System.Drawing.Size(200, 20);
+            this.dateTimeFechaReinicio.TabIndex = 67;
             // 
             // BajaAeronave
             // 
@@ -319,9 +320,9 @@
         private System.Windows.Forms.TextBox textMatricula;
         private System.Windows.Forms.Button buttonOutService;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.MonthCalendar monthCalendar1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.Button buttonLimpiar2;
+        private System.Windows.Forms.DateTimePicker dateTimeFechaReinicio;
     }
 }
