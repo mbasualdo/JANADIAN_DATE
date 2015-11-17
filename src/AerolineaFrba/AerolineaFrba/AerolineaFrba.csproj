@@ -291,15 +291,19 @@
     <Compile Include="Entidades\Usuario.cs" />
     <EmbeddedResource Include="Abm Aeronave\AltaAeronave.resx">
       <DependentUpon>AltaAeronave.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\BajaAeronave.resx">
       <DependentUpon>BajaAeronave.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\FormAeronave.resx">
       <DependentUpon>FormAeronave.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\ListadoAeronave.resx">
       <DependentUpon>ListadoAeronave.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\ListadoSeleccionAeronave.resx">
       <DependentUpon>ListadoSeleccionAeronave.cs</DependentUpon>

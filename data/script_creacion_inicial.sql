@@ -313,6 +313,16 @@ CREATE TABLE [JANADIAN_DATE].[Compra](
 
 GO
 
+ /** Creacion de tabla Cancelacion  ***/
+IF OBJECT_ID('[JANADIAN_DATE].[Cancelacion]') IS NULL
+CREATE TABLE [JANADIAN_DATE].[Cancelacion](
+	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[Motivo] [nvarchar](255) NOT NULL,
+	[FechaDevolucion] [datetime] NOT NULL
+) ON [PRIMARY]
+
+GO
+
   /** Creacion de tabla Pasaje ***/
 IF OBJECT_ID('[JANADIAN_DATE].[Pasaje]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Pasaje](
@@ -323,13 +333,14 @@ CREATE TABLE [JANADIAN_DATE].[Pasaje](
 	[Cliente] [int] NOT NULL,
 	[Precio] [numeric](18,2) NOT NULL CHECK ([Precio] > 0),
 	/**Por defecto activo ***/
-	[Cancelado] [bit] NOT NULL DEFAULT 0 
+	[Cancelado] [bit] NOT NULL DEFAULT 0,
+	[Cancelacion] [int] FOREIGN KEY (Cancelacion) REFERENCES [JANADIAN_DATE].[Cancelacion] (Id),	 
 	CONSTRAINT FK_Pasaje_Butaca FOREIGN KEY (Butaca) REFERENCES [JANADIAN_DATE].[Butaca] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
 	CONSTRAINT FK_Pasaje_Cliente FOREIGN KEY (Cliente) REFERENCES [JANADIAN_DATE].[Cliente] (Id)
 	ON DELETE CASCADE
-    ON UPDATE CASCADE,
+    ON UPDATE CASCADE
 ) ON [PRIMARY]
 
 GO
@@ -342,7 +353,9 @@ CREATE TABLE [JANADIAN_DATE].[Paquete](
 	[KG] [numeric](18,0) CHECK ([KG]>=0),
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
+
 	[Precio] [numeric](18,2) NOT NULL CHECK ([Precio] > 0),
+	[Cancelacion] [int] FOREIGN KEY (Cancelacion) REFERENCES [JANADIAN_DATE].[Cancelacion] (Id),	 
 	/**Por defecto activo ***/
 	[Cancelado] [bit] NOT NULL DEFAULT 0 
 	CONSTRAINT FK_Paquete_Cliente FOREIGN KEY (Cliente) REFERENCES [JANADIAN_DATE].[Cliente] (Id)
@@ -418,25 +431,6 @@ CREATE TABLE [JANADIAN_DATE].[Millas](
 
 GO
 
- /** Creacion de tabla Cancelacion  ***/
-IF OBJECT_ID('[JANADIAN_DATE].[Cancelacion]') IS NULL
-CREATE TABLE [JANADIAN_DATE].[Cancelacion](
-	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[PNR] [int] NOT NULL,
-	[Codigo_Pasaje] [int] FOREIGN KEY (Codigo_Pasaje) REFERENCES [JANADIAN_DATE].[Pasaje] (Id),
-	[Codigo_Paquete] [int] FOREIGN KEY (Codigo_Paquete) REFERENCES [JANADIAN_DATE].[Paquete] (Id),
-	[Pasaje_o_Paquete] [nvarchar](255) NOT NULL,
-	[Motivo] [nvarchar](255) NOT NULL,
-	[FechaDevolucion] [datetime] NOT NULL,
-	CONSTRAINT FK_Cancelacion_Compra FOREIGN KEY (PNR) REFERENCES [JANADIAN_DATE].[Compra] (PNR)
-	ON DELETE CASCADE
-    ON UPDATE CASCADE,
-	CONSTRAINT CHK_Algun_tipo CHECK ( ([Codigo_Pasaje] IS NOT NULL) OR ([Codigo_Paquete] IS NOT NULL) ),
-	CONSTRAINT CHK_Tipos CHECK ( [Pasaje_o_Paquete] IN ('PASAJE','PAQUETE') )
-) ON [PRIMARY]
-
-GO
-
 /** creacion tabla millas canjeadas**/
 IF OBJECT_ID('[JANADIAN_DATE].[Millas_Canjeadas]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Millas_Canjeadas](
@@ -499,13 +493,16 @@ BEGIN TRY
 		BEGIN
 		/** Liberar la butaca **/
 		 DELETE Butaca_Viaje WHERE Butaca=@butacaPasaje
+		
+		/** grabamos la cancelacion en la tabla correspondiente **/
+		INSERT INTO JANADIAN_DATE.Cancelacion 
+		(Motivo,FechaDevolucion) 
+		VALUES	
+		(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
+
 		/** Marcamos el pasaje como cancelado **/
-			UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1 WHERE Id=@cod_pasaje
-					/** grabamos la cancelacion en la tabla correspondiente **/
-				INSERT INTO Cancelacion 
-				(PNR,Codigo_Pasaje,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
-				VALUES
-				(@PNR_compra,@cod_pasaje,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PASAJE')	
+
+			UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_pasaje
 		END
 
 
@@ -542,15 +539,18 @@ BEGIN TRY
 	IF  @kg_paquete IS NOT NULL
 		BEGIN
 		 /** Liberar los KG **/
-			/** Marcamos el paquete como cancelado **/
-			UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1 WHERE Id=@cod_paquete
+		
+		/** grabamos la cancelacion en la tabla correspondiente **/
+		INSERT INTO JANADIAN_DATE.Cancelacion 
+		(Motivo,FechaDevolucion) 
+		VALUES	
+		(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
 
-			/** grabamos la cancelacion en la tabla correspondiente **/
-				INSERT INTO Cancelacion 
-				(PNR,Codigo_Paquete,Motivo,FechaDevolucion,Pasaje_o_Paquete) 
-				VALUES
-				(@PNR_compra,@cod_paquete,ISNULL (@motivo,''),CURRENT_TIMESTAMP,'PAQUETE')	
-				END
+		/** Marcamos el paquete como cancelado **/
+
+			UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_paquete
+
+		END
 
 
 	/** aplicamos los cambios **/
