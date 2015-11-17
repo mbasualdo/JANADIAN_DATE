@@ -63,7 +63,10 @@ namespace AerolineaFrba
             this.habilitado = habilitado;
         }
 
-
+        public override string ToString()
+        {
+            return this.getCodigo.ToString() + " " + this.getOrigen.ToString() + " " + this.getDestino.ToString() + " " + this.getTipoServicio.ToString();
+        }
         internal void setOrigen(string p)
         {
             this.origen = p;

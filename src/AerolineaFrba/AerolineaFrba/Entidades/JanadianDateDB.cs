@@ -1200,5 +1200,81 @@ namespace AerolineaFrba
 
             }
         }
+
+        internal List<Ruta> getRutas()
+        {
+            List<Ruta> rutas = new List<Ruta>();
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado  FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Rutas"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    rutas.Add(new Ruta(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Origen"]), Convert.ToString(Fila["Destino"]), Convert.ToDecimal(Fila["Codigo"]), Convert.ToDouble(Fila["Precio_BaseKG"]), Convert.ToDouble(Fila["Precio_BasePasaje"]), Convert.ToString(Fila["Tipo_Servicio"]), Convert.ToBoolean(Fila["Habilitado"])));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return rutas;
+        }
+
+        internal List<Aeronave> getAeronaves()
+        {
+            List<Aeronave> aeronaves = new List<Aeronave>();
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT a.Id,a.Matricula,a.Modelo ,	a.KG_Disponibles,	f.Nombre as Fabricante,	t.Nombre as Tipo_Servicio,	Fecha_Alta,	Baja_Fuera_Servicio,	Baja_Vida_Util,	Fecha_Baja_Definitiva,	Cant_Butacas_Ventanilla,	Cant_Butacas_Pasillo,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)   "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Aeronaves"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    aeronaves.Add(new Aeronave(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Matricula"]), Convert.ToString(Fila["Modelo"]), Convert.ToDecimal(Fila["KG_Disponibles"]), Convert.ToString(Fila["Fabricante"]), Convert.ToInt32(Fila["Cant_Butacas_Ventanilla"]), Convert.ToInt32(Fila["Cant_Butacas_Pasillo"]), Convert.ToString(Fila["Tipo_Servicio"])));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return aeronaves;
+        }
     }
 }

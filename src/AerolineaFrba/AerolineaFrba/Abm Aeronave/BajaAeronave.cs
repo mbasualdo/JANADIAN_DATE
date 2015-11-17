@@ -63,6 +63,8 @@ namespace AerolineaFrba.Abm_Aeronave
             numericUpDownPasillo.Value = 0.00M;
             comboFabricante.SelectedItem = null;
             comboBoxTipoServicio.SelectedItem = null;
+            dateTimeFechaReinicio.MinDate = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
+            dateTimeFechaReinicio.Value = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
         }
 
         private void buttonGuardar_Click(object sender, EventArgs e)
@@ -107,7 +109,8 @@ namespace AerolineaFrba.Abm_Aeronave
             numericUpDownPasillo.Value = aeronaveSel.getCantidadButacasPasillo;
             comboFabricante.SelectedItem = aeronaveSel.getFabricante;
             comboBoxTipoServicio.SelectedItem = aeronaveSel.getTipoServicio;
-            dateTimeFechaReinicio.MinDate = JanadianDateDB.Instance.getFechaSistema();
+            dateTimeFechaReinicio.MinDate = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
+            dateTimeFechaReinicio.Value = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
         }
 
         private void buttonLimpiar2_Click(object sender, EventArgs e)

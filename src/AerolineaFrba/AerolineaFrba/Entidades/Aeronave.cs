@@ -39,6 +39,10 @@ namespace AerolineaFrba
 
         }
 
+        public override string ToString()
+        {
+            return this.getMatricula.ToString() + " " + this.getModelo.ToString() + " " + this.getFabricante.ToString() + " " + this.getTipoServicio.ToString();
+        }
         public Boolean getHabilitado
         {
             get { return habilitado; }
