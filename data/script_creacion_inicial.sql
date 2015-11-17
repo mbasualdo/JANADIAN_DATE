@@ -353,7 +353,6 @@ CREATE TABLE [JANADIAN_DATE].[Paquete](
 	[KG] [numeric](18,0) CHECK ([KG]>=0),
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
-
 	[Precio] [numeric](18,2) NOT NULL CHECK ([Precio] > 0),
 	[Cancelacion] [int] FOREIGN KEY (Cancelacion) REFERENCES [JANADIAN_DATE].[Cancelacion] (Id),	 
 	/**Por defecto activo ***/
@@ -478,7 +477,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Pasaje] 
 	@PNR_compra int,
 	@cod_pasaje [numeric](18,0),
-	@motivo nvarchar(255) 
+	@motivo nvarchar(255),
+	@Viaje int 
 
 AS
 BEGIN TRY
@@ -492,7 +492,7 @@ BEGIN TRY
 	 IF  @butacaPasaje IS NOT NULL
 		BEGIN
 		/** Liberar la butaca **/
-		 DELETE Butaca_Viaje WHERE Butaca=@butacaPasaje
+		 DELETE JANADIAN_DATE.Butaca_Viaje WHERE Butaca=@butacaPasaje AND Viaje=@Viaje
 		
 		/** grabamos la cancelacion en la tabla correspondiente **/
 		INSERT INTO JANADIAN_DATE.Cancelacion 
@@ -580,13 +580,14 @@ BEGIN TRY
 	/***   RECORRER TODO LO ASOCIADO A LA AERONAVE Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
 		declare @pnr int;
 		declare @codigo [numeric](18,0);
+		declare @viaje int;
 
 		BEGIN TRANSACTION
 			IF (@Fecha_maxima IS NULL)
 			BEGIN
 				DECLARE ViajesEnAeronave CURSOR FOR 
 
-					SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+					SELECT c.PNR, p.Id AS codigo,v.Id as Viaje FROM [JANADIAN_DATE].[Aeronave] a
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
 					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
@@ -597,7 +598,7 @@ BEGIN TRY
 			BEGIN
 
 			DECLARE ViajesEnAeronave CURSOR FOR 
-			SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+			SELECT c.PNR, p.Id AS codigo,v.Id as Viaje FROM [JANADIAN_DATE].[Aeronave] a
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
 					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
@@ -606,12 +607,12 @@ BEGIN TRY
 			END
 
 		OPEN ViajesEnAeronave 
-		FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
+		FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo,@viaje
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave'
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave',@viaje
 
-			FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
+			FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo,@viaje
 		END
 		CLOSE ViajesEnAeronave
 		DEALLOCATE ViajesEnAeronave
@@ -1544,20 +1545,21 @@ BEGIN
 	/***   RECORRER TODO LO ASOCIADO A LA RUTA Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
 		declare @pnr int;
 		declare @codigo [numeric](18,0);
+		declare @viaje int
 
 		DECLARE ViajesEnRuta CURSOR FOR 
-		SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		SELECT c.PNR, p.Id AS codigo,v.Id as viaje FROM [JANADIAN_DATE].[Ruta] r
 		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
 		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
 		WHERE r.Id=@Id and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0		
 
 		OPEN ViajesEnRuta 
-		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
+		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo,@viaje
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta'
-			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta',@viaje
+			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo,@viaje
 		END
 		CLOSE ViajesEnRuta
 		DEALLOCATE ViajesEnRuta
