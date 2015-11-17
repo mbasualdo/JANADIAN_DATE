@@ -304,7 +304,7 @@ CREATE TABLE [JANADIAN_DATE].[Compra](
 	[Fecha_Compra] [datetime] NOT NULL,
 	[Viaje] [int] NOT NULL,
 	[Forma_Pago] [nvarchar](255) NOT NULL CHECK (Forma_Pago IN ('TC','EFECTIVO')),
-	[Usuario] [int] FOREIGN KEY (Usuario) REFERENCES  [JANADIAN_DATE].[Usuario] (Id),
+	[Cliente] [int] FOREIGN KEY (Cliente) REFERENCES  [JANADIAN_DATE].[Cliente] (Id),
 	CONSTRAINT FK_Compra_Viaje FOREIGN KEY (Viaje) REFERENCES [JANADIAN_DATE].[Viaje] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
@@ -1354,8 +1354,8 @@ BEGIN TRANSACTION
 BEGIN TRY
 
 /* CADA REGISTRO DE MAESTRA LO TOMAMOS COMO UNA COMPRA INDEPENDIENTE pagada en efectivo y realizada por autoservicio*/
-INSERT INTO JANADIAN_DATE.Compra(Precio,Fecha_Compra,Viaje,Forma_Pago,Codigo) 
-SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.iD as Viaje,'EFECTIVO',IIF(m.Pasaje_Precio=0, m.Paquete_Codigo,m.Pasaje_Codigo) as Codigo
+INSERT INTO JANADIAN_DATE.Compra(Cliente,Precio,Fecha_Compra,Viaje,Forma_Pago,Codigo) 
+SELECT c.Id as Cliente, IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF(m.Pasaje_Precio=0, m.Paquete_FechaCompra,m.Pasaje_FechaCompra) as Fecha_Compra,v.iD as Viaje,'EFECTIVO',IIF(m.Pasaje_Precio=0, m.Paquete_Codigo,m.Pasaje_Codigo) as Codigo
 	 FROM [GD2C2015].[gd_esquema].[Maestra] m
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c1 ON (c1.Nombre=m.Ruta_Ciudad_Origen)
@@ -1363,6 +1363,7 @@ SELECT  IIF(m.Pasaje_Precio=0, m.Paquete_Precio,m.Pasaje_Precio) AS Precio,  IIF
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t ON (t.Nombre=m.Tipo_Servicio)
 	INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (r.Codigo=m.Ruta_Codigo and r.Ciudad_Origen=c1.Id and r.Ciudad_Destino=c2.Id)
     INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Ruta=r.Id and v.Aeronave=a.Id and v.FechaSalida=m.FechaSalida)
+    INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] c ON (c.Nombre=m.Cli_Nombre and c.Dni=m.Cli_Dni and c.Apellido=m.Cli_Apellido)
 
 COMMIT TRANSACTION
 
