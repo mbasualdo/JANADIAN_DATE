@@ -47,7 +47,7 @@ namespace AerolineaFrba.Generacion_Viaje
             dateTimeFechaSalida.Value = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
             dateTimeFechaSalida.Format = DateTimePickerFormat.Custom;
 
-            this.dateTimeFechaSalida.CustomFormat = "dd 'de' MMMM 'de' yyyy hh:mm:ss";
+            this.dateTimeFechaSalida.CustomFormat = "dd 'de' MMMM 'de' yyyy HH:mm:ss";
             
           //  this.dateTimeFecha.Width = 1000;
             this.dateTimeFechaSalida.ShowUpDown = true;
@@ -56,7 +56,7 @@ namespace AerolineaFrba.Generacion_Viaje
             dateTimeFechaLlegada.Value = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
             dateTimeFechaLlegada.Format = DateTimePickerFormat.Custom;
 
-            this.dateTimeFechaLlegada.CustomFormat = "dd 'de' MMMM 'de' yyyy hh:mm:ss";
+            this.dateTimeFechaLlegada.CustomFormat = "dd 'de' MMMM 'de' yyyy HH:mm:ss";
 
             //  this.dateTimeFecha.Width = 1000;
             this.dateTimeFechaLlegada.ShowUpDown = true;

@@ -450,7 +450,7 @@ GO
 
  /** Creacion de vista itinerario aeronave ***/
  CREATE VIEW [JANADIAN_DATE].[Itinerario_Aeronave] AS  
- SELECT a.Matricula,v.FechaLlegada,o.Nombre as Origen,d.Nombre as Destino FROM   [JANADIAN_DATE].[Viaje] v
+ SELECT a.Matricula,v.FechaSalida,v.Fecha_Llegada_Estimada,o.Nombre as Origen,d.Nombre as Destino FROM   [JANADIAN_DATE].[Viaje] v
  INNER JOIN [JANADIAN_DATE].[Aeronave] a ON (v.Aeronave = a.Id)
  INNER JOIN [JANADIAN_DATE].[Ruta] r ON (v.Ruta = r.Id)
  INNER JOIN [JANADIAN_DATE].[Ciudad] o ON (r.Ciudad_Origen = o.Id)
@@ -569,7 +569,7 @@ BEGIN CATCH
 END CATCH;
 GO
 
-/*** trigger que cancela pasajes al dar de baja una aeronave (inhabilitar) - si tiene fecha maxima es baja fuera de servicio sino baja por fin de vida util ****/
+/*** procedimiento que cancela pasajes al dar de baja una aeronave (inhabilitar) - si tiene fecha maxima es baja fuera de servicio sino baja por fin de vida util ****/
 /***        ****/
 CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPasajesAeronave]
 @Id_Aeronave int,
@@ -1602,6 +1602,44 @@ BEGIN
 	end
 	
 GO
+
+/*** trigger que computa las millas de los clientes al registrar la llegada ****/
+/***        ****/
+CREATE TRIGGER [JANADIAN_DATE].[trgComputarMillasAlLegar] ON  [JANADIAN_DATE].[Viaje]
+FOR UPDATE
+AS
+BEGIN
+	declare @Llegada  datetime ;
+	declare @id int;
+
+	select @id=i.Id,@Llegada=i.FechaLlegada from inserted i;	
+	
+	if  @Llegada IS NOT NULL
+			
+		/***   RECORRER todas las compras del viaje ***/
+		declare @pnr int;
+		declare @codigo [numeric](18,0);
+
+		DECLARE ViajesEnRuta CURSOR FOR 
+		SELECT c.PNR, x.Id AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
+		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
+		INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
+		WHERE r.Id=@Id and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0		
+
+		OPEN ViajesEnRuta 
+		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Ruta'
+			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
+		END
+		CLOSE ViajesEnRuta
+		DEALLOCATE ViajesEnRuta
+	end
+	
+GO
+
 EXEC [JANADIAN_DATE].[Insertar_Funcionalidades] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Roles] 

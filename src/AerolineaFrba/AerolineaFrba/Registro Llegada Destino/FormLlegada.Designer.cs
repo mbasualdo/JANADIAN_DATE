@@ -38,10 +38,13 @@
             this.comboDestino = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.comboOrigen = new System.Windows.Forms.ComboBox();
-            this.buttonGuardar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.dataGridRol1 = new System.Windows.Forms.DataGridView();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.SuspendLayout();
             // 
             // dateTimeFechaLlegada
@@ -145,16 +148,6 @@
             this.comboOrigen.Size = new System.Drawing.Size(185, 21);
             this.comboOrigen.TabIndex = 29;
             // 
-            // buttonGuardar
-            // 
-            this.buttonGuardar.Location = new System.Drawing.Point(448, 227);
-            this.buttonGuardar.Name = "buttonGuardar";
-            this.buttonGuardar.Size = new System.Drawing.Size(75, 23);
-            this.buttonGuardar.TabIndex = 28;
-            this.buttonGuardar.Text = "Registrar";
-            this.buttonGuardar.UseVisualStyleBackColor = true;
-            this.buttonGuardar.Click += new System.EventHandler(this.buttonGuardar_Click);
-            // 
             // buttonLimpiar
             // 
             this.buttonLimpiar.Location = new System.Drawing.Point(35, 227);
@@ -176,13 +169,47 @@
             this.linkLabel2.Text = "Atras";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(448, 227);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 34;
+            this.button1.Text = "Consultar";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dataGridRol1
+            // 
+            this.dataGridRol1.AllowUserToAddRows = false;
+            this.dataGridRol1.AllowUserToDeleteRows = false;
+            this.dataGridRol1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridRol1.Location = new System.Drawing.Point(35, 280);
+            this.dataGridRol1.Name = "dataGridRol1";
+            this.dataGridRol1.ReadOnly = true;
+            this.dataGridRol1.Size = new System.Drawing.Size(488, 107);
+            this.dataGridRol1.TabIndex = 35;
+            this.dataGridRol1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridRol1_CellContentClick);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(212, 261);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(140, 16);
+            this.label5.TabIndex = 36;
+            this.label5.Text = "Viajes de la aeronave";
+            // 
             // FormLlegada
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(579, 307);
+            this.ClientSize = new System.Drawing.Size(579, 428);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.dataGridRol1);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.linkLabel2);
-            this.Controls.Add(this.buttonGuardar);
             this.Controls.Add(this.buttonLimpiar);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
@@ -191,6 +218,7 @@
             this.Load += new System.EventHandler(this.FormLlegada_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -208,8 +236,10 @@
         private System.Windows.Forms.ComboBox comboDestino;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox comboOrigen;
-        private System.Windows.Forms.Button buttonGuardar;
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.DataGridView dataGridRol1;
+        private System.Windows.Forms.Label label5;
     }
 }

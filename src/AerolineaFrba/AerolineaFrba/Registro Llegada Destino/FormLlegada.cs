@@ -51,7 +51,7 @@ namespace AerolineaFrba.Registro_Llegada_Destino
             dateTimeFechaLlegada.Value = JanadianDateDB.Instance.getFechaSistema();
             dateTimeFechaLlegada.Format = DateTimePickerFormat.Custom;
 
-            this.dateTimeFechaLlegada.CustomFormat = "dd 'de' MMMM 'de' yyyy hh:mm:ss";
+            this.dateTimeFechaLlegada.CustomFormat = "dd 'de' MMMM 'de' yyyy HH:mm:ss";
             //  this.dateTimeFecha.Width = 1000;
             this.dateTimeFechaLlegada.ShowUpDown = true;
 
@@ -80,62 +80,72 @@ private void limpiar()
             comboOrigen.SelectedItem = null;
             comboDestino.SelectedItem = null;
             comboAeronave.SelectedItem = null;
+            dataGridRol1.DataSource = null;
+            dataGridRol1.Columns.Clear();
 }
 
-        private void buttonGuardar_Click(object sender, EventArgs e)
+        private void validarCampos(out String textoError, out Viaje viaje)
         {
-              try
+            textoError = "";
+
+            if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
             {
-                String textoError = "";
-
-                if (comboOrigen.Text == null || comboOrigen.Text.Trim() == "")
+                textoError += "El campo Origen es obligatorio\n";
+            }
+            if (comboDestino.Text == null || comboDestino.Text.Trim() == "")
+            {
+                textoError += "El campo Destino es obligatorio\n";
+            }
+            if (comboAeronave.Text == null || comboAeronave.Text.Trim() == "")
+            {
+                textoError += "El campo Aeronave es obligatorio\n";
+            }
+            if (comboOrigen.SelectedItem != null && comboDestino.SelectedItem != null)
+            {
+                if (comboOrigen.SelectedItem.Equals(comboDestino.SelectedItem))
                 {
-                    textoError += "El campo Origen es obligatorio\n";
+                    textoError += "Origen y destino deben ser diferentes\n";
+
                 }
-                if (comboDestino.Text == null || comboDestino.Text.Trim() == "")
+
+            }
+            else
+            {
+                textoError += "Origen y destino obligatorio\n";
+            }
+
+            if (dateTimeFechaLlegada.Value == null)
+            {
+                textoError += "El campo fecha de llegada es obligatorio\n";
+            }
+            if (dateTimeFechaLlegada.Value.CompareTo(JanadianDateDB.Instance.getFechaSistema()) <= 0)
+            {
+                textoError += "El campo fecha de llegada debe ser mayor a la fecha actual\n";
+            }
+
+            viaje = null;
+
+            if (comboAeronave.SelectedItem != null && comboOrigen.SelectedItem != null && comboDestino.SelectedItem != null && dateTimeFechaLlegada.Value != null)
+            {
+
+                Aeronave nave = JanadianDateDB.Instance.getAeronaveByMatricula(comboAeronave.SelectedItem.ToString());
+                viaje = JanadianDateDB.Instance.getViaje(nave, comboOrigen.SelectedItem, comboDestino.SelectedItem);
+
+                if (viaje == null)
                 {
-                    textoError += "El campo Destino es obligatorio\n";
-                }
-                if (comboAeronave.Text == null || comboAeronave.Text.Trim() == "")
-                {
-                    textoError += "El campo Aeronave es obligatorio\n";
-                }
-                if (comboOrigen.SelectedItem != null && comboDestino.SelectedItem != null)
-                {
-                    if (comboOrigen.SelectedItem.Equals(comboDestino.SelectedItem))
-                    {
-                        textoError += "Origen y destino deben ser diferentes\n";
-
-                    }
+                    textoError += "No existe el viaje para las condiciones ingresadas\n";
 
                 }
-                else {
-                    textoError += "Origen y destino obligatorio\n";
-                }
+            }
+        }
 
-                if (dateTimeFechaLlegada.Value == null)
-                {
-                    textoError += "El campo fecha de llegada es obligatorio\n";
-                }
-                if (dateTimeFechaLlegada.Value.CompareTo(JanadianDateDB.Instance.getFechaSistema()) <= 0)
-                {
-                    textoError += "El campo fecha de llegada debe ser mayor a la fecha actual\n";
-                }
-
-                Viaje viaje=null;
-
-                if (comboAeronave.SelectedItem != null && comboOrigen.SelectedItem != null && comboDestino.SelectedItem != null && dateTimeFechaLlegada.Value !=null)
-                {
-
-                 Aeronave nave = JanadianDateDB.Instance.getAeronaveByMatricula(comboAeronave.SelectedItem.ToString());
-                 viaje = JanadianDateDB.Instance.getViaje(nave,comboOrigen.SelectedItem,comboDestino.SelectedItem, dateTimeFechaLlegada.Value);
-                 
-                 if (viaje == null)
-                 {
-                     textoError += "No existe el viaje para las condiciones ingresadas\n";
-
-                 }
-                }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                String textoError;
+                Viaje viaje;
+                validarCampos(out textoError, out viaje);
 
                 if (textoError.Length != 0)
                 {
@@ -144,9 +154,18 @@ private void limpiar()
 
                 }
 
-                JanadianDateDB.Instance.registrarLlegada(viaje, dateTimeFechaLlegada.Value);
-                MessageBox.Show(null, "Se ha registrado la llegada", "Registrar Llegada destino");
-                this.limpiar();
+                String query = String.Format("SELECT * from [JANADIAN_DATE].[Itinerario_Aeronave] WHERE Matricula='{0}' and Origen='{1}' and Destino='{2}' ", comboAeronave.SelectedItem.ToString(), comboOrigen.SelectedItem.ToString(), comboDestino.SelectedItem.ToString());
+                Console.WriteLine(query);
+                //MessageBox.Show(null, query, "Query");
+                dataGridRol1.Columns.Clear();
+                dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
+                // Create a  button column
+                DataGridViewButtonColumn columnSave = new DataGridViewButtonColumn();
+
+                // Set column values
+                columnSave.Name = "buttonSelection";
+                columnSave.HeaderText = "Registrar";
+                dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
             }
             catch (Exception exAlta)
             {
@@ -154,6 +173,20 @@ private void limpiar()
 
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
+            }
+        }
+
+        private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ignore clicks that are not in our 
+            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
+            {
+                Aeronave nave = JanadianDateDB.Instance.getAeronaveByMatricula(comboAeronave.SelectedItem.ToString());
+                Viaje viaje = JanadianDateDB.Instance.getViaje(nave, comboOrigen.SelectedItem, comboDestino.SelectedItem, Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value),Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["Fecha_Llegada_Estimada"].Value));
+
+                JanadianDateDB.Instance.registrarLlegada(viaje, dateTimeFechaLlegada.Value);
+                MessageBox.Show(null, "Se ha registrado la llegada", "Registrar Llegada destino");
+                this.limpiar();
             }
         }
 

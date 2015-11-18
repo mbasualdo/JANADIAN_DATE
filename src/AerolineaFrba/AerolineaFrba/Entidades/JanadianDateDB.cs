@@ -1295,7 +1295,44 @@ namespace AerolineaFrba
 
         }
 
-        internal Viaje getViaje(Aeronave nave, object origen, object destino, DateTime llegada)
+        internal Viaje getViaje(Aeronave nave, object origen, object destino, DateTime salida, DateTime llegadaEstimada)
+        {
+            Viaje viaje = null;
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 v.[Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] v INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (v.Ruta=r.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c ON (r.Ciudad_Origen=c.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (r.Ciudad_Destino=c2.Id) WHERE v.Aeronave={0} AND c.Nombre='{1}' AND c2.Nombre='{2}'   AND v.FechaSalida='{3}'  AND v.Fecha_Llegada_Estimada='{4}'   ", nave.getId, origen.ToString(), destino.ToString(), salida, llegadaEstimada), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return viaje;
+        }
+
+        internal Viaje getViaje(Aeronave nave, object origen, object destino)
         {
             Viaje viaje = null;
             try
