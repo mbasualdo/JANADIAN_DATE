@@ -1294,5 +1294,10 @@ namespace AerolineaFrba
             }
 
         }
+
+        internal Viaje getViaje(Aeronave nave, object origen, object destino, DateTime llegada)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
