@@ -122,7 +122,8 @@ private void limpiar()
                     textoError += "El campo fecha de llegada debe ser mayor a la fecha actual\n";
                 }
 
-                Viaje viaje;
+                Viaje viaje=null;
+
                 if (comboAeronave.SelectedItem != null && comboOrigen.SelectedItem != null && comboDestino.SelectedItem != null && dateTimeFechaLlegada.Value !=null)
                 {
 
@@ -143,7 +144,7 @@ private void limpiar()
 
                 }
 
-           //     JanadianDateDB.Instance.insertarViaje(new Viaje(0, ((Aeronave)comboAeronave.SelectedItem).getId, ((Ruta)comboRuta.SelectedItem).getId, dateTimeFechaSalida.Value, dateTimeFechaLlegada.Value, dateTimeFechaLlegada.Value), ((Aeronave)comboAeronave.SelectedItem), ((Ruta)comboRuta.SelectedItem));
+                JanadianDateDB.Instance.registrarLlegada(viaje, dateTimeFechaLlegada.Value);
                 MessageBox.Show(null, "Se ha registrado la llegada", "Registrar Llegada destino");
                 this.limpiar();
             }
