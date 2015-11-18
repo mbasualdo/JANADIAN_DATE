@@ -14,12 +14,6 @@ namespace AerolineaFrba
         Decimal KG_Disponibles;
         String fabricante;
         String tipoServicio;
-        DateTime fechaAlta;
-        Boolean Baja_Fuera_Servicio;
-        Boolean Baja_Vida_Util;
-        DateTime fechaFueraServicio;
-        DateTime fechaReinicioServicio;
-        DateTime fechaBajaDefinitiva;
         int cantButacasVentanilla;
         int cantButacasPasillo;
 

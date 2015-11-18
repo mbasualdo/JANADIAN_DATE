@@ -812,7 +812,7 @@ namespace AerolineaFrba
                 try
                 {
                     foreach(Aeronave otraNave in aeronavesSimilares){
-                    int cantViajesFecha = getCantViajesFecha(otraNave,v);
+                    int cantViajesFecha = getCantViajesFecha(otraNave,v.getFechaSalida);
 
                     if (cantViajesFecha == 0) {
                         migrarViajeAOtraAeronave(idAeronave,v, otraNave);
@@ -871,7 +871,7 @@ namespace AerolineaFrba
             }
         }
 
-        private int getCantViajesFecha(Aeronave otraNave,Viaje v)
+        public int getCantViajesFecha(Aeronave otraNave,DateTime fechaSalida)
         {
             try
             {
@@ -883,7 +883,7 @@ namespace AerolineaFrba
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
 
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT [GD2C2015].[JANADIAN_DATE].[Viajes_Fecha_Aeronave] ({0},'{1}') as Cant", otraNave.getId, v.getFechaSalida), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [GD2C2015].[JANADIAN_DATE].[Viajes_Fecha_Aeronave] ({0},'{1}') as Cant", otraNave.getId, fechaSalida), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1214,7 +1214,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado  FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) "), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado  FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) WHERE r.Habilitado=1 "), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1252,7 +1252,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT a.Id,a.Matricula,a.Modelo ,	a.KG_Disponibles,	f.Nombre as Fabricante,	t.Nombre as Tipo_Servicio,	Fecha_Alta,	Baja_Fuera_Servicio,	Baja_Vida_Util,	Fecha_Baja_Definitiva,	Cant_Butacas_Ventanilla,	Cant_Butacas_Pasillo,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)   "), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT a.Id,a.Matricula,a.Modelo ,	a.KG_Disponibles,	f.Nombre as Fabricante,	t.Nombre as Tipo_Servicio,	Fecha_Alta,	Baja_Fuera_Servicio,	Baja_Vida_Util,	Fecha_Baja_Definitiva,	Cant_Butacas_Ventanilla,	Cant_Butacas_Pasillo,Habilitado FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio) WHERE a.Habilitado=1  "), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1275,6 +1275,24 @@ namespace AerolineaFrba
 
             }
             return aeronaves;
+        }
+        internal void insertarViaje(Viaje v,Aeronave a,Ruta r)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Viaje] (FechaSalida,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES ('{0}','{1}',{2},{3})", v.getFechaSalida,v.getFechaLlegadaEstimada,a.getId,r.getId), con);
+                insertRol.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+
         }
     }
 }

@@ -64,12 +64,17 @@ namespace AerolineaFrba.Generacion_Viaje
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
+            limpiar();
+        }
+
+        private void limpiar()
+        {
             dateTimeFechaSalida.MinDate = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
             dateTimeFechaSalida.Value = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
             dateTimeFechaLlegada.MinDate = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
             dateTimeFechaLlegada.Value = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
-            comboRuta.SelectedValue = null;
-            comboAeronave.SelectedValue = null;
+            comboRuta.SelectedItem = null;
+            comboAeronave.SelectedItem = null;
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)
@@ -86,10 +91,17 @@ namespace AerolineaFrba.Generacion_Viaje
                 {
                     textoError += "El campo Aeronave es obligatorio\n";
                 }
-                if (!((Ruta)comboRuta.SelectedItem).getTipoServicio.Equals(((Aeronave)comboAeronave.SelectedItem).getTipoServicio))
+                if (comboRuta.SelectedItem != null && comboAeronave.SelectedItem != null)
                 {
-                    textoError += "Ruta y Aeronave no tienen el mismo tipo de servicio para generar el viaje\n";
-                    
+                    if (!((Ruta)comboRuta.SelectedItem).getTipoServicio.Equals(((Aeronave)comboAeronave.SelectedItem).getTipoServicio))
+                    {
+                        textoError += "Ruta y Aeronave no tienen el mismo tipo de servicio para generar el viaje\n";
+
+                    }
+
+                }
+                else {
+                    textoError += "Ruta y Aeronave obligatorio\n";
                 }
                 if (dateTimeFechaSalida.Value == null)
                 {
@@ -116,6 +128,14 @@ namespace AerolineaFrba.Generacion_Viaje
                     textoError += "El campo fecha de llegada debe como maximo 24 hs a la salida\n";
                 }
 
+                 int cantViajesFecha = JanadianDateDB.Instance.getCantViajesFecha(((Aeronave)comboAeronave.SelectedItem), dateTimeFechaSalida.Value);
+
+                 if (cantViajesFecha > 0)
+                 {
+                     textoError += "La aeronave seleccionada no esta disponible para la fecha que desea generar el viaje\n";
+
+                 }
+
                 if (textoError.Length != 0)
                 {
                     MessageBox.Show(null, textoError, "Error de Validacion");
@@ -123,11 +143,9 @@ namespace AerolineaFrba.Generacion_Viaje
 
                 }
 
-                //JanadianDateDB.Instance.getAeronaveByMatricula
-                //JanadianDateDB.Instance.ge (JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), numericUpDownKG.Value, numericUpDownPasaje.Value, comboBoxTipoServicio.Text.ToString(), comboRuta.Text.ToString(), comboAeronave.Text.ToString());
-                //MessageBox.Show(null, "Se ha insertado correctamente la nueva ruta", "Alta de Ruta");
-
-                //this.Close();
+                JanadianDateDB.Instance.insertarViaje(new Viaje(0, ((Aeronave)comboAeronave.SelectedItem).getId, ((Ruta)comboRuta.SelectedItem).getId, dateTimeFechaSalida.Value, dateTimeFechaLlegada.Value, dateTimeFechaLlegada.Value), ((Aeronave)comboAeronave.SelectedItem), ((Ruta)comboRuta.SelectedItem));
+                MessageBox.Show(null, "Se ha creado el viaje", "Generar Viaje");
+                this.limpiar();
             }
             catch (Exception exAlta)
             {
