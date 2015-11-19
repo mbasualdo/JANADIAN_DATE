@@ -243,6 +243,8 @@
       <DependentUpon>FormDevolucion.cs</DependentUpon>
     </Compile>
     <Compile Include="Entidades\Aeronave.cs" />
+    <Compile Include="Entidades\Cliente.cs" />
+    <Compile Include="Entidades\Producto.cs" />
     <Compile Include="Entidades\Viaje.cs" />
     <Compile Include="Entidades\Ruta.cs" />
     <Compile Include="Excepciones\PasswordMismatchException.cs" />
@@ -362,8 +364,14 @@
     <EmbeddedResource Include="Administrador\FormInvitadoMenu.resx">
       <DependentUpon>FormInvitadoMenu.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Canje Millas\FormCanje.resx">
+      <DependentUpon>FormCanje.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Compra\FormCompra.resx">
       <DependentUpon>FormCompra.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Consulta Millas\FormMillas.resx">
+      <DependentUpon>FormMillas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>

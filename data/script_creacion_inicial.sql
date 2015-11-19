@@ -80,6 +80,22 @@ BEGIN
 END
 GO
 
+ /****** Funcion que devuelve cuantos viajes tiene en una fecha una aeronave  ********/
+CREATE FUNCTION  [JANADIAN_DATE].[Millas_Disponibles](@id int)
+RETURNS  int
+AS 
+BEGIN
+   DECLARE @count int
+	SELECT @count = SUM (Cant) FROM 
+	((SELECT - SUM ([Cantidad]) as Cant FROM [GD2C2015].[JANADIAN_DATE].[Canje] WHERE Cliente=@id AND DATEDIFF(YEAR,Fecha,CURRENT_TIMESTAMP) =0)
+	union
+	(SELECT SUM ([Cantidad]) as Cant FROM [GD2C2015].[JANADIAN_DATE].[Millas] WHERE Cliente=@id AND DATEDIFF(YEAR,Fecha,CURRENT_TIMESTAMP) =0)
+	)AS launion
+
+   RETURN  ISNULL ( @count , 0 )
+END
+GO
+
 /************************************************************************************/
 /************************** CREACION DE TABLAS **************************************/
 /************************************************************************************/
@@ -1465,7 +1481,7 @@ INSERT INTO JANADIAN_DATE.Millas(Cantidad,Cliente,Motivo)
 (SELECT 
 	   FLOOR( [Precio]/10 ) AS Millas
 	   ,[Cliente]
-	   ,'Canje millas paquete nro.' + CAST([Codigo] as nvarchar(255)) as Motivo
+	   ,'Acumulacion millas paquete nro.' + CAST([Codigo] as nvarchar(255)) as Motivo
   FROM [GD2C2015].[JANADIAN_DATE].[Paquete]
 
   UNION
@@ -1473,7 +1489,7 @@ INSERT INTO JANADIAN_DATE.Millas(Cantidad,Cliente,Motivo)
   SELECT 
 	   FLOOR( [Precio]/10 ) AS Millas
 	   ,[Cliente]
-	   ,'Canje millas pasaje nro.' + CAST([Codigo] as nvarchar(255)) as Motivo
+	   ,'Acumulacion millas pasaje nro.' + CAST([Codigo] as nvarchar(255)) as Motivo
   FROM [GD2C2015].[JANADIAN_DATE].[Pasaje])
 
 COMMIT TRANSACTION
@@ -1619,9 +1635,9 @@ BEGIN
 		/***   RECORRER todas las compras del viaje y calcular millas ***/
 		INSERT INTO [JANADIAN_DATE].[Millas] (Cantidad,Cliente,Motivo)
 		(
-		select FLOOR( x.[Precio]/10 ) AS Millas,x.Cliente,'Canje millas paquete nro.' + CAST(x.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Paquete x INNER JOIN JANADIAN_DATE.Compra c ON (x.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE x.Cancelacion is null and v.Id=@id
+		select FLOOR( x.[Precio]/10 ) AS Millas,x.Cliente,'Acumulacion millas paquete nro.' + CAST(x.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Paquete x INNER JOIN JANADIAN_DATE.Compra c ON (x.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE x.Cancelacion is null and v.Id=@id
 		UNION
-		select FLOOR( p.[Precio]/10 ) AS Millas,p.Cliente,'Canje millas pasaje nro.' + CAST(p.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Pasaje p INNER JOIN JANADIAN_DATE.Compra c ON (p.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE p.Cancelacion is null and v.Id=@id
+		select FLOOR( p.[Precio]/10 ) AS Millas,p.Cliente,'Acumulacion millas pasaje nro.' + CAST(p.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Pasaje p INNER JOIN JANADIAN_DATE.Compra c ON (p.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE p.Cancelacion is null and v.Id=@id
 		)
 
 	end

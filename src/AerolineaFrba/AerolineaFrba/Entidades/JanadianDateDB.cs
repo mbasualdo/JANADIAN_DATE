@@ -1386,5 +1386,146 @@ namespace AerolineaFrba
 
             }
         }
+
+        internal Cliente getCliente(decimal dni)
+        {
+            Cliente cliente = null;
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 [Id],[Dni],[Nombre],[Apellido],[Dir],[Telefono],[Mail],[Fecha_Nac] FROM [JANADIAN_DATE].[Cliente] WHERE Dni={0:0}", dni), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    cliente = new Cliente(Convert.ToInt32(Fila["Id"]), Convert.ToDecimal(Fila["Dni"]), Convert.ToString(Fila["Nombre"]), Convert.ToString(Fila["Apellido"]), Convert.ToString(Fila["Dir"]), Convert.ToDecimal(Fila["Telefono"]),Convert.ToString(Fila["Mail"]), Convert.ToDateTime(Fila["Fecha_Nac"]) );
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return cliente;
+        }
+
+        internal List<Producto> getProductos()
+        {
+            List<Producto> productos = new List<Producto>();
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [Id],[Nombre],[Stock],[Millas_Necesarias] FROM [GD2C2015].[JANADIAN_DATE].[Producto]  WHERE Stock>0"), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Productos"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    productos.Add(new Producto(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Nombre"]), Convert.ToInt32(Fila["Stock"]), Convert.ToInt32(Fila["Millas_Necesarias"])));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return productos;
+        }
+
+        internal int getMillasTotalesDisponibles(Cliente c)
+        {
+            //  	SELECT SUM ([Cantidad])FROM [GD2C2015].[JANADIAN_DATE].[Millas] WHERE Cliente=1 AND DATEDIFF(YEAR,Fecha,CURRENT_TIMESTAMP) =0
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [GD2C2015].[JANADIAN_DATE].[Millas_Disponibles] ({0}) as Cant ", c.getId), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return 1;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    int count = Convert.ToInt32(Fila["Cant"]);
+                    con.Close();
+
+                    return count;
+
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                exAlta.ToString();
+                con.Close();
+                return 0;
+
+            }
+            return 0;
+        }
+
+        internal void canjearMillas(Cliente cliente, Producto producto, decimal cantidad)
+        {
+            try
+            {
+                //canjear millas
+                con.Open();
+                SqlCommand insertCanje = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Canje] (Fecha,Cantidad,Cliente,Motivo,Producto) VALUES ('{0}',{1},{2},'{3}',{4}) ", this.fechaSistema, cantidad * producto.getMillasNecesarias, cliente.getId, "Canje de " + (cantidad * producto.getMillasNecesarias).ToString() + " millas por " + cantidad.ToString() + " " + producto.getNombre, producto.getId), con);
+                insertCanje.ExecuteNonQuery();
+
+                //descontar stock
+                SqlCommand updateStock= new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Producto] SET Stock=(Stock-{0}) WHERE Id={1}", cantidad,producto.getId), con);
+                updateStock.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+        }
     }
 }
