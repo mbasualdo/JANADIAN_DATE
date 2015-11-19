@@ -75,7 +75,8 @@ namespace AerolineaFrba.Devolucion
 
                 }
 
-                if(checkBoxAll.Checked){
+                if (checkBoxAll.Checked)
+                {
                     DialogResult dialogResult1 = MessageBox.Show("Esta Seguro que desea cancelar todos los pasajes y paquetes de la compra", "Cancelacion/Devolucion", MessageBoxButtons.YesNo);
                     if (dialogResult1 == DialogResult.Yes)
                     {
@@ -84,18 +85,32 @@ namespace AerolineaFrba.Devolucion
                         MessageBox.Show(null, "Se han cancelado todos los pasajes/paquetes de la compra", "Cancelacion/Devolucion");
                         this.limpiar();
                     }
-                }else{
+                }
+                else
+                {
+                    string query = string.Format("SELECT PNR,codigo,Tipo,Viaje FROM JANADIAN_DATE.[Pasajes_Paquetes_Compra_Viaje] WHERE PNR={0}", compra.getPNR);
                     Console.WriteLine(query);
                     //MessageBox.Show(null, query, "Query");
                     dataGridRol1.Columns.Clear();
-                    dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
-                    // Create a  button column
-                    DataGridViewButtonColumn columnSave = new DataGridViewButtonColumn();
+                    DataTable table = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
 
-                    // Set column values
-                    columnSave.Name = "buttonSelection";
-                    columnSave.HeaderText = "Seleccionar";
-                    dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
+                    if (table.Rows.Count > 0)
+                    {
+
+                        dataGridRol1.DataSource = table;
+
+
+                        // Create a  button column
+                        DataGridViewButtonColumn columnSave = new DataGridViewButtonColumn();
+
+                        // Set column values
+                        columnSave.Name = "buttonSelection";
+                        columnSave.HeaderText = "Seleccionar";
+                        dataGridRol1.Columns.Insert(dataGridRol1.Columns.Count, columnSave);
+                    }
+                    else {
+                        MessageBox.Show(null, "No hay pasajes/paquetes disponibles para cancelar de esta compra", "Cancelacion/Devolucion");
+                    }
                 }
 
 
@@ -111,7 +126,36 @@ namespace AerolineaFrba.Devolucion
 
         private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // Ignore clicks that are not in our 
+            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
+            {
+                if (Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo"].Value).CompareTo("PASAJE") == 0)
+                {
+                    JanadianDateDB.Instance.cancelarPasajeCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value));
+                    MessageBox.Show(null, "Se han cancelado el pasaje seleccionado", "Cancelacion/Devolucion");
 
+                }
+                else
+                {
+                    JanadianDateDB.Instance.cancelarPaqueteCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text);
+                    MessageBox.Show(null, "Se han cancelado el paquete seleccionado", "Cancelacion/Devolucion");
+
+                }
+
+                this.limpiar();
+
+            }
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            backClick();
+
+        }
+        private void backClick()
+        {
+            this.Owner.Show();
+            this.Hide();
         }
     }
 }

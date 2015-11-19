@@ -501,6 +501,19 @@ WHERE p.Cancelado=1
 SELECT a.Matricula,f.Fecha_Baja,f.Fecha_Reinicio FROM JANADIAN_DATE.Aeronave a 
 INNER JOIN JANADIAN_DATE.Fuera_Servicio f ON (f.Aeronave=a.Id)
  GO
+
+  /** Creacion de vista pasajes/paquetes con sus compras y viajes correspondientes no cancelados ***/
+  CREATE VIEW [JANADIAN_DATE].[Pasajes_Paquetes_Compra_Viaje] AS  
+ 					SELECT c.PNR, p.Id AS codigo,'PASAJE' as Tipo,v.Id As Viaje FROM [JANADIAN_DATE].[Compra] c
+					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
+					WHERE p.Cancelado=0
+					union
+					SELECT c.PNR, x.Id AS codigo,'PAQUETE' as Tipo,v.Id As Viaje  FROM [JANADIAN_DATE].[Compra] c
+					INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
+					WHERE x.Cancelado=0
+GO
  
  /********************************************************************************/
 /******************** CREACION DE PROCEDIMIENTOS ***************************************/
@@ -516,6 +529,7 @@ CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Pasaje]
 AS
 BEGIN TRY
 	declare @butacaPasaje int;
+	declare @Canc bit;
 
 	BEGIN TRANSACTION
 	/** consultar**/
@@ -528,14 +542,21 @@ BEGIN TRY
 		 DELETE JANADIAN_DATE.Butaca_Viaje WHERE Butaca=@butacaPasaje AND Viaje=@Viaje
 		
 		/** grabamos la cancelacion en la tabla correspondiente **/
-		INSERT INTO JANADIAN_DATE.Cancelacion 
-		(Motivo,FechaDevolucion) 
-		VALUES	
-		(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
 
-		/** Marcamos el pasaje como cancelado **/
+		--controlar que no este cancelado actualmente
+		SELECT TOP 1 @Canc=Cancelado FROM [JANADIAN_DATE].[Pasaje]  WHERE Id=@cod_pasaje
 
-			UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_pasaje
+		IF @Canc=0
+			BEGIN
+				INSERT INTO JANADIAN_DATE.Cancelacion 
+				(Motivo,FechaDevolucion) 
+				VALUES	
+				(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
+
+				/** Marcamos el pasaje como cancelado **/
+
+				UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_pasaje
+			END
 		END
 
 
@@ -563,6 +584,7 @@ CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Paquete]
 AS
 BEGIN TRY
 	declare @kg_paquete numeric(18,0);
+	declare @Canc bit;
 
 	BEGIN TRANSACTION
 	/** consultar**/
@@ -574,15 +596,21 @@ BEGIN TRY
 		 /** Liberar los KG **/
 		
 		/** grabamos la cancelacion en la tabla correspondiente **/
-		INSERT INTO JANADIAN_DATE.Cancelacion 
-		(Motivo,FechaDevolucion) 
-		VALUES	
-		(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
 
-		/** Marcamos el paquete como cancelado **/
+		--controlar que no este cancelado actualmente
+		SELECT TOP 1 @Canc=Cancelado FROM [JANADIAN_DATE].[Paquete]  WHERE Id=@cod_paquete
 
-			UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_paquete
+		IF @Canc=0
+			BEGIN
+				INSERT INTO JANADIAN_DATE.Cancelacion 
+				(Motivo,FechaDevolucion) 
+				VALUES	
+				(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
 
+				/** Marcamos el paquete como cancelado **/
+
+				UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_paquete
+			END
 		END
 
 

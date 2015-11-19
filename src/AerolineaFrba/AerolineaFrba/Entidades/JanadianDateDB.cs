@@ -1655,5 +1655,43 @@ namespace AerolineaFrba
 
             }
         }
+
+        internal void cancelarPasajeCompra(string compra, decimal codigo, string motivo, int viaje)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Pasaje] {0},{1},'{2}',{3}", compra,codigo, motivo,viaje), con);
+                updateCompra.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
+        }
+
+        internal void cancelarPaqueteCompra(string compra, decimal codigo, string motivo)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Paquete] {0},{1},'{2}'", compra, codigo, motivo), con);
+                updateCompra.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
+        }
     }
 }

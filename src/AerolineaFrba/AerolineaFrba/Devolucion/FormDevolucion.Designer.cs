@@ -38,6 +38,7 @@
             this.textMotivo = new System.Windows.Forms.TextBox();
             this.checkBoxAll = new System.Windows.Forms.CheckBox();
             this.textBoxCompra = new System.Windows.Forms.TextBox();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -141,11 +142,23 @@
             this.textBoxCompra.Size = new System.Drawing.Size(151, 20);
             this.textBoxCompra.TabIndex = 23;
             // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Location = new System.Drawing.Point(12, 18);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(31, 13);
+            this.linkLabel2.TabIndex = 41;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Atras";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
             // FormDevolucion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(625, 460);
+            this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.dataGridRol1);
             this.Controls.Add(this.buttonBuscar);
             this.Controls.Add(this.buttonLimpiar);
@@ -173,5 +186,6 @@
         private System.Windows.Forms.TextBox textMotivo;
         private System.Windows.Forms.CheckBox checkBoxAll;
         private System.Windows.Forms.TextBox textBoxCompra;
+        private System.Windows.Forms.LinkLabel linkLabel2;
     }
 }

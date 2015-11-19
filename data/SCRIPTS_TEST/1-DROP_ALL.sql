@@ -7,6 +7,7 @@ DROP VIEW JANADIAN_DATE.Pasajes_Vendidos_Destino
 DROP VIEW JANADIAN_DATE.Clientes_Millas
 DROP VIEW JANADIAN_DATE.Pasajes_Cancelados_Destino
 DROP VIEW JANADIAN_DATE.Aeronaves_Fuera_Servicio
+DROP VIEW JANADIAN_DATE.Pasajes_Paquetes_Compra_Viaje
 
 DROP PROCEDURE JANADIAN_DATE.Cancelar_Pasaje
 DROP PROCEDURE JANADIAN_DATE.Cancelar_Paquete
