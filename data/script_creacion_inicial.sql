@@ -1616,26 +1616,14 @@ BEGIN
 	
 	if  @Llegada IS NOT NULL
 			
-		/***   RECORRER todas las compras del viaje ***/
-		declare @pnr int;
-		declare @codigo [numeric](18,0);
+		/***   RECORRER todas las compras del viaje y calcular millas ***/
+		INSERT INTO [JANADIAN_DATE].[Millas] (Cantidad,Cliente,Motivo)
+		(
+		select FLOOR( x.[Precio]/10 ) AS Millas,x.Cliente,'Canje millas paquete nro.' + CAST(x.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Paquete x INNER JOIN JANADIAN_DATE.Compra c ON (x.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE x.Cancelacion is null and v.Id=@id
+		UNION
+		select FLOOR( p.[Precio]/10 ) AS Millas,p.Cliente,'Canje millas pasaje nro.' + CAST(p.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Pasaje p INNER JOIN JANADIAN_DATE.Compra c ON (p.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE p.Cancelacion is null and v.Id=@id
+		)
 
-		DECLARE ViajesEnRuta CURSOR FOR 
-		SELECT c.PNR, x.Id AS codigo FROM [JANADIAN_DATE].[Ruta] r
-		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
-		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
-		INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
-		WHERE r.Id=@Id and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0		
-
-		OPEN ViajesEnRuta 
-		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
-		WHILE @@FETCH_STATUS=0
-		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Ruta'
-			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
-		END
-		CLOSE ViajesEnRuta
-		DEALLOCATE ViajesEnRuta
 	end
 	
 GO
