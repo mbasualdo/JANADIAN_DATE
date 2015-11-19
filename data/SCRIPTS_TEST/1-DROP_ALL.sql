@@ -3,10 +3,10 @@ GO
 
 DROP VIEW JANADIAN_DATE.Itinerario_Aeronave
 DROP VIEW JANADIAN_DATE.Viaje_Disponible
-DROP VIEW JANADIAN_DATE.Viaje_Disponible
 DROP VIEW JANADIAN_DATE.Pasajes_Vendidos_Destino
 DROP VIEW JANADIAN_DATE.Clientes_Millas
 DROP VIEW JANADIAN_DATE.Pasajes_Cancelados_Destino
+DROP VIEW JANADIAN_DATE.Aeronaves_Fuera_Servicio
 
 DROP PROCEDURE JANADIAN_DATE.Cancelar_Pasaje
 DROP PROCEDURE JANADIAN_DATE.Cancelar_Paquete
@@ -14,6 +14,8 @@ DROP PROCEDURE JANADIAN_DATE.inhabilitarPaquetesAeronave
 DROP PROCEDURE JANADIAN_DATE.inhabilitarPasajesAeronave
 DROP PROCEDURE JANADIAN_DATE.reemplazarAeronaveViaje
 DROP PROCEDURE JANADIAN_DATE.crearNuevaAeronave
+DROP PROCEDURE JANADIAN_DATE.inhabilitarPaquetesCompra
+DROP PROCEDURE JANADIAN_DATE.inhabilitarPasajesCompra
 DROP PROCEDURE JANADIAN_DATE.Insertar_Funcionalidades
 DROP PROCEDURE JANADIAN_DATE.Insertar_Roles
 DROP PROCEDURE JANADIAN_DATE.Insertar_Rol_Funcionalidades

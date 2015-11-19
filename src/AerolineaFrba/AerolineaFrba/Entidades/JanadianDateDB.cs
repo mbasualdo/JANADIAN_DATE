@@ -1558,5 +1558,102 @@ namespace AerolineaFrba
 
             return time;
         }
+
+        internal List<CompraDB> getCompras()
+        {
+            List<CompraDB> compras = new List<CompraDB>();
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [PNR],[Precio],[Fecha_Compra],[Viaje],[Forma_Pago],[Cliente]  FROM [GD2C2015].[JANADIAN_DATE].[Compra]  "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Compras"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    compras.Add(new CompraDB(Convert.ToInt32(Fila["PNR"]), Convert.ToDouble(Fila["Precio"]), Convert.ToDateTime(Fila["Fecha_Compra"]), Convert.ToInt32(Fila["Viaje"]), Convert.ToString(Fila["Forma_Pago"]), Convert.ToInt32(Fila["Cliente"])));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return compras;
+        }
+
+        internal CompraDB getCompraByPNR(string pnr)
+        {
+            CompraDB compras = null;
+
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 [PNR],[Precio],[Fecha_Compra],[Viaje],[Forma_Pago],[Cliente]  FROM [GD2C2015].[JANADIAN_DATE].[Compra] where PNR={0} ",pnr), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("No hay Compras"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    compras =new CompraDB(Convert.ToInt32(Fila["PNR"]), Convert.ToDouble(Fila["Precio"]), Convert.ToDateTime(Fila["Fecha_Compra"]), Convert.ToInt32(Fila["Viaje"]), Convert.ToString(Fila["Forma_Pago"]), Convert.ToInt32(Fila["Cliente"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return compras;
+        }
+
+        internal void cancelarPasajesPaquetesDeCompra(int pnr,String motivo)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPasajesCompra] {0},'{1}'", pnr, motivo), con);
+                updateCompra.ExecuteNonQuery();
+                SqlCommand updatePaqCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPaquetesCompra] {0},'{1}'", pnr,motivo), con);
+                updatePaqCompra.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
+        }
     }
 }

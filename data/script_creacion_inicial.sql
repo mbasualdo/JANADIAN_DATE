@@ -727,6 +727,100 @@ BEGIN CATCH
 END CATCH;
 GO
 
+/*** procedimiento que cancela pasajes al dar cancelar una compra ****/
+/***        ****/
+CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPasajesCompra]
+@Id_Compra int,
+@motivo nvarchar(255)
+AS
+BEGIN TRY
+			
+	/***   RECORRER TODO LO ASOCIADO A LA AERONAVE Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Pasaje] ***/
+		declare @pnr int;
+		declare @codigo [numeric](18,0);
+		declare @viaje int;
+
+		BEGIN TRANSACTION
+				DECLARE ViajesEnCompra CURSOR FOR 
+
+				SELECT c.PNR, p.Id AS codigo,v.Id  FROM [JANADIAN_DATE].[Compra] c
+					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
+					WHERE c.PNR=@Id_Compra and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	
+
+
+		OPEN ViajesEnCompra 
+		FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo,@viaje
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,@motivo,@viaje
+
+			FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo,@viaje
+		END
+		CLOSE ViajesEnCompra
+		DEALLOCATE ViajesEnCompra
+		/** aplicamos los cambios **/
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
+
+END CATCH;
+GO
+
+/*** procedimiento que cancela paquetes al dar cancelar una compra ****/
+/***        ****/
+CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPaquetesCompra]
+@Id_Compra int,
+@motivo nvarchar(255)
+AS
+BEGIN TRY
+			
+	/***   RECORRER TODO LO ASOCIADO A LA AERONAVE Y CANCELARLO LLAMANDO A [JANADIAN_DATE].[Cancelar_Paquete] ***/
+		declare @pnr int;
+		declare @codigo [numeric](18,0);
+
+		BEGIN TRANSACTION
+				DECLARE ViajesEnCompra CURSOR FOR 
+
+				SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Compra] c
+					INNER JOIN [JANADIAN_DATE].[Paquete] p ON (p.Compra = c.PNR)
+					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
+					WHERE c.PNR=@Id_Compra and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	
+
+
+		OPEN ViajesEnCompra 
+		FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo
+		WHILE @@FETCH_STATUS=0
+		BEGIN
+			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,@motivo
+			FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo
+		END
+		CLOSE ViajesEnCompra
+		DEALLOCATE ViajesEnCompra
+		/** aplicamos los cambios **/
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+  IF @@TRANCOUNT > 0
+     ROLLBACK
+
+  -- INFO DE ERROR.
+  DECLARE @ErrorMessage nvarchar(4000),  @ErrorSeverity int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorSeverity = ERROR_SEVERITY();
+  RAISERROR(@ErrorMessage,@ErrorSeverity , 1);
+
+
+END CATCH;
+GO
+
 
 /***  liberar las butacas_viajes con butacas viejas y 
 	crear las butacas_viajes con las butacas nuevas, 

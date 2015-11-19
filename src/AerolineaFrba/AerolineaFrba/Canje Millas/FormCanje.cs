@@ -62,11 +62,11 @@ namespace AerolineaFrba.Canje_Millas
                 {
                     textoError += "El campo Producto es obligatorio\n";
                 }
-                if (numericUpDownCantidad.Value == null || numericUpDownCantidad.Value <1)
+                if (numericUpDownCantidad.Value <1)
                 {
                     textoError += "El campo Cantidad debe ser positivo\n";
                 }
-                if (numericUpDownCantidad.Value == null || (numericUpDownCantidad.Value != null && comboBoxProducto.SelectedItem!=null && numericUpDownCantidad.Value > ((Producto) comboBoxProducto.SelectedItem).getStock))
+                if (( comboBoxProducto.SelectedItem!=null && numericUpDownCantidad.Value > ((Producto) comboBoxProducto.SelectedItem).getStock))
                 {
                     textoError += "No hay stock suficiente del producto solicitado\n";
                 }

@@ -244,6 +244,7 @@
     </Compile>
     <Compile Include="Entidades\Aeronave.cs" />
     <Compile Include="Entidades\Cliente.cs" />
+    <Compile Include="Entidades\Compra.cs" />
     <Compile Include="Entidades\Producto.cs" />
     <Compile Include="Entidades\Viaje.cs" />
     <Compile Include="Entidades\Ruta.cs" />
@@ -372,6 +373,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Consulta Millas\FormMillas.resx">
       <DependentUpon>FormMillas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Devolucion\FormDevolucion.resx">
+      <DependentUpon>FormDevolucion.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>
