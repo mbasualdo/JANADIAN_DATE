@@ -79,7 +79,6 @@ namespace AerolineaFrba.Consulta_Millas
 
                 dataGridRol1.Columns.Clear();
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);
-              //  JanadianDateDB.Instance.insertarRuta(JanadianDateDB.RemoveSpecialCharacters(textCodigo.Text), numericUpDownKG.Value, numericUpDownPasaje.Value, comboBoxTipoServicio.Text.ToString(), comboOrigen.Text.ToString(), comboDestino.Text.ToString());
 
 
             }

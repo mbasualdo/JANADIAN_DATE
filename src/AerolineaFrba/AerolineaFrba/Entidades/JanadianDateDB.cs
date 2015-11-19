@@ -1527,5 +1527,36 @@ namespace AerolineaFrba
 
             }
         }
+
+        internal DateTime generarFechaInicialSemestre(object p, DateTime dateTime)
+        {
+            string date = dateTime.Year.ToString();
+
+            if(p.ToString().Equals("ENE-JUN")){
+                date += "-01-01";
+            }else{
+                date += "-07-01";
+            }
+            DateTime time = DateTime.Parse(date);
+
+            return time;
+        }
+
+        internal DateTime generarFechaFinalSemestre(object p, DateTime dateTime)
+        {
+            string date = dateTime.Year.ToString();
+
+            if (p.ToString().Equals("ENE-JUN"))
+            {
+                date += "-06-30 23:59:59";
+            }
+            else
+            {
+                date += "-12-31 23:59:59";
+            }
+            DateTime time = DateTime.Parse(date);
+
+            return time;
+        }
     }
 }

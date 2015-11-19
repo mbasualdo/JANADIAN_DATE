@@ -446,20 +446,6 @@ CREATE TABLE [JANADIAN_DATE].[Millas](
 
 GO
 
-/** creacion tabla millas canjeadas**/
-IF OBJECT_ID('[JANADIAN_DATE].[Millas_Canjeadas]') IS NULL
-CREATE TABLE [JANADIAN_DATE].[Millas_Canjeadas](
-	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Milla] [int] NOT NULL,
-	[Canje] [int] NOT NULL,
-	CONSTRAINT FK_Milla FOREIGN KEY (Milla) REFERENCES [JANADIAN_DATE].[Millas] (Id),
-	CONSTRAINT FK_Canje FOREIGN KEY (Canje) REFERENCES [JANADIAN_DATE].[Canje] (Id),
-	CONSTRAINT AK_Milla_Canje UNIQUE (Milla,Canje)
-) ON [PRIMARY]
-
-GO
-
-
 /*******************************************************************************/
 /******************** CREACION DE VISTAS ***************************************/
 /*******************************************************************************/
@@ -1635,9 +1621,9 @@ BEGIN
 		/***   RECORRER todas las compras del viaje y calcular millas ***/
 		INSERT INTO [JANADIAN_DATE].[Millas] (Cantidad,Cliente,Motivo)
 		(
-		select FLOOR( x.[Precio]/10 ) AS Millas,x.Cliente,'Acumulacion millas paquete nro.' + CAST(x.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Paquete x INNER JOIN JANADIAN_DATE.Compra c ON (x.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE x.Cancelacion is null and v.Id=@id
+		select FLOOR( x.[Precio]/10 ) AS Millas,x.Cliente,'Acumulacion millas paquete nro.' + CAST(x.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Paquete x INNER JOIN JANADIAN_DATE.Compra c ON (x.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE x.Cancelado = 0  and v.Id=@id
 		UNION
-		select FLOOR( p.[Precio]/10 ) AS Millas,p.Cliente,'Acumulacion millas pasaje nro.' + CAST(p.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Pasaje p INNER JOIN JANADIAN_DATE.Compra c ON (p.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE p.Cancelacion is null and v.Id=@id
+		select FLOOR( p.[Precio]/10 ) AS Millas,p.Cliente,'Acumulacion millas pasaje nro.' + CAST(p.[Codigo] as nvarchar(255)) as Motivo  from JANADIAN_DATE.Pasaje p INNER JOIN JANADIAN_DATE.Compra c ON (p.Compra=c.PNR) INNER JOIN JANADIAN_DATE.Viaje v ON (C.Viaje=v.Id) WHERE p.Cancelado = 0 and v.Id=@id
 		)
 
 	end
