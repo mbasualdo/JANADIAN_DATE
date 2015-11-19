@@ -76,8 +76,12 @@ namespace AerolineaFrba.Listado_Estadistico
 
                 }
 
-              //  JanadianDateDB.Instance.canjearMillas(cliente, (Producto)comboBoxProducto.SelectedItem, numericUpDownCantidad.Value);
+                String query = String.Format("select top 5 count(*) as Pasajes,Destino  from JANADIAN_DATE.[Pasajes_Vendidos_Destino] WHERE Fecha_Compra>'{0}' AND Fecha_Compra<'{1}' GROUP by Destino ORDER BY Pasajes asc ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
+                Console.WriteLine(query);
+                //MessageBox.Show(null, query, "Query");
 
+                dataGridView1.Columns.Clear();
+                dataGridView1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridView1, query);
             }
             catch (Exception exAlta)
             {
@@ -90,6 +94,7 @@ namespace AerolineaFrba.Listado_Estadistico
 
         private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            
             try
             {
                 String textoError = validarIngreso();
@@ -101,8 +106,12 @@ namespace AerolineaFrba.Listado_Estadistico
 
                 }
 
-              //  JanadianDateDB.Instance.canjearMillas(cliente, (Producto)comboBoxProducto.SelectedItem, numericUpDownCantidad.Value);
+                String query = String.Format("select TOP 5 [JANADIAN_DATE].[Millas_Disponibles](Id) as Acumulado,Nombre,Dni,Mail from JANADIAN_DATE.[Clientes_Millas] WHERE Fecha>'{0}' AND Fecha<'{1}' ORDER BY Acumulado DESC ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
+                Console.WriteLine(query);
+                //MessageBox.Show(null, query, "Query");
 
+                dataGridView1.Columns.Clear();
+                dataGridView1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridView1, query);
             }
             catch (Exception exAlta)
             {
@@ -126,8 +135,12 @@ namespace AerolineaFrba.Listado_Estadistico
 
                 }
 
-       //         JanadianDateDB.Instance.canjearMillas(cliente, (Producto)comboBoxProducto.SelectedItem, numericUpDownCantidad.Value);
+                String query = String.Format("select top 5 count(*) as Pasajes,Destino  from JANADIAN_DATE.[Pasajes_Cancelados_Destino] WHERE Fecha_Compra>'{0}' AND Fecha_Compra<'{1}' GROUP by Destino ORDER BY Pasajes asc ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
+                Console.WriteLine(query);
+                //MessageBox.Show(null, query, "Query");
 
+                dataGridView1.Columns.Clear();
+                dataGridView1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridView1, query);
             }
             catch (Exception exAlta)
             {
@@ -140,6 +153,7 @@ namespace AerolineaFrba.Listado_Estadistico
 
         private void linkLabel6_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+
             try
             {
                 String textoError = validarIngreso();
@@ -151,8 +165,12 @@ namespace AerolineaFrba.Listado_Estadistico
 
                 }
 
-      //          JanadianDateDB.Instance.canjearMillas(cliente, (Producto)comboBoxProducto.SelectedItem, numericUpDownCantidad.Value);
+                String query = String.Format("SELECT top 5  SUM(DATEDIFF(DAY,Fecha_Baja,Fecha_Reinicio)) as DiasFuera,Matricula  from  JANADIAN_DATE.[Aeronaves_Fuera_Servicio]  WHERE Fecha_Baja>'{0}' AND Fecha_Baja<'{1}' group by Matricula  ORDER BY DiasFuera DESC ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
+                Console.WriteLine(query);
+                //MessageBox.Show(null, query, "Query");
 
+                dataGridView1.Columns.Clear();
+                dataGridView1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridView1, query);
             }
             catch (Exception exAlta)
             {

@@ -470,6 +470,37 @@ GO
 
  GO
 
+  
+ /** Creacion de vista pasajes vendidos a un destino ***/
+ CREATE VIEW [JANADIAN_DATE].[Pasajes_Vendidos_Destino] AS  
+SELECT ci.Nombre as Destino,c.Fecha_Compra FROM JANADIAN_DATE.Pasaje p 
+INNER JOIN JANADIAN_DATE.Compra c ON (c.PNR=p.Compra)
+INNER JOIN JANADIAN_DATE.Viaje v ON (v.Id=c.Viaje)
+INNER JOIN JANADIAN_DATE.Ruta r ON (r.Id=v.Ruta)
+INNER JOIN JANADIAN_DATE.Ciudad ci ON (ci.Id=r.Ciudad_Destino)
+
+ GO
+
+  /** Creacion de vista clientes millas ***/
+ CREATE VIEW [JANADIAN_DATE].[Clientes_Millas] AS  
+SELECT DISTINCT(c.Id), (c.Nombre +' '+ c.Apellido) as Nombre,c.Dni,C.Mail,m.Fecha FROM JANADIAN_DATE.Cliente c INNER JOIN JANADIAN_DATE.Millas m ON (m.Cliente=c.Id)
+ GO
+
+  /** Creacion de vista pasajes cancelados a un destino ***/
+ CREATE VIEW [JANADIAN_DATE].[Pasajes_Cancelados_Destino] AS  
+SELECT ci.Nombre as Destino,c.Fecha_Compra FROM JANADIAN_DATE.Pasaje p 
+INNER JOIN JANADIAN_DATE.Compra c ON (c.PNR=p.Compra)
+INNER JOIN JANADIAN_DATE.Viaje v ON (v.Id=c.Viaje)
+INNER JOIN JANADIAN_DATE.Ruta r ON (r.Id=v.Ruta)
+INNER JOIN JANADIAN_DATE.Ciudad ci ON (ci.Id=r.Ciudad_Destino)
+WHERE p.Cancelado=1
+ GO
+
+   /** Creacion de vista pasajes cancelados a un destino ***/
+ CREATE VIEW [JANADIAN_DATE].[Aeronaves_Fuera_Servicio] AS  
+SELECT a.Matricula,f.Fecha_Baja,f.Fecha_Reinicio FROM JANADIAN_DATE.Aeronave a 
+INNER JOIN JANADIAN_DATE.Fuera_Servicio f ON (f.Aeronave=a.Id)
+ GO
  
  /********************************************************************************/
 /******************** CREACION DE PROCEDIMIENTOS ***************************************/
