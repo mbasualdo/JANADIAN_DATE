@@ -96,6 +96,32 @@ BEGIN
 END
 GO
 
+ /****** Funcion que devuelve cuantos kg tiene reservado un viaje********/
+CREATE FUNCTION  [JANADIAN_DATE].[KG_Reservados](@id int)
+RETURNS  int
+AS 
+BEGIN
+   DECLARE @count int
+SELECT @count =  count(*) from JANADIAN_DATE.Paquete p 
+  INNER JOIN JANADIAN_DATE.Compra c ON (c.PNR=P.Compra) 
+  INNER JOIN JANADIAN_DATE.Viaje v ON (V.Id=C.Viaje) 
+  WHERE Viaje=@id and Cancelado=0
+   RETURN  ISNULL ( @count , 0 )
+END
+GO
+ /****** Funcion que devuelve cuantas butacas tiene reservado un viaje********/
+CREATE FUNCTION  [JANADIAN_DATE].[Butacas_Reservadas](@id int)
+RETURNS  int
+AS 
+BEGIN
+   DECLARE @count int
+SELECT @count =  count(*) from JANADIAN_DATE.Pasaje p 
+  INNER JOIN JANADIAN_DATE.Compra c ON (c.PNR=P.Compra) 
+  INNER JOIN JANADIAN_DATE.Viaje v ON (V.Id=C.Viaje) 
+  WHERE Viaje=@id and Cancelado=0
+   RETURN  ISNULL ( @count , 0 )
+END
+GO
 /************************************************************************************/
 /************************** CREACION DE TABLAS **************************************/
 /************************************************************************************/
@@ -463,11 +489,13 @@ GO
  
  /** Creacion de vista viajes disponibles ***/
  CREATE VIEW [JANADIAN_DATE].[Viaje_Disponible] AS  
- SELECT v.FechaSalida,o.Nombre as Origen,d.Nombre as Destino FROM   [JANADIAN_DATE].[Viaje] v
+SELECT v.Id as Viaje, v.FechaSalida,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,(a.KG_Disponibles -  JANADIAN_DATE.kg_Reservados(v.Id)) AS KG_Disponibles,((a.Cant_Butacas_Pasillo+a.Cant_Butacas_Ventanilla) - JANADIAN_DATE.Butacas_Reservadas(v.Id)) as Butacas_Libres  FROM   [JANADIAN_DATE].[Viaje] v
  INNER JOIN [JANADIAN_DATE].[Ruta] r ON (v.Ruta = r.Id)
  INNER JOIN [JANADIAN_DATE].[Ciudad] o ON (r.Ciudad_Origen = o.Id)
  INNER JOIN [JANADIAN_DATE].[Ciudad] d ON (r.Ciudad_Destino = d.Id)
-
+ INNER JOIN [JANADIAN_DATE].[Aeronave] a ON (v.Aeronave = a.Id)
+ INNER JOIN [JANADIAN_DATE].[Tipo_Servicio] t ON (a.Tipo_Servicio = t.Id)
+  WHERE a.Habilitado=1 AND r.Habilitado=1 
  GO
 
   
