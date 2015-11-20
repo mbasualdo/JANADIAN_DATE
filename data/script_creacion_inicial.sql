@@ -122,6 +122,18 @@ SELECT @count =  count(*) from JANADIAN_DATE.Pasaje p
    RETURN  ISNULL ( @count , 0 )
 END
 GO
+
+ /****** Funcion que devuelve cuantos viajes tiene en una fecha una aeronave  ********/
+CREATE FUNCTION  [JANADIAN_DATE].[Viajes_Fecha_Cliente](@id int,@fecha datetime)
+RETURNS  int
+AS 
+BEGIN
+   DECLARE @count int
+SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] v iNNER JOIN  [JANADIAN_DATE].[Compra] c ON (c.Viaje=v.Id)
+ WHERE c.Cliente=@id AND DATEDIFF(SECOND,@fecha,[FechaSalida]) >=0 AND DATEDIFF(SECOND,@fecha,ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) <= 0
+   RETURN  ISNULL ( @count , 0 )
+END
+GO
 /************************************************************************************/
 /************************** CREACION DE TABLAS **************************************/
 /************************************************************************************/
@@ -1408,8 +1420,6 @@ BEGIN
 	 SET @Butacas_Ventanilla =  @@ROWCOUNT
 	 SELECT  Butaca_Piso  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Pasillo'  group by Butaca_Tipo,Butaca_Nro,Butaca_Piso
 	 SET @Butacas_Pasillo =  @@ROWCOUNT
-	--SELECT @Butacas_Ventanilla = MAX(c) from (SELECT  COUNT(*) as c  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Ventanilla'  group by FechaSalida) as s
-	--SELECT @Butacas_Pasillo = MAX(c2) from (SELECT  COUNT(*) as c2  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Pasillo'  group by FechaSalida) as s2
 
     INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) VALUES (   @Matricula ,@Fabricante,@Modelo , @Tipo_Servicio,@KG_Disponibles,@Butacas_Pasillo,@Butacas_Ventanilla )
 

@@ -56,6 +56,7 @@
             this.dataGridRol1 = new System.Windows.Forms.DataGridView();
             this.textBoxKG = new System.Windows.Forms.TextBox();
             this.labelKG = new System.Windows.Forms.Label();
+            this.labelButacas = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.SuspendLayout();
@@ -305,7 +306,7 @@
             this.dataGridRol1.AllowUserToAddRows = false;
             this.dataGridRol1.AllowUserToDeleteRows = false;
             this.dataGridRol1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridRol1.Location = new System.Drawing.Point(25, 378);
+            this.dataGridRol1.Location = new System.Drawing.Point(25, 393);
             this.dataGridRol1.Name = "dataGridRol1";
             this.dataGridRol1.ReadOnly = true;
             this.dataGridRol1.Size = new System.Drawing.Size(583, 123);
@@ -332,11 +333,22 @@
             this.labelKG.Text = "KG a enviar";
             this.labelKG.Visible = false;
             // 
+            // labelButacas
+            // 
+            this.labelButacas.AutoSize = true;
+            this.labelButacas.Location = new System.Drawing.Point(291, 377);
+            this.labelButacas.Name = "labelButacas";
+            this.labelButacas.Size = new System.Drawing.Size(103, 13);
+            this.labelButacas.TabIndex = 50;
+            this.labelButacas.Text = "Butacas Disponibles";
+            this.labelButacas.Visible = false;
+            // 
             // ComprarViaje
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(631, 528);
+            this.Controls.Add(this.labelButacas);
             this.Controls.Add(this.labelKG);
             this.Controls.Add(this.textBoxKG);
             this.Controls.Add(this.dataGridRol1);
@@ -386,5 +398,6 @@
         private System.Windows.Forms.DataGridView dataGridRol1;
         private System.Windows.Forms.TextBox textBoxKG;
         private System.Windows.Forms.Label labelKG;
+        private System.Windows.Forms.Label labelButacas;
     }
 }

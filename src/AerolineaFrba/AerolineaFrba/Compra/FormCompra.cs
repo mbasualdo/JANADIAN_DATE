@@ -140,7 +140,7 @@ namespace AerolineaFrba.Compra
                     MessageBox.Show(null, "La cantidad de kg a enviar es mayor a los disponibles", "Compra");
                     return;
                 }
-                if (numericUpDownKG.Value >= Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Butacas_Libres"].Value))
+                if (numericUpDownPax.Value >= Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Butacas_Libres"].Value))
                 {
                     MessageBox.Show(null, "La cantidad de butacas seleccionadas es mayor a las libres", "Compra");
                     return;
@@ -148,15 +148,18 @@ namespace AerolineaFrba.Compra
 //                ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), numericUpDownKG.Value, numericUpDownPax.Value,"Pasajero 1");
                 
                 List<Cliente> clientes = new List<Cliente>();
-                List<Butaca> butaca = new List<Butaca>();
+                List<Butaca> butacas = new List<Butaca>();
                 List<Decimal> paquetes = new List<Decimal>();
 
                 if (numericUpDownKG.Value > 0) {
-                   ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), numericUpDownKG.Value, 0, "Datos para enviar Encomienda");
+                    ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), numericUpDownKG.Value, 0, "Datos para enviar Encomienda", Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value));
                         DialogResult result = frm.ShowDialog(this);
-                        if (result == DialogResult.OK)
+                        if (result == DialogResult.OK )
                         {
                             // fill other values
+                            clientes.Add(frm.getCliente);
+                            paquetes.Add(numericUpDownKG.Value);
+                            butacas.Add(null);
                         }
 
                     }
@@ -165,14 +168,29 @@ namespace AerolineaFrba.Compra
                     for (int i = 0; i < numericUpDownPax.Value; i++)
                     {
 
-                        ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), 0, numericUpDownPax.Value, "Datos pasaje" + (i+1).ToString());
+                        ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), 0, numericUpDownPax.Value, "Datos pasaje" + (i + 1).ToString(), Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value));
                         DialogResult result = frm.ShowDialog(this);
                         if (result == DialogResult.OK)
                         {
                             // fill other values
+                            clientes.Add(frm.getCliente);
+                            butacas.Add(frm.getButaca);
+                            paquetes.Add(0);
                         }
                     }
                 }
+
+
+                PagoCompra frmPago = new PagoCompra(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), clientes,butacas,paquetes);
+                DialogResult resultPago = frmPago.ShowDialog(this);
+                if (resultPago == DialogResult.OK)
+                {
+                    // fill other values
+                   // clientes.Add(frmPago.getCliente);
+                    paquetes.Add(numericUpDownKG.Value);
+                    butacas.Add(null);
+                }
+
                 }
             }
     }

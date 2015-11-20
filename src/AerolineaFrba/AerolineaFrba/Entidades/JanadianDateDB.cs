@@ -912,7 +912,47 @@ namespace AerolineaFrba
             }
             return 1;
         }
+        public int getCantViajesFechaCliente(Cliente cliente, DateTime fechaSalida)
+        {
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
 
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [GD2C2015].[JANADIAN_DATE].[Viajes_Fecha_Cliente] ({0},'{1}') as Cant", cliente.getId, fechaSalida), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return 1;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    int count = Convert.ToInt32(Fila["Cant"]);
+                    con.Close();
+
+                    return count;
+
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                exAlta.ToString();
+                con.Close();
+                return 1;
+
+            }
+            return 1;
+        }
         private void migrarViajeAOtraAeronave(int idAeronave, Viaje v, Aeronave otraNave)
         {
             try
@@ -1726,6 +1766,80 @@ namespace AerolineaFrba
                 throw (new Exception());
 
             }
+        }
+
+        internal Viaje getViajeById(int viajeId)
+        {
+            Viaje viaje = null;
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 v.[Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] v  WHERE v.Id={0} ",viajeId), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return viaje;
+        }
+
+        internal Ruta getRutaById(int p)
+        {
+            Ruta ruta = null;
+            try
+            {
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT top 1 r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado  FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) WHERE r.Id={0} ",p), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return null;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {  
+                    ruta = new Ruta(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Origen"]), Convert.ToString(Fila["Destino"]), Convert.ToDecimal(Fila["Codigo"]), Convert.ToDouble(Fila["Precio_BaseKG"]), Convert.ToDouble(Fila["Precio_BasePasaje"]), Convert.ToString(Fila["Tipo_Servicio"]), Convert.ToBoolean(Fila["Habilitado"]));
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return ruta;
         }
     }
 }

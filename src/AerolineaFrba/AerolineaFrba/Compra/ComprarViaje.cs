@@ -16,6 +16,9 @@ namespace AerolineaFrba.Compra
         private Cliente cliente;
         private Butaca butaca;
         private decimal kg;
+        private int viaje;
+        private int aeronave;
+        private DateTime fechaSalida;
 
         public Cliente getCliente
         {
@@ -25,12 +28,19 @@ namespace AerolineaFrba.Compra
         {
             get { return usuario; }
         }
-        public ComprarViaje(Usuario usuario, int viaje, decimal kg, decimal pax, string label)
+        public Butaca getButaca
+        {
+            get { return butaca; }
+        }
+        public ComprarViaje(Usuario usuario, int viaje, int aeronave, decimal kg, decimal pax, string label,DateTime fechaSalida)
         {
             InitializeComponent();
             this.usuario = usuario;
             labelDatos.Text = label;
             this.kg = kg;
+            this.viaje = viaje;
+            this.aeronave = aeronave;
+            this.fechaSalida = fechaSalida;
         }
 
         private void ComprarViaje_Load(object sender, EventArgs e)
@@ -38,6 +48,7 @@ namespace AerolineaFrba.Compra
             if (this.kg == 0)
             {
                 dataGridRol1.Visible = true;
+                labelButacas.Visible = true;
             }
             else
             {
@@ -83,6 +94,7 @@ namespace AerolineaFrba.Compra
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
+            textBox1.Text = "";
             textNombre.Text = "";
             textApellido.Text = "";
             textDireccion.Text = "";
@@ -135,10 +147,14 @@ namespace AerolineaFrba.Compra
                         Decimal value;
                         if (!Decimal.TryParse(textBox1.Text, out value))
                         {
-                            textoError += "El campo DNI no es valido";
+                            textoError += "El campo DNI no es valido\n";
                         }
 
                     }
+                }
+                if (c != null && JanadianDateDB.Instance.getCantViajesFechaCliente(c, fechaSalida) > 0)
+                {
+                    textoError += "El Cliente ya posee viajes en la fecha del viaje que selecciono\n";
                 }
                 if (textoError.Length != 0)
                 {
@@ -156,9 +172,18 @@ namespace AerolineaFrba.Compra
                 }
                 this.cliente = JanadianDateDB.Instance.getCliente(Convert.ToDecimal(textBox1.Text.Trim()));
 
+
+
                 MessageBox.Show(null, "Se han confirmado correctamente los datos del cliente", "Compra");
 
-                string query = string.Format(" SELECT * FROM JANADIAN_DATE.Viaje_Disponible where  CONVERT(DATE,FechaSalida ) = '{0:dd/MM/yyyy}' AND Origen='{1}' AND Destino='{2}'", dateTimeFechaSalida.Value.Date, comboOrigen.SelectedItem.ToString(), comboDestino.SelectedItem.ToString());
+
+                if(kg>0){
+                    //encomienda, luego de validar los datos se retorna para seguir con el siguiente
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }else{
+                    //pasaje, luego de validar los datos se elige el asiento
+                string query = string.Format(" SELECT  b.Id,b.Numero,b.Tipo FROM JANADIAN_DATE.Butaca b WHERE aeronave={0} AND b.Id not in (SELECT Butaca from JANADIAN_DATE.Butaca_Viaje where Viaje={1})", aeronave, viaje);
                 Console.WriteLine(query);
                 //MessageBox.Show(null, query, "Query");
                 dataGridRol1.Columns.Clear();
@@ -181,6 +206,7 @@ namespace AerolineaFrba.Compra
                     // this.Close();
 
                 }
+                }
             }
             catch (Exception exAlta)
             {
@@ -194,7 +220,15 @@ namespace AerolineaFrba.Compra
 
         private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            // Ignore clicks that are not in our 
+            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
+            {
+                this.butaca = new Butaca(Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Id"].Value), Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Numero"].Value), Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo"].Value), 1, aeronave);
+                MessageBox.Show(null, "Seleccion de butaca correcta", "Compra");
+ 
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
         }
     }
 }
