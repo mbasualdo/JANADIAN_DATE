@@ -489,7 +489,7 @@ GO
  
  /** Creacion de vista viajes disponibles ***/
  CREATE VIEW [JANADIAN_DATE].[Viaje_Disponible] AS  
-SELECT v.Id as Viaje, v.FechaSalida,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,(a.KG_Disponibles -  JANADIAN_DATE.kg_Reservados(v.Id)) AS KG_Disponibles,((a.Cant_Butacas_Pasillo+a.Cant_Butacas_Ventanilla) - JANADIAN_DATE.Butacas_Reservadas(v.Id)) as Butacas_Libres  FROM   [JANADIAN_DATE].[Viaje] v
+SELECT v.Id as Viaje,a.Id as Aeronave, v.FechaSalida,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,(a.KG_Disponibles -  JANADIAN_DATE.kg_Reservados(v.Id)) AS KG_Disponibles,((a.Cant_Butacas_Pasillo+a.Cant_Butacas_Ventanilla) - JANADIAN_DATE.Butacas_Reservadas(v.Id)) as Butacas_Libres  FROM   [JANADIAN_DATE].[Viaje] v
  INNER JOIN [JANADIAN_DATE].[Ruta] r ON (v.Ruta = r.Id)
  INNER JOIN [JANADIAN_DATE].[Ciudad] o ON (r.Ciudad_Origen = o.Id)
  INNER JOIN [JANADIAN_DATE].[Ciudad] d ON (r.Ciudad_Destino = d.Id)
@@ -1512,11 +1512,9 @@ BEGIN TRY
 
 /****** S  ******/
 INSERT INTO JANADIAN_DATE.Butaca_Viaje(Butaca,Viaje)
-SELECT distinct b.Id,v.Id
-  FROM [GD2C2015].[gd_esquema].[Maestra] m
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Butaca] b ON (b.Numero=m.Butaca_Nro and b.Aeronave=a.id)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v ON (v.Aeronave=a.Id)
+  select p.Butaca,c.Viaje FROM [GD2C2015].[gd_esquema].[Maestra] m
+  inner join JANADIAN_DATE.Compra c on (c.Codigo=m.Pasaje_Codigo)
+  INNER JOIN JANADIAN_DATE.Pasaje p on (p.Compra=c.PNR)
 
 COMMIT TRANSACTION
 
