@@ -21,6 +21,8 @@ namespace AerolineaFrba.Listado_Estadistico
         {
             try
             {
+                dataGridView1.DataSource = null;
+                dataGridView1.Columns.Clear();
                 String textoError = validarIngreso();
 
                 if (textoError.Length != 0)
@@ -67,6 +69,8 @@ namespace AerolineaFrba.Listado_Estadistico
         {
             try
             {
+                dataGridView1.DataSource = null;
+                dataGridView1.Columns.Clear();
                 String textoError = validarIngreso();
 
                 if (textoError.Length != 0)
@@ -76,7 +80,7 @@ namespace AerolineaFrba.Listado_Estadistico
 
                 }
 
-                String query = String.Format("select top 5 count(*) as Pasajes,Destino  from JANADIAN_DATE.[Pasajes_Vendidos_Destino] WHERE Fecha_Compra>'{0}' AND Fecha_Compra<'{1}' GROUP by Destino ORDER BY Pasajes desc ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
+                String query = String.Format("select top 5 count(*) as Pasajes,Destino  from JANADIAN_DATE.[Pasajes_Vendidos_Destino] WHERE Fecha_Compra>'{0}' AND Fecha_Compra<'{1}' GROUP by Destino ORDER BY Pasajes asc ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
                 Console.WriteLine(query);
                 //MessageBox.Show(null, query, "Query");
 
@@ -97,6 +101,8 @@ namespace AerolineaFrba.Listado_Estadistico
             
             try
             {
+                dataGridView1.DataSource = null;
+                dataGridView1.Columns.Clear();
                 String textoError = validarIngreso();
 
                 if (textoError.Length != 0)
@@ -126,6 +132,8 @@ namespace AerolineaFrba.Listado_Estadistico
         {
             try
             {
+                dataGridView1.DataSource = null;
+                dataGridView1.Columns.Clear();
                 String textoError = validarIngreso();
 
                 if (textoError.Length != 0)
@@ -156,6 +164,8 @@ namespace AerolineaFrba.Listado_Estadistico
 
             try
             {
+                dataGridView1.DataSource = null;
+                dataGridView1.Columns.Clear();
                 String textoError = validarIngreso();
 
                 if (textoError.Length != 0)
