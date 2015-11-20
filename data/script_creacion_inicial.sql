@@ -362,7 +362,7 @@ CREATE TABLE [JANADIAN_DATE].[Compra](
 	CONSTRAINT FK_Compra_Viaje FOREIGN KEY (Viaje) REFERENCES [JANADIAN_DATE].[Viaje] (Id)
 	ON DELETE CASCADE
     ON UPDATE CASCADE,
-	[Codigo] [numeric](18,0) UNIQUE,
+	[Codigo] [numeric](18,0),
 ) ON [PRIMARY]
 
 GO
@@ -380,8 +380,7 @@ GO
   /** Creacion de tabla Pasaje ***/
 IF OBJECT_ID('[JANADIAN_DATE].[Pasaje]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Pasaje](
-	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
+	[Codigo]  [numeric](18,0) IDENTITY(1,1) PRIMARY KEY,
 	[Butaca] [int] NOT NULL,
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
@@ -402,8 +401,7 @@ GO
   /** Creacion de tabla Paquete ***/
 IF OBJECT_ID('[JANADIAN_DATE].[Paquete]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Paquete](
-	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Codigo] [numeric](18,0) NOT NULL UNIQUE,
+	[Codigo]  [numeric](18,0) IDENTITY(1,1) PRIMARY KEY,
 	[KG] [numeric](18,0) CHECK ([KG]>=0),
 	[Compra] [int] NOT NULL FOREIGN KEY (Compra) REFERENCES [JANADIAN_DATE].[Compra] (PNR),
 	[Cliente] [int] NOT NULL,
@@ -544,12 +542,12 @@ INNER JOIN JANADIAN_DATE.Fuera_Servicio f ON (f.Aeronave=a.Id)
 
   /** Creacion de vista pasajes/paquetes con sus compras y viajes correspondientes no cancelados ***/
   CREATE VIEW [JANADIAN_DATE].[Pasajes_Paquetes_Compra_Viaje] AS  
- 					SELECT c.PNR, p.Id AS codigo,'PASAJE' as Tipo,v.Id As Viaje FROM [JANADIAN_DATE].[Compra] c
+ 					SELECT c.PNR, p.codigo AS codigo,'PASAJE' as Tipo,v.Id As Viaje FROM [JANADIAN_DATE].[Compra] c
 					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
 					WHERE p.Cancelado=0
 					union
-					SELECT c.PNR, x.Id AS codigo,'PAQUETE' as Tipo,v.Id As Viaje  FROM [JANADIAN_DATE].[Compra] c
+					SELECT c.PNR, x.codigo AS codigo,'PAQUETE' as Tipo,v.Id As Viaje  FROM [JANADIAN_DATE].[Compra] c
 					INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
 					WHERE x.Cancelado=0
@@ -573,7 +571,7 @@ BEGIN TRY
 
 	BEGIN TRANSACTION
 	/** consultar**/
-	SELECT  @butacaPasaje=Butaca FROM [JANADIAN_DATE].[Pasaje] WHERE Id=@cod_pasaje
+	SELECT  @butacaPasaje=Butaca FROM [JANADIAN_DATE].[Pasaje] WHERE Codigo=@cod_pasaje
 
 	/** verificar si es pasaje o paquete**/
 	 IF  @butacaPasaje IS NOT NULL
@@ -584,7 +582,7 @@ BEGIN TRY
 		/** grabamos la cancelacion en la tabla correspondiente **/
 
 		--controlar que no este cancelado actualmente
-		SELECT TOP 1 @Canc=Cancelado FROM [JANADIAN_DATE].[Pasaje]  WHERE Id=@cod_pasaje
+		SELECT TOP 1 @Canc=Cancelado FROM [JANADIAN_DATE].[Pasaje]  WHERE Codigo=@cod_pasaje
 
 		IF @Canc=0
 			BEGIN
@@ -595,7 +593,7 @@ BEGIN TRY
 
 				/** Marcamos el pasaje como cancelado **/
 
-				UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_pasaje
+				UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Codigo=@cod_pasaje
 			END
 		END
 
@@ -628,7 +626,7 @@ BEGIN TRY
 
 	BEGIN TRANSACTION
 	/** consultar**/
-	SELECT  @kg_paquete=KG FROM [JANADIAN_DATE].[Paquete] WHERE Id=@cod_paquete
+	SELECT  @kg_paquete=KG FROM [JANADIAN_DATE].[Paquete] WHERE Codigo=@cod_paquete
 
 	/** verificar si es pasaje o paquete**/
 	IF  @kg_paquete IS NOT NULL
@@ -638,7 +636,7 @@ BEGIN TRY
 		/** grabamos la cancelacion en la tabla correspondiente **/
 
 		--controlar que no este cancelado actualmente
-		SELECT TOP 1 @Canc=Cancelado FROM [JANADIAN_DATE].[Paquete]  WHERE Id=@cod_paquete
+		SELECT TOP 1 @Canc=Cancelado FROM [JANADIAN_DATE].[Paquete]  WHERE Codigo=@cod_paquete
 
 		IF @Canc=0
 			BEGIN
@@ -649,7 +647,7 @@ BEGIN TRY
 
 				/** Marcamos el paquete como cancelado **/
 
-				UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Id=@cod_paquete
+				UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Codigo=@cod_paquete
 			END
 		END
 
@@ -688,7 +686,7 @@ BEGIN TRY
 			BEGIN
 				DECLARE ViajesEnAeronave CURSOR FOR 
 
-					SELECT c.PNR, p.Id AS codigo,v.Id as Viaje FROM [JANADIAN_DATE].[Aeronave] a
+					SELECT c.PNR, p.codigo AS codigo,v.Id as Viaje FROM [JANADIAN_DATE].[Aeronave] a
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
 					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
@@ -699,7 +697,7 @@ BEGIN TRY
 			BEGIN
 
 			DECLARE ViajesEnAeronave CURSOR FOR 
-			SELECT c.PNR, p.Id AS codigo,v.Id as Viaje FROM [JANADIAN_DATE].[Aeronave] a
+			SELECT c.PNR, p.codigo AS codigo,v.Id as Viaje FROM [JANADIAN_DATE].[Aeronave] a
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
 					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
@@ -751,7 +749,7 @@ BEGIN TRY
 				DECLARE ViajesEnAeronave CURSOR FOR 
 
 
-			SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+			SELECT c.PNR, p.codigo AS codigo FROM [JANADIAN_DATE].[Aeronave] a
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
 					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 					INNER JOIN [JANADIAN_DATE].[Paquete] p ON (p.Compra = c.PNR)
@@ -762,7 +760,7 @@ BEGIN TRY
 			BEGIN
 
 			DECLARE ViajesEnAeronave CURSOR FOR 
-			SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Aeronave] a
+			SELECT c.PNR, p.codigo AS codigo FROM [JANADIAN_DATE].[Aeronave] a
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Aeronave = a.Id)
 					INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 					INNER JOIN [JANADIAN_DATE].[Paquete] p ON (p.Compra = c.PNR)
@@ -811,7 +809,7 @@ BEGIN TRY
 		BEGIN TRANSACTION
 				DECLARE ViajesEnCompra CURSOR FOR 
 
-				SELECT c.PNR, p.Id AS codigo,v.Id  FROM [JANADIAN_DATE].[Compra] c
+				SELECT c.PNR, p.codigo AS codigo,v.Id  FROM [JANADIAN_DATE].[Compra] c
 					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
 					WHERE c.PNR=@Id_Compra and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	
@@ -858,7 +856,7 @@ BEGIN TRY
 		BEGIN TRANSACTION
 				DECLARE ViajesEnCompra CURSOR FOR 
 
-				SELECT c.PNR, p.Id AS codigo FROM [JANADIAN_DATE].[Compra] c
+				SELECT c.PNR, p.codigo AS codigo FROM [JANADIAN_DATE].[Compra] c
 					INNER JOIN [JANADIAN_DATE].[Paquete] p ON (p.Compra = c.PNR)
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
 					WHERE c.PNR=@Id_Compra and DATEDIFF(day,CURRENT_TIMESTAMP,v.FechaSalida)>0	
@@ -1585,6 +1583,7 @@ BEGIN TRANSACTION
 BEGIN TRY
 
 /* S*/
+SET IDENTITY_INSERT JANADIAN_DATE.Paquete ON
 INSERT INTO JANADIAN_DATE.Paquete (Codigo,Precio,KG,Compra,Cliente)
 	  select m.[Paquete_Codigo]
       ,m.[Paquete_Precio]
@@ -1619,8 +1618,9 @@ BEGIN TRANSACTION
 BEGIN TRY
 
 /* S*/
+SET IDENTITY_INSERT JANADIAN_DATE.Pasaje ON
 INSERT INTO JANADIAN_DATE.Pasaje(Codigo,Precio,Butaca,Compra,Cliente)
-  	  select m.[Pasaje_Codigo]
+   select  m.[Pasaje_Codigo]
       ,m.[Pasaje_Precio]
       ,b.Id as Butaca
       ,c.PNR as Compra
@@ -1628,10 +1628,8 @@ INSERT INTO JANADIAN_DATE.Pasaje(Codigo,Precio,Butaca,Compra,Cliente)
   FROM [GD2C2015].[gd_esquema].[Maestra] m
   INNER JOIN [GD2C2015].[JANADIAN_DATE].[Cliente] cli ON (cli.Nombre=m.Cli_Nombre AND cli.Apellido=m.Cli_Apellido and cli.Dni=m.Cli_Dni)
     INNER JOIN [GD2C2015].[JANADIAN_DATE].[Compra] c ON (c.Codigo=m.Pasaje_Codigo)
-	 INNER JOIN [GD2C2015].[JANADIAN_DATE].[Aeronave] a ON (a.Matricula=m.Aeronave_Matricula)
-  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v  ON (c.Viaje=v.Id AND a.Id=v.Aeronave)
-  INNER JOIN  [GD2C2015].[JANADIAN_DATE].Butaca b ON ( a.Id=b.Aeronave and b.Numero=m.Butaca_Nro and b.Tipo=m.Butaca_Tipo )
-
+  INNER JOIN [GD2C2015].[JANADIAN_DATE].[Viaje] v  ON (c.Viaje=v.Id )
+  INNER JOIN  [GD2C2015].[JANADIAN_DATE].Butaca b ON ( v.Aeronave=b.Aeronave and b.Numero=m.Butaca_Nro )
 COMMIT TRANSACTION
 
 END TRY
@@ -1743,7 +1741,7 @@ BEGIN
 		declare @viaje int
 
 		DECLARE ViajesEnRuta CURSOR FOR 
-		SELECT c.PNR, p.Id AS codigo,v.Id as viaje FROM [JANADIAN_DATE].[Ruta] r
+		SELECT c.PNR, p.codigo AS codigo,v.Id as viaje FROM [JANADIAN_DATE].[Ruta] r
 		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
 		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
@@ -1779,7 +1777,7 @@ BEGIN
 		declare @codigo [numeric](18,0);
 
 		DECLARE ViajesEnRuta CURSOR FOR 
-		SELECT c.PNR, x.Id AS codigo FROM [JANADIAN_DATE].[Ruta] r
+		SELECT c.PNR, x.codigo AS codigo FROM [JANADIAN_DATE].[Ruta] r
 		INNER JOIN [JANADIAN_DATE].[Viaje] v ON (v.Ruta = r.Id)
 		INNER JOIN [JANADIAN_DATE].[Compra] c ON (c.Viaje = v.Id)
 		INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
@@ -1849,13 +1847,13 @@ EXEC [JANADIAN_DATE].[Insertar_Viajes]
 GO
 EXEC [JANADIAN_DATE].[Insertar_Butacas] 
 GO
-EXEC [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
-GO
 EXEC [JANADIAN_DATE].[Insertar_Compras] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Paquetes] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Pasajes] 
+GO
+EXEC [JANADIAN_DATE].[Insertar_Butaca_Viajes] 
 GO
 EXEC [JANADIAN_DATE].[Insertar_Millas] 
 GO

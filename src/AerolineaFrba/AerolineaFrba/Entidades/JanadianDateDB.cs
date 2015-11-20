@@ -1734,6 +1734,29 @@ namespace AerolineaFrba
             }
         }
 
+        private double calcularPagoPaquete(Viaje v,Ruta r,decimal paquete)
+        {
+            double val = 0;
+
+            if (paquete > 0)
+                {
+                    val = (val + (Convert.ToDouble(paquete) * r.getPrecio_BaseKG));
+                }
+
+            return val;
+        }
+        private double calcularPagoPasaje(Viaje v,Ruta r,Butaca b)
+        {
+            double val = 0;
+
+                if (b != null)
+                {
+                    val = (val + (r.getPrecio_BasePasaje));
+                }
+
+            return val;
+        }
+
         internal void insertarCliente(Cliente cliente)
         {
             try{
@@ -1748,7 +1771,9 @@ namespace AerolineaFrba
                 con.Close();
                 throw (new Exception(exAlta.ToString()));
 
-            }        }
+            }       
+        
+        }
 
         internal void actualizarCliente(Cliente cliente)
         {
@@ -1840,6 +1865,87 @@ namespace AerolineaFrba
 
             }
             return ruta;
+        }
+
+        internal int insertarCompra(CompraDB compra)
+        {
+            int idCompra=0 ;
+            try
+            {
+                con.Open();
+                SqlCommand insertCompra = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Compra] (Precio,Fecha_Compra,Viaje,Forma_Pago,Cliente) VALUES ({0:0.00},'{1}',{2},'{3}',{4})", compra.getPrecio.ToString().Replace(",", "."), compra.getFecha, compra.getViaje, compra.getFormaPago, compra.getCliente), con);
+                insertCompra.ExecuteNonQuery();
+
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT SCOPE_IDENTITY() as Cont "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    new Exception();
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    idCompra = Convert.ToInt32(Fila["Cont"]);
+                    break;
+                }
+           
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+
+            return idCompra;
+        }
+
+        internal void insertarPaquetes(List<decimal> paquetes,List<Cliente> clientes, int idCompra,Viaje v,Ruta r)
+        {
+            try
+            {
+                con.Open();
+
+                for (int i = 0; i < paquetes.Count; i++)
+                {
+                    SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Paquete] ([KG],[Compra],[Cliente],[Precio]) VALUES ({0},{1},{2},{3:0.00})", paquetes[i], idCompra, clientes[i].getId, calcularPagoPaquete(v, r, paquetes[i]).ToString().Replace(",", ".")), con);
+                    insertPaquete.ExecuteNonQuery();
+
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+        }
+
+        internal void insertarPasajes(List<Butaca> butacas, List<Cliente> clientes, int idCompra, Viaje v, Ruta r)
+        {
+            try
+            {
+                con.Open();
+
+                for (int i = 0; i < butacas.Count; i++)
+                {
+                    SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Pasaje] ([Butaca],[Compra],[Cliente],[Precio]) VALUES ({0},{1},{2},{3:0.00})", paquetes[i], idCompra, clientes[i].getId, calcularPagoPaquete(v, r, paquetes[i]).ToString().Replace(",", ".")), con);
+                    insertPaquete.ExecuteNonQuery();
+
+                }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
         }
     }
 }

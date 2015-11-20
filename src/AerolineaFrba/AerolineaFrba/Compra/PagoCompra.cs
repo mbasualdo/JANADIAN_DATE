@@ -303,15 +303,7 @@ namespace AerolineaFrba.Compra
                 {
                     textoError += "El campo tipo de tarjeta es obligatorio\n";
                 }
-                else
-                {
-                    Decimal value;
-                    if (!Decimal.TryParse(textBoxTipoTarj.Text, out value))
-                    {
-                        textoError += "El campo tipo de tarjeta no es valido";
-                    }
 
-                }
                 if (dateTimePickerVenc.Value == null)
                 {
                     textoError += "El campo fecha de vencimiento es obligatorio\n";
@@ -335,7 +327,9 @@ namespace AerolineaFrba.Compra
                 }
                 this.cliente = JanadianDateDB.Instance.getCliente(Convert.ToDecimal(textBox1.Text.Trim()));
 
-                MessageBox.Show(null, "Se ha confirmado la compra", "Compra");
+                String dataCompra = this.guardarCompra();
+
+                MessageBox.Show(null, "Se ha confirmado la compra\n", "Compra");
 
 
             }
@@ -346,6 +340,20 @@ namespace AerolineaFrba.Compra
                 MessageBox.Show(null, "Intente de nuevo", "Error");
                 return;
             }
+        }
+
+        private string guardarCompra()
+        {
+            String textoRetorno = "\n";
+
+            DateTime fecha = JanadianDateDB.Instance.getFechaSistema();
+            Viaje v = JanadianDateDB.Instance.getViajeById(viaje);
+            Ruta r = JanadianDateDB.Instance.getRutaById(v.getRuta);
+            int idCompra = JanadianDateDB.Instance.insertarCompra(new CompraDB(0, this.pago, fecha, this.viaje, comboBoxFormaPago.SelectedItem.ToString(), cliente.getId));
+            JanadianDateDB.Instance.insertarPaquetes(this.paquetes,this.clientes,idCompra,v,r);
+            JanadianDateDB.Instance.insertarPasajes(this.butacas, this.clientes, idCompra, v, r);
+
+            return textoRetorno;
         }
 
         private void buttonLimpiarTarjeta_Click(object sender, EventArgs e)
