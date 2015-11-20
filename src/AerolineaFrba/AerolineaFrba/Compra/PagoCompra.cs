@@ -329,7 +329,7 @@ namespace AerolineaFrba.Compra
 
                 String dataCompra = this.guardarCompra();
 
-                MessageBox.Show(null, "Se ha confirmado la compra\n", "Compra");
+                MessageBox.Show(null, "Se ha confirmado la compra\n" + dataCompra, "Compra");
 
 
             }
@@ -346,13 +346,38 @@ namespace AerolineaFrba.Compra
         {
             String textoRetorno = "\n";
 
+
             DateTime fecha = JanadianDateDB.Instance.getFechaSistema();
             Viaje v = JanadianDateDB.Instance.getViajeById(viaje);
             Ruta r = JanadianDateDB.Instance.getRutaById(v.getRuta);
             int idCompra = JanadianDateDB.Instance.insertarCompra(new CompraDB(0, this.pago, fecha, this.viaje, comboBoxFormaPago.SelectedItem.ToString(), cliente.getId));
-            JanadianDateDB.Instance.insertarPaquetes(this.paquetes,this.clientes,idCompra,v,r);
-            JanadianDateDB.Instance.insertarPasajes(this.butacas, this.clientes, idCompra, v, r);
+            List<int> idPaquetes = JanadianDateDB.Instance.insertarPaquetes(this.paquetes, this.clientes, idCompra, v, r);
+            List<int> idsPasajes = JanadianDateDB.Instance.insertarPasajes(this.butacas, this.clientes, idCompra, v, r);
 
+            if (comboBoxFormaPago.SelectedItem.ToString().CompareTo("TC")==0)
+            {
+                JanadianDateDB.Instance.insertarDatosTarjeta(Convert.ToDecimal(textBoxNumeroTarj.Text), Convert.ToString(textBoxTipoTarj.Text), Convert.ToDecimal(textBoxCodTarj.Text), String.Format("{0:MMyy}",dateTimePickerVenc.Value), idCompra, cliente.getId);
+            }
+
+            textoRetorno += string.Format("PNR: {0}\n" , idCompra.ToString());
+            textoRetorno += string.Format("Monto: ${0}\n\n", this.pago);
+            if (idPaquetes != null && idPaquetes.Count > 0)
+            {
+
+                textoRetorno += string.Format("Codigo Paquete: \n");
+                foreach (int pId in idPaquetes) {
+                    textoRetorno += string.Format("{0}\n", pId);
+                }
+            }
+            if (idsPasajes != null && idsPasajes.Count > 0)
+            {
+
+                textoRetorno += string.Format("Codigo Pasaje: \n");
+                foreach (int pId in idsPasajes)
+                {
+                    textoRetorno += string.Format("{0}\n", pId);
+                }
+            }
             return textoRetorno;
         }
 

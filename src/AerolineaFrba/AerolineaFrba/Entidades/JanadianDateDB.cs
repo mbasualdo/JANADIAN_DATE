@@ -1904,16 +1904,37 @@ namespace AerolineaFrba
             return idCompra;
         }
 
-        internal void insertarPaquetes(List<decimal> paquetes,List<Cliente> clientes, int idCompra,Viaje v,Ruta r)
+        internal List<int> insertarPaquetes(List<decimal> paquetes,List<Cliente> clientes, int idCompra,Viaje v,Ruta r)
         {
+            List<int> idPaquete = new List<int>();
             try
             {
                 con.Open();
 
                 for (int i = 0; i < paquetes.Count; i++)
                 {
+                    if(paquetes[i]!=0){
+
                     SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Paquete] ([KG],[Compra],[Cliente],[Precio]) VALUES ({0},{1},{2},{3:0.00})", paquetes[i], idCompra, clientes[i].getId, calcularPagoPaquete(v, r, paquetes[i]).ToString().Replace(",", ".")), con);
                     insertPaquete.ExecuteNonQuery();
+
+                    SqlCommand cmd = new SqlCommand(String.Format("SELECT SCOPE_IDENTITY() as Cont "), con);
+                    DataTable dt = new DataTable();
+
+                    dt.TableName = "Tabla";
+                    dt.Load(cmd.ExecuteReader());
+                    if (dt.Rows.Count == 0)
+                    {
+                        con.Close();
+                        new Exception();
+                    }
+                    foreach (DataRow Fila in dt.Rows)
+                    {
+                        idPaquete.Add(Convert.ToInt32(Fila["Cont"]));
+                        break;
+                    }
+
+                }
 
                 }
                 con.Close();
@@ -1924,20 +1945,67 @@ namespace AerolineaFrba
                 throw (new Exception(exAlta.ToString()));
 
             }
+            return idPaquete;
+
         }
 
-        internal void insertarPasajes(List<Butaca> butacas, List<Cliente> clientes, int idCompra, Viaje v, Ruta r)
+        internal List<int> insertarPasajes(List<Butaca> butacas, List<Cliente> clientes, int idCompra, Viaje v, Ruta r)
         {
+            List<int> idPasajes = new List<int>();
+
             try
             {
                 con.Open();
 
                 for (int i = 0; i < butacas.Count; i++)
                 {
-                    SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Pasaje] ([Butaca],[Compra],[Cliente],[Precio]) VALUES ({0},{1},{2},{3:0.00})", paquetes[i], idCompra, clientes[i].getId, calcularPagoPaquete(v, r, paquetes[i]).ToString().Replace(",", ".")), con);
-                    insertPaquete.ExecuteNonQuery();
+                    if (butacas[i] != null)
+                    {
+                        SqlCommand insertButacaViaje = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Butaca_Viaje] ([Butaca],[Viaje]) VALUES ({0},{1})", butacas[i].getId, v.getId), con);
+                        insertButacaViaje.ExecuteNonQuery();
+
+                        SqlCommand insertPasaje = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Pasaje] ([Butaca],[Compra],[Cliente],[Precio]) VALUES ({0},{1},{2},{3:0.00})", butacas[i].getId, idCompra, clientes[i].getId, calcularPagoPasaje(v, r, butacas[i]).ToString().Replace(",", ".")), con);
+                        insertPasaje.ExecuteNonQuery();
+
+                        SqlCommand cmd = new SqlCommand(String.Format("SELECT SCOPE_IDENTITY() as Cont "), con);
+                        DataTable dt = new DataTable();
+
+                        dt.TableName = "Tabla";
+                        dt.Load(cmd.ExecuteReader());
+                        if (dt.Rows.Count == 0)
+                        {
+                            con.Close();
+                            new Exception();
+                        }
+                        foreach (DataRow Fila in dt.Rows)
+                        {
+                            idPasajes.Add(Convert.ToInt32(Fila["Cont"]));
+                            break;
+                        }
+                    }
 
                 }
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }
+            return idPasajes;
+
+        }
+
+        internal void insertarDatosTarjeta(decimal numero, string tipo, decimal codigo, string venc, int idCompra, int cliente)
+        {
+            try
+            {
+                con.Open();
+
+                SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Datos_Tarjeta] ([Numero],[Tipo],[Cod_Seg],[Fecha_Venc],[Compra],[Cliente]) VALUES ({0},'{1}',{2},'{3}',{4},{5})", numero,  tipo,  codigo,  venc,  idCompra,  cliente), con);
+                    insertPaquete.ExecuteNonQuery();
+
                 con.Close();
             }
             catch (Exception exAlta)
