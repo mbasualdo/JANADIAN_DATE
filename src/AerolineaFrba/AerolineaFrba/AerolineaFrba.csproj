@@ -224,6 +224,12 @@
     <Compile Include="Canje Millas\FormCanje.Designer.cs">
       <DependentUpon>FormCanje.cs</DependentUpon>
     </Compile>
+    <Compile Include="Compra\ComprarViaje.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Compra\ComprarViaje.Designer.cs">
+      <DependentUpon>ComprarViaje.cs</DependentUpon>
+    </Compile>
     <Compile Include="Compra\FormCompra.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -245,6 +251,7 @@
     <Compile Include="Entidades\Aeronave.cs" />
     <Compile Include="Entidades\Cliente.cs" />
     <Compile Include="Entidades\Compra.cs" />
+    <Compile Include="Entidades\Butaca.cs" />
     <Compile Include="Entidades\Producto.cs" />
     <Compile Include="Entidades\Viaje.cs" />
     <Compile Include="Entidades\Ruta.cs" />
@@ -367,6 +374,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Canje Millas\FormCanje.resx">
       <DependentUpon>FormCanje.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Compra\ComprarViaje.resx">
+      <DependentUpon>ComprarViaje.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Compra\FormCompra.resx">
       <DependentUpon>FormCompra.cs</DependentUpon>

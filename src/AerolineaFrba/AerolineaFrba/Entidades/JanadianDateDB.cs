@@ -1693,5 +1693,39 @@ namespace AerolineaFrba
 
             }
         }
+
+        internal void insertarCliente(Cliente cliente)
+        {
+            try{
+                con.Open();
+                SqlCommand insertCliente = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Cliente] (Dni,Nombre,Apellido,Dir,Telefono,Mail,Fecha_Nac) VALUES ({0},'{1}','{2}','{3}',{4},'{5}','{6}')", cliente.getDni,cliente.getNombre,cliente.getApellido,cliente.getDir,cliente.getTelefono,cliente.getMail,cliente.getFechaNacimiento), con);
+                insertCliente.ExecuteNonQuery();
+
+                con.Close();
+            }
+            catch (Exception exAlta)
+            {
+                con.Close();
+                throw (new Exception(exAlta.ToString()));
+
+            }        }
+
+        internal void actualizarCliente(Cliente cliente)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Cliente] SET Dni={0},Nombre='{1}',Apellido='{2}',Dir='{3}',Telefono={4},Mail='{5}',Fecha_Nac='{6}' WHERE Id={7}", cliente.getDni, cliente.getNombre, cliente.getApellido, cliente.getDir, cliente.getTelefono, cliente.getMail, cliente.getFechaNacimiento, cliente.getId), con);
+                updateRol.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception eUpdate)
+            {
+                Console.WriteLine(eUpdate.ToString());
+                con.Close();
+                throw (new Exception());
+
+            }
+        }
     }
 }

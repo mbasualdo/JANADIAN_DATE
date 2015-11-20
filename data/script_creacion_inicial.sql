@@ -1404,8 +1404,12 @@ FETCH NEXT FROM db_cursor_naves INTO @Matricula ,@Fabricante,@Modelo , @Tipo_Ser
 WHILE @@FETCH_STATUS = 0   
 BEGIN   
 
-	SELECT @Butacas_Ventanilla = MAX(c) from (SELECT  COUNT(*) as c  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Ventanilla'  group by FechaSalida) as s
-	SELECT @Butacas_Pasillo = MAX(c2) from (SELECT  COUNT(*) as c2  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Pasillo'  group by FechaSalida) as s2
+	 SELECT Butaca_Piso   FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Ventanilla'  group by Butaca_Tipo,Butaca_Nro,Butaca_Piso
+	 SET @Butacas_Ventanilla =  @@ROWCOUNT
+	 SELECT  Butaca_Piso  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Pasillo'  group by Butaca_Tipo,Butaca_Nro,Butaca_Piso
+	 SET @Butacas_Pasillo =  @@ROWCOUNT
+	--SELECT @Butacas_Ventanilla = MAX(c) from (SELECT  COUNT(*) as c  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Ventanilla'  group by FechaSalida) as s
+	--SELECT @Butacas_Pasillo = MAX(c2) from (SELECT  COUNT(*) as c2  FROM GD2C2015.gd_esquema.Maestra  where Aeronave_Matricula=@Matricula AND   Butaca_Tipo='Pasillo'  group by FechaSalida) as s2
 
     INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) VALUES (   @Matricula ,@Fabricante,@Modelo , @Tipo_Servicio,@KG_Disponibles,@Butacas_Pasillo,@Butacas_Ventanilla )
 

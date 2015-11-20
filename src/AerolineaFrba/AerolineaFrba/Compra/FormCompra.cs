@@ -126,7 +126,54 @@ namespace AerolineaFrba.Compra
 
         private void dataGridRol1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // Ignore clicks that are not in our 
+            if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
+            {
+                if (numericUpDownKG.Value <= 0 && numericUpDownPax.Value<=0)
+                {
+                    MessageBox.Show(null, "No ingreso cantidad de pasajes/kg a enviar", "Compra");
+                    return;
+                }
 
-        }
+                if (numericUpDownKG.Value >= Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value))
+                {
+                    MessageBox.Show(null, "La cantidad de kg a enviar es mayor a los disponibles", "Compra");
+                    return;
+                }
+                if (numericUpDownKG.Value >= Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Butacas_Libres"].Value))
+                {
+                    MessageBox.Show(null, "La cantidad de butacas seleccionadas es mayor a las libres", "Compra");
+                    return;
+                }
+//                ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), numericUpDownKG.Value, numericUpDownPax.Value,"Pasajero 1");
+                
+                List<Cliente> clientes = new List<Cliente>();
+                List<Butaca> butaca = new List<Butaca>();
+                List<Decimal> paquetes = new List<Decimal>();
+
+                if (numericUpDownKG.Value > 0) {
+                   ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), numericUpDownKG.Value, 0, "Datos para enviar Encomienda");
+                        DialogResult result = frm.ShowDialog(this);
+                        if (result == DialogResult.OK)
+                        {
+                            // fill other values
+                        }
+
+                    }
+                if (numericUpDownPax.Value > 0)
+                {
+                    for (int i = 0; i < numericUpDownPax.Value; i++)
+                    {
+
+                        ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), 0, numericUpDownPax.Value, "Datos pasaje" + (i+1).ToString());
+                        DialogResult result = frm.ShowDialog(this);
+                        if (result == DialogResult.OK)
+                        {
+                            // fill other values
+                        }
+                    }
+                }
+                }
+            }
     }
 }
