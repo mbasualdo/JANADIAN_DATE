@@ -112,7 +112,7 @@ namespace AerolineaFrba.Listado_Estadistico
 
                 }
 
-                String query = String.Format("select TOP 5 [JANADIAN_DATE].[Millas_Disponibles](Id) as Acumulado,Nombre,Dni,Mail from JANADIAN_DATE.[Clientes_Millas] WHERE Fecha>'{0}' AND Fecha<'{1}' ORDER BY Acumulado DESC ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
+                String query = String.Format("select TOP 5 Acumulado,(c.Nombre +' '+ c.Apellido) as Nombre,Dni,Mail from (select  Id as ClienteId,SUM(Cantidad) as Acumulado from JANADIAN_DATE.[Clientes_Millas] cm WHERE Fecha>'{0}' AND Fecha<'{1}' group by Id ) as acumulados INNER JOIN JANADIAN_DATE.Cliente c on ClienteId=c.Id ORDER BY Acumulado DESC ", JanadianDateDB.Instance.generarFechaInicialSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value), JanadianDateDB.Instance.generarFechaFinalSemestre(comboBoxSemestre.SelectedItem, dateTimePickerAnio.Value));
                 Console.WriteLine(query);
                 //MessageBox.Show(null, query, "Query");
 

@@ -80,7 +80,7 @@ BEGIN
 END
 GO
 
- /****** Funcion que devuelve cuantos viajes tiene en una fecha una aeronave  ********/
+ /****** Funcion que devuelve cuantAS millas tiene disponible un cliente ********/
 CREATE FUNCTION  [JANADIAN_DATE].[Millas_Disponibles](@id int)
 RETURNS  int
 AS 
@@ -521,7 +521,7 @@ INNER JOIN JANADIAN_DATE.Ciudad ci ON (ci.Id=r.Ciudad_Destino)
 
   /** Creacion de vista clientes millas ***/
  CREATE VIEW [JANADIAN_DATE].[Clientes_Millas] AS  
-SELECT DISTINCT(c.Id), (c.Nombre +' '+ c.Apellido) as Nombre,c.Dni,C.Mail,m.Fecha FROM JANADIAN_DATE.Cliente c INNER JOIN JANADIAN_DATE.Millas m ON (m.Cliente=c.Id)
+SELECT c.Id,m.Fecha,m.Cantidad as Cantidad FROM JANADIAN_DATE.Cliente c INNER JOIN JANADIAN_DATE.Millas m ON (m.Cliente=c.Id)
  GO
 
   /** Creacion de vista pasajes cancelados a un destino ***/
