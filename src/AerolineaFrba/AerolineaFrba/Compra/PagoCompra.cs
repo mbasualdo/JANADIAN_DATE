@@ -263,7 +263,7 @@ namespace AerolineaFrba.Compra
                 }
                 this.cliente = JanadianDateDB.Instance.getCliente(Convert.ToDecimal(textBox1.Text.Trim()));
 
-                if (comboBoxFormaPago.SelectedItem.ToString().Trim() == "")
+                if (comboBoxFormaPago.SelectedItem == null || comboBoxFormaPago.SelectedItem.ToString().Trim() == "")
                 
                 {
                     textoError += "La forma de pago es obligatoria\n";
@@ -330,7 +330,7 @@ namespace AerolineaFrba.Compra
                 String dataCompra = this.guardarCompra();
 
                 MessageBox.Show(null, "Se ha confirmado la compra\n" + dataCompra, "Compra");
-
+                this.Close();
 
             }
             catch (Exception exAlta)

@@ -40,17 +40,17 @@
             this.label5 = new System.Windows.Forms.Label();
             this.labelDatos = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.textDireccion = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.dateTimeNacimiento = new System.Windows.Forms.DateTimePicker();
+            this.label11 = new System.Windows.Forms.Label();
+            this.textMail = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.textTelefono = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.textMail = new System.Windows.Forms.TextBox();
-            this.dateTimeNacimiento = new System.Windows.Forms.DateTimePicker();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textDireccion = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.buttonGuardar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.dataGridRol1 = new System.Windows.Forms.DataGridView();
@@ -187,6 +187,75 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "datos personales";
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.ForeColor = System.Drawing.Color.Red;
+            this.label13.Location = new System.Drawing.Point(207, 183);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(62, 13);
+            this.label13.TabIndex = 44;
+            this.label13.Text = "* obligatorio";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(117, 182);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(93, 13);
+            this.label12.TabIndex = 43;
+            this.label12.Text = "Fecha Nacimiento";
+            // 
+            // dateTimeNacimiento
+            // 
+            this.dateTimeNacimiento.Location = new System.Drawing.Point(275, 176);
+            this.dateTimeNacimiento.Name = "dateTimeNacimiento";
+            this.dateTimeNacimiento.Size = new System.Drawing.Size(200, 20);
+            this.dateTimeNacimiento.TabIndex = 42;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(117, 153);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(26, 13);
+            this.label11.TabIndex = 41;
+            this.label11.Text = "Mail";
+            // 
+            // textMail
+            // 
+            this.textMail.Location = new System.Drawing.Point(275, 149);
+            this.textMail.Name = "textMail";
+            this.textMail.Size = new System.Drawing.Size(197, 20);
+            this.textMail.TabIndex = 40;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(117, 127);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(49, 13);
+            this.label9.TabIndex = 38;
+            this.label9.Text = "Telefono";
+            // 
+            // textTelefono
+            // 
+            this.textTelefono.Location = new System.Drawing.Point(275, 123);
+            this.textTelefono.MaxLength = 18;
+            this.textTelefono.Name = "textTelefono";
+            this.textTelefono.Size = new System.Drawing.Size(197, 20);
+            this.textTelefono.TabIndex = 37;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.ForeColor = System.Drawing.Color.Red;
+            this.label10.Location = new System.Drawing.Point(207, 126);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(62, 13);
+            this.label10.TabIndex = 36;
+            this.label10.Text = "* obligatorio";
+            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -212,74 +281,6 @@
             this.label8.Size = new System.Drawing.Size(62, 13);
             this.label8.TabIndex = 33;
             this.label8.Text = "* obligatorio";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(117, 127);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(49, 13);
-            this.label9.TabIndex = 38;
-            this.label9.Text = "Telefono";
-            // 
-            // textTelefono
-            // 
-            this.textTelefono.Location = new System.Drawing.Point(275, 123);
-            this.textTelefono.Name = "textTelefono";
-            this.textTelefono.Size = new System.Drawing.Size(197, 20);
-            this.textTelefono.TabIndex = 37;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.ForeColor = System.Drawing.Color.Red;
-            this.label10.Location = new System.Drawing.Point(207, 126);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(62, 13);
-            this.label10.TabIndex = 36;
-            this.label10.Text = "* obligatorio";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(117, 153);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(26, 13);
-            this.label11.TabIndex = 41;
-            this.label11.Text = "Mail";
-            // 
-            // textMail
-            // 
-            this.textMail.Location = new System.Drawing.Point(275, 149);
-            this.textMail.Name = "textMail";
-            this.textMail.Size = new System.Drawing.Size(197, 20);
-            this.textMail.TabIndex = 40;
-            // 
-            // dateTimeNacimiento
-            // 
-            this.dateTimeNacimiento.Location = new System.Drawing.Point(275, 176);
-            this.dateTimeNacimiento.Name = "dateTimeNacimiento";
-            this.dateTimeNacimiento.Size = new System.Drawing.Size(200, 20);
-            this.dateTimeNacimiento.TabIndex = 42;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(117, 182);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(93, 13);
-            this.label12.TabIndex = 43;
-            this.label12.Text = "Fecha Nacimiento";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.ForeColor = System.Drawing.Color.Red;
-            this.label13.Location = new System.Drawing.Point(207, 183);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(62, 13);
-            this.label13.TabIndex = 44;
-            this.label13.Text = "* obligatorio";
             // 
             // buttonGuardar
             // 

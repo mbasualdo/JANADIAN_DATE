@@ -52,6 +52,11 @@ namespace AerolineaFrba.Compra
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
+            limpiar();
+        }
+
+        private void limpiar()
+        {
             dateTimeFechaSalida.Value = JanadianDateDB.Instance.getFechaSistema().AddDays(1);
             comboOrigen.SelectedItem = null;
             comboDestino.SelectedItem = null;
@@ -190,7 +195,7 @@ namespace AerolineaFrba.Compra
                     paquetes.Add(numericUpDownKG.Value);
                     butacas.Add(null);
                 }
-
+                this.limpiar();
                 }
             }
     }
