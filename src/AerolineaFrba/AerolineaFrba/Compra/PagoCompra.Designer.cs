@@ -404,6 +404,7 @@
             // textBoxNumeroTarj
             // 
             this.textBoxNumeroTarj.Location = new System.Drawing.Point(275, 19);
+            this.textBoxNumeroTarj.MaxLength = 18;
             this.textBoxNumeroTarj.Name = "textBoxNumeroTarj";
             this.textBoxNumeroTarj.Size = new System.Drawing.Size(197, 20);
             this.textBoxNumeroTarj.TabIndex = 0;

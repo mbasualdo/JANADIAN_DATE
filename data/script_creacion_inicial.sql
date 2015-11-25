@@ -102,7 +102,7 @@ RETURNS  int
 AS 
 BEGIN
    DECLARE @count int
-SELECT @count =  count(*) from JANADIAN_DATE.Paquete p 
+SELECT @count = sum(p.KG) from JANADIAN_DATE.Paquete p 
   INNER JOIN JANADIAN_DATE.Compra c ON (c.PNR=P.Compra) 
   INNER JOIN JANADIAN_DATE.Viaje v ON (V.Id=C.Viaje) 
   WHERE Viaje=@id and Cancelado=0
@@ -420,7 +420,7 @@ GO
 IF OBJECT_ID('[JANADIAN_DATE].[Datos_Tarjeta]') IS NULL
 CREATE TABLE [JANADIAN_DATE].[Datos_Tarjeta](
 	[Id] [int] IDENTITY(1,1) PRIMARY KEY,
-	[Numero] [numeric](18,0) NOT NULL UNIQUE,
+	[Numero] [numeric](18,0) NOT NULL,
 	[Tipo] [nvarchar](255) NOT NULL,
 	[Cod_Seg]  [numeric](18,0) NOT NULL,
 	[Fecha_Venc] [nvarchar](4) NOT NULL,
