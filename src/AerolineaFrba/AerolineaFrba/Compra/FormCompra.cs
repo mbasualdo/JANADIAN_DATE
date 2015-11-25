@@ -135,12 +135,12 @@ namespace AerolineaFrba.Compra
                     return;
                 }
 
-                if (numericUpDownKG.Value >= Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value))
+                if (numericUpDownKG.Value > Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value))
                 {
                     MessageBox.Show(null, "La cantidad de kg a enviar es mayor a los disponibles", "Compra");
                     return;
                 }
-                if (numericUpDownPax.Value >= Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Butacas_Libres"].Value))
+                if (numericUpDownPax.Value > Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Butacas_Libres"].Value))
                 {
                     MessageBox.Show(null, "La cantidad de butacas seleccionadas es mayor a las libres", "Compra");
                     return;
