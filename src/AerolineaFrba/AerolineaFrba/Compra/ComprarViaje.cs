@@ -19,6 +19,7 @@ namespace AerolineaFrba.Compra
         private int viaje;
         private int aeronave;
         private DateTime fechaSalida;
+        private List<String> butacasReservadas;
 
         public Cliente getCliente
         {
@@ -32,7 +33,7 @@ namespace AerolineaFrba.Compra
         {
             get { return butaca; }
         }
-        public ComprarViaje(Usuario usuario, int viaje, int aeronave, decimal kg, decimal pax, string label,DateTime fechaSalida)
+        public ComprarViaje(Usuario usuario, int viaje, int aeronave, decimal kg, decimal pax, string label,DateTime fechaSalida,List<Butaca> butacasReservadas)
         {
             InitializeComponent();
             this.usuario = usuario;
@@ -41,6 +42,14 @@ namespace AerolineaFrba.Compra
             this.viaje = viaje;
             this.aeronave = aeronave;
             this.fechaSalida = fechaSalida;
+            this.butacasReservadas = new List<string>();
+            foreach (Butaca b in butacasReservadas)
+            {
+                if (b != null)
+                {
+                    this.butacasReservadas.Add(b.getId.ToString());
+                }
+            }
         }
 
         private void ComprarViaje_Load(object sender, EventArgs e)
@@ -91,7 +100,23 @@ namespace AerolineaFrba.Compra
             }
             return c;
         }
+        private Cliente validarDNISinPisarDatos()
+        {
+            Cliente c = null;
+            if (textBox1.Text != null && textBox1.Text.Trim() != "")
+            {
+                Decimal value;
+                if (!Decimal.TryParse(textBox1.Text, out value))
+                {
+                    MessageBox.Show(null, "El campo DNI no es valido", "Error");
+                    return null;
+                }
 
+                c = JanadianDateDB.Instance.getCliente(Convert.ToDecimal(textBox1.Text.Trim()));
+
+            }
+            return c;
+        }
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
@@ -135,7 +160,7 @@ namespace AerolineaFrba.Compra
                 {
                     textoError += "El campo Fecha de nacimiento es incorrecto\n";
                 }
-                Cliente c = validarDNI();
+                Cliente c = validarDNISinPisarDatos();
                 if (c == null)
                 {
                     if (textBox1.Text == null || textBox1.Text.Trim() == "")
@@ -183,7 +208,7 @@ namespace AerolineaFrba.Compra
                     this.Close();
                 }else{
                     //pasaje, luego de validar los datos se elige el asiento
-                string query = string.Format(" SELECT  b.Id,b.Numero,b.Tipo FROM JANADIAN_DATE.Butaca b WHERE aeronave={0} AND b.Id not in (SELECT Butaca from JANADIAN_DATE.Butaca_Viaje where Viaje={1})", aeronave, viaje);
+                string query = string.Format(" SELECT  b.Id,b.Numero,b.Tipo FROM JANADIAN_DATE.Butaca b WHERE aeronave={0} AND b.Id not in ({1})", aeronave, string.Join(",",butacasReservadas.ToArray()));
                 Console.WriteLine(query);
                 //MessageBox.Show(null, query, "Query");
                 dataGridRol1.Columns.Clear();

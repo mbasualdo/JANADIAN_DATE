@@ -71,6 +71,23 @@ namespace AerolineaFrba.Compra
             }
             return c;
         }
+        private Cliente validarDNISinPisarDatos()
+        {
+            Cliente c = null;
+            if (textBox1.Text != null && textBox1.Text.Trim() != "")
+            {
+                Decimal value;
+                if (!Decimal.TryParse(textBox1.Text, out value))
+                {
+                    MessageBox.Show(null, "El campo DNI no es valido", "Error");
+                    return null;
+                }
+
+                c = JanadianDateDB.Instance.getCliente(Convert.ToDecimal(textBox1.Text.Trim()));
+
+            }
+            return c;
+        }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
@@ -116,7 +133,7 @@ namespace AerolineaFrba.Compra
                 {
                     textoError += "El campo Fecha de nacimiento es incorrecto\n";
                 }
-                Cliente c = validarDNI();
+                Cliente c = validarDNISinPisarDatos();
                 if (c == null)
                 {
                     if (textBox1.Text == null || textBox1.Text.Trim() == "")
@@ -230,7 +247,7 @@ namespace AerolineaFrba.Compra
                 {
                     textoError += "El campo Fecha de nacimiento es incorrecto\n";
                 }
-                Cliente c = validarDNI();
+                Cliente c = validarDNISinPisarDatos();
                 if (c == null)
                 {
                     if (textBox1.Text == null || textBox1.Text.Trim() == "")

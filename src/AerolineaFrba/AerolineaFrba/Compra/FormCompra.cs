@@ -157,7 +157,7 @@ namespace AerolineaFrba.Compra
                 List<Decimal> paquetes = new List<Decimal>();
 
                 if (numericUpDownKG.Value > 0) {
-                    ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), numericUpDownKG.Value, 0, "Datos para enviar Encomienda", Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value));
+                    ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), numericUpDownKG.Value, 0, "Datos para enviar Encomienda", Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value), butacas);
                         DialogResult result = frm.ShowDialog(this);
                         if (result == DialogResult.OK )
                         {
@@ -173,7 +173,7 @@ namespace AerolineaFrba.Compra
                     for (int i = 0; i < numericUpDownPax.Value; i++)
                     {
 
-                        ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), 0, numericUpDownPax.Value, "Datos pasaje" + (i + 1).ToString(), Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value));
+                        ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), 0, numericUpDownPax.Value, "Datos pasaje" + (i + 1).ToString(), Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value), butacas);
                         DialogResult result = frm.ShowDialog(this);
                         if (result == DialogResult.OK)
                         {

@@ -86,6 +86,21 @@ namespace AerolineaFrba.Abm_Aeronave
                     }
                     query += String.Format(andText + " a.Modelo like '%{0}%'", textBoxModelo.Text);
                 }
+                if (textMatricula.Text != null && textMatricula.Text.Trim() != "")
+                {
+                    // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");
+                    String andText = "";
+                    if (conditions)
+                    {
+                        andText = " AND ";
+                    }
+                    else
+                    {
+                        query += String.Format(" WHERE ");
+                        conditions = true;
+                    }
+                    query += String.Format(andText + " a.Matricula like '%{0}%'", textMatricula.Text);
+                }
                 if (numericUpDownKG.Text != null && numericUpDownKG.Text.Trim() != "" && numericUpDownKG.Value > 0)
                 {
                     // bool isNumeric = Regex.IsMatch(textId.Text, @"^\d+$");

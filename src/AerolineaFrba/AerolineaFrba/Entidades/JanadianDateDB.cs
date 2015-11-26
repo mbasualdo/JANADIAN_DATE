@@ -50,49 +50,50 @@ namespace AerolineaFrba
         {
             //this.fechaSistema.ToString();
             Usuario user = null;
-            try{
-            string hash = GetSha256FromString(password);
-            //
-            // Open the SqlConnection.
-            //
-            con.Open();
-            //
-            // The following code uses an SqlCommand based on the SqlConnection.
-            //
-            SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre as UsuarioNombre,u.Password,u.Intentos,u.Habilitado,r.Nombre as RolNombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol] r ON (u.Rol=r.Id) WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con);
-            DataTable dt = new DataTable();
-
-            dt.TableName = "Tabla";
-            dt.Load(cmd.ExecuteReader());
-            if (dt.Rows.Count == 0)
+            try
             {
+                string hash = GetSha256FromString(password);
+                //
+                // Open the SqlConnection.
+                //
+                con.Open();
+                //
+                // The following code uses an SqlCommand based on the SqlConnection.
+                //
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 u.Id,u.Nombre as UsuarioNombre,u.Password,u.Intentos,u.Habilitado,r.Nombre as RolNombre FROM [GD2C2015].[JANADIAN_DATE].[Usuario] u INNER JOIN [GD2C2015].[JANADIAN_DATE].[Rol] r ON (u.Rol=r.Id) WHERE u.Nombre = '{0}' and r.Nombre LIKE '%Admin%'  ", username), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    throw (new NoResultsException("Usuario incorrecto"));
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    if (!Convert.ToBoolean(Fila["Habilitado"]))
+                    {
+                        con.Close();
+                        throw (new UnavailableException("Usuario no esta habilitado"));
+                    }
+                    else if (!Convert.ToString(Fila["Password"]).Equals(hash))
+                    {
+                        SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", Convert.ToInt32(Fila["Intentos"]) + 1, username), con);
+                        update.ExecuteNonQuery();
+                        con.Close();
+                        throw (new PasswordMismatchException("Contraseña incorrecta"));
+                    }
+                    else
+                    {
+                        SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", 0, username), con);
+                        update.ExecuteNonQuery();
+                        user = new Usuario(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["UsuarioNombre"]), Convert.ToInt32(Fila["Intentos"]), Convert.ToString(Fila["RolNombre"]));
+                    }
+
+
+                }
                 con.Close();
-                throw (new NoResultsException("Usuario incorrecto"));
-            }
-            foreach (DataRow Fila in dt.Rows)
-            {
-                if (!Convert.ToBoolean(Fila["Habilitado"]))
-                {
-                    con.Close();
-                    throw (new UnavailableException("Usuario no esta habilitado"));
-                }
-                else if (!Convert.ToString(Fila["Password"]).Equals(hash))
-                {
-                    SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", Convert.ToInt32(Fila["Intentos"]) + 1, username), con);
-                    update.ExecuteNonQuery();
-                    con.Close();
-                    throw (new PasswordMismatchException("Contraseña incorrecta"));
-                }
-                else
-                {
-                    SqlCommand update = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Usuario] SET Intentos = {0} WHERE Nombre = '{1}'", 0, username), con);
-                    update.ExecuteNonQuery();
-                    user = new Usuario(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["UsuarioNombre"]), Convert.ToInt32(Fila["Intentos"]), Convert.ToString(Fila["RolNombre"]));
-                }
-
-
-            }
-            con.Close();
             }
             catch (Exception exAlta)
             {
@@ -541,7 +542,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                int origen=0;
+                int origen = 0;
                 int destino = 0;
                 int tipoServ = 0;
 
@@ -560,8 +561,8 @@ namespace AerolineaFrba
                     origen = Convert.ToInt32(Fila["Id"]);
                 }
 
-                 cmd = new SqlCommand(String.Format("SELECT TOP 1 Id FROM [GD2C2015].[JANADIAN_DATE].[Ciudad]  WHERE Nombre='{0}'  ", rutaSel.getDestino), con);
-                 dt = new DataTable();
+                cmd = new SqlCommand(String.Format("SELECT TOP 1 Id FROM [GD2C2015].[JANADIAN_DATE].[Ciudad]  WHERE Nombre='{0}'  ", rutaSel.getDestino), con);
+                dt = new DataTable();
 
                 dt.TableName = "Tabla1";
                 dt.Load(cmd.ExecuteReader());
@@ -656,8 +657,9 @@ namespace AerolineaFrba
 
             List<String> fabricantes = new List<String>();
 
-            try{
-    //
+            try
+            {
+                //
                 // Open the SqlConnection.
                 //
                 con.Open();
@@ -687,7 +689,7 @@ namespace AerolineaFrba
 
             }
             return fabricantes;
-}
+        }
 
         internal Aeronave getAeronaveByMatricula(string matricula)
         {
@@ -729,11 +731,60 @@ namespace AerolineaFrba
 
         internal void insertarAeronave(string matricula, string modelo, string fabricante, string tipoServicio, decimal kg_disponibles, decimal butacasPasillo, decimal butacasVentanilla)
         {
+            int idAeronave = 0;
             try
             {
                 con.Open();
-                SqlCommand insertAeronave = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Aeronave] (Matricula,Modelo ,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla,Fabricante,Tipo_Servicio,Fecha_Alta) SELECT '{0}','{1}',{2},{3},{4},f.Id,t.Id,'{7}' FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Fabricante] f WHERE f.Nombre='{5}'  AND t.Nombre='{6}'", matricula, modelo, kg_disponibles, butacasPasillo, butacasVentanilla, fabricante,tipoServicio,this.fechaSistema), con);
+                SqlCommand insertAeronave = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Aeronave] (Matricula,Modelo ,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla,Fabricante,Tipo_Servicio,Fecha_Alta) SELECT '{0}','{1}',{2},{3},{4},f.Id,t.Id,'{7}' FROM [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t,[GD2C2015].[JANADIAN_DATE].[Fabricante] f WHERE f.Nombre='{5}'  AND t.Nombre='{6}'", matricula, modelo, kg_disponibles, butacasPasillo, butacasVentanilla, fabricante, tipoServicio, this.fechaSistema), con);
                 insertAeronave.ExecuteNonQuery();
+
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT SCOPE_IDENTITY() as Cont "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    new Exception();
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    idAeronave = Convert.ToInt32(Fila["Cont"]);
+                    break;
+                }
+
+                int k = 0;
+                for (int i = 0; i < butacasPasillo; i++)
+                {
+                    try
+                    {
+                        SqlCommand insertButaca = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Butaca] (Numero,Tipo,Piso,Aeronave) VALUES ({0},'Pasillo',1,{1}) ", k, idAeronave), con);
+                        insertButaca.ExecuteNonQuery();
+                    }
+                    catch (Exception exAlta)
+                    {
+                        con.Close();
+                        throw (new Exception(exAlta.ToString()));
+
+                    }
+                    k += 1;
+                }
+                for (int i = 0; i < butacasVentanilla; i++)
+                {
+                    try
+                    {
+                        SqlCommand insertButaca = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Butaca] (Numero,Tipo,Piso,Aeronave) VALUES ({0},'Ventanilla',1,{1}) ", k, idAeronave), con);
+                        insertButaca.ExecuteNonQuery();
+                    }
+                    catch (Exception exAlta)
+                    {
+                        con.Close();
+                        throw (new Exception(exAlta.ToString()));
+
+                    }
+                    k += 1;
+                }
                 con.Close();
             }
             catch (Exception exAlta)
@@ -749,7 +800,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave] SET Habilitado=0,Baja_Vida_Util=1,Fecha_Baja_Definitiva='{1}' WHERE Id ={0}", idAeronave,this.fechaSistema), con);
+                SqlCommand updateAeronave = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Aeronave] SET Habilitado=0,Baja_Vida_Util=1,Fecha_Baja_Definitiva='{1}' WHERE Id ={0}", idAeronave, this.fechaSistema), con);
                 updateAeronave.ExecuteNonQuery();
                 con.Close();
             }
@@ -783,7 +834,7 @@ namespace AerolineaFrba
             }
         }
 
-        internal void reemplazarAeronave(int idAeronave,string matricula)
+        internal void reemplazarAeronave(int idAeronave, string matricula)
         {
             // sacar los datos de la aeronave
 
@@ -792,7 +843,7 @@ namespace AerolineaFrba
             // buscar todas las aeronaves con las mismas caracteristicas
 
             List<Aeronave> aeronavesSimilares = obtenerAeronavesSimilares(Convert.ToString(dict["modelo"]), Convert.ToInt32(dict["fabricante"]), Convert.ToInt32(dict["tipoServicio"]), Convert.ToDecimal(dict["kgDisponibles"]), Convert.ToInt32(dict["butacasVentanilla"]), Convert.ToInt32(dict["butacasPasillo"]), idAeronave);
-                
+
             //traigo todos los viajes a reemplazar
             List<Viaje> viajesAeronave = obtenerViajesFuturosAeronave(idAeronave);
 
@@ -803,22 +854,25 @@ namespace AerolineaFrba
 
         }
 
-        private void reemplazarOCrearNuevaAeronave(int idAeronave, List<Viaje> viajesAeronave, List<Aeronave> aeronavesSimilares,string matricula)
+        private void reemplazarOCrearNuevaAeronave(int idAeronave, List<Viaje> viajesAeronave, List<Aeronave> aeronavesSimilares, string matricula)
         {
             // [JANADIAN_DATE].[Viajes_Fecha_Aeronave]@id int,@fecha datetime
 
-            foreach(Viaje v in viajesAeronave){
+            foreach (Viaje v in viajesAeronave)
+            {
                 Boolean reemplazoEncontrado = false;
                 try
                 {
-                    foreach(Aeronave otraNave in aeronavesSimilares){
-                    int cantViajesFecha = getCantViajesFecha(otraNave,v.getFechaSalida);
+                    foreach (Aeronave otraNave in aeronavesSimilares)
+                    {
+                        int cantViajesFecha = getCantViajesFecha(otraNave, v.getFechaSalida);
 
-                    if (cantViajesFecha == 0) {
-                        migrarViajeAOtraAeronave(idAeronave,v, otraNave);
-                        reemplazoEncontrado = true;
-                    }
-                    break;
+                        if (cantViajesFecha == 0)
+                        {
+                            migrarViajeAOtraAeronave(idAeronave, v, otraNave);
+                            reemplazoEncontrado = true;
+                        }
+                        break;
                     }
 
                     if (!reemplazoEncontrado)
@@ -826,38 +880,39 @@ namespace AerolineaFrba
                         //crear nueva aeronave
                         // copiar butacas
                         // liberar las butacas_viajes y crear las butacas_viajes con las butacas nuevas
-                        crearNuevaAeronaveParaSatisfacerViaje(idAeronave, matricula,v);
+                        crearNuevaAeronaveParaSatisfacerViaje(idAeronave, matricula, v);
 
                         //se vuelve a pedir aeronaves similares ya que ahora se agrega la nueva
                         Dictionary<string, object> dict = obtenerDatosAeronave(idAeronave);
                         aeronavesSimilares = obtenerAeronavesSimilares(Convert.ToString(dict["modelo"]), Convert.ToInt32(dict["fabricante"]), Convert.ToInt32(dict["tipoServicio"]), Convert.ToDecimal(dict["kgDisponibles"]), Convert.ToInt32(dict["butacasVentanilla"]), Convert.ToInt32(dict["butacasPasillo"]), idAeronave);
-                
+
                     }
                 }
-                catch (Exception e ){
+                catch (Exception e)
+                {
                     e.ToString();
                     con.Close();
                     //crear nueva aeronave
                     // copiar butacas
                     // liberar las butacas_viajes y crear las butacas_viajes con las butacas nuevas
-                    crearNuevaAeronaveParaSatisfacerViaje(idAeronave,matricula, v);
+                    crearNuevaAeronaveParaSatisfacerViaje(idAeronave, matricula, v);
 
                     //se vuelve a pedir aeronaves similares ya que ahora se agrega la nueva
                     Dictionary<string, object> dict = obtenerDatosAeronave(idAeronave);
                     aeronavesSimilares = obtenerAeronavesSimilares(Convert.ToString(dict["modelo"]), Convert.ToInt32(dict["fabricante"]), Convert.ToInt32(dict["tipoServicio"]), Convert.ToDecimal(dict["kgDisponibles"]), Convert.ToInt32(dict["butacasVentanilla"]), Convert.ToInt32(dict["butacasPasillo"]), idAeronave);
-                
+
 
                 }
             }
 
         }
 
-        private void crearNuevaAeronaveParaSatisfacerViaje(int idAeronave,string matricula, Viaje v)
+        private void crearNuevaAeronaveParaSatisfacerViaje(int idAeronave, string matricula, Viaje v)
         {
             try
             {
                 con.Open();
-                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[crearNuevaAeronave] {0},'{1}',{2}", idAeronave,matricula, v.getId), con);
+                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[crearNuevaAeronave] {0},'{1}',{2}", idAeronave, matricula, v.getId), con);
                 updateAeronave.ExecuteNonQuery();
 
                 con.Close();
@@ -871,7 +926,7 @@ namespace AerolineaFrba
             }
         }
 
-        public int getCantViajesFecha(Aeronave otraNave,DateTime fechaSalida)
+        public int getCantViajesFecha(Aeronave otraNave, DateTime fechaSalida)
         {
             try
             {
@@ -958,7 +1013,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[reemplazarAeronaveViaje] {0},{1},{2}", idAeronave,v.getId,otraNave.getId), con);
+                SqlCommand updateAeronave = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[reemplazarAeronaveViaje] {0},{1},{2}", idAeronave, v.getId, otraNave.getId), con);
                 updateAeronave.ExecuteNonQuery();
 
                 con.Close();
@@ -1011,7 +1066,7 @@ namespace AerolineaFrba
             return viajes;
         }
 
-        private List<Aeronave> obtenerAeronavesSimilares(string modelo, int fabricante, int tipoServicio,Decimal kgDisponibles,int butacasVentanilla,int butacasPasillo, int idAeronave)
+        private List<Aeronave> obtenerAeronavesSimilares(string modelo, int fabricante, int tipoServicio, Decimal kgDisponibles, int butacasVentanilla, int butacasPasillo, int idAeronave)
         {
             List<Aeronave> aeronavesSimilares = new List<Aeronave>();
 
@@ -1024,7 +1079,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT a.Id,a.Matricula,a.Modelo,a.KG_Disponibles,f.Nombre as Fabricante,t.Nombre as Tipo_Servicio,Fecha_Alta,Baja_Fuera_Servicio,Baja_Vida_Util,Fecha_Baja_Definitiva,Cant_Butacas_Ventanilla,Cant_Butacas_Pasillo,Habilitado FROM JANADIAN_DATE.Aeronave a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)  WHERE a.ID<>{0} AND a.Fabricante={1} AND a.Tipo_Servicio={2} AND a.Modelo='{3}' AND a.Habilitado=1 and KG_Disponibles>={4} and Cant_Butacas_Ventanilla>={5} and Cant_Butacas_Pasillo>={6}", idAeronave, fabricante, tipoServicio, modelo,kgDisponibles,butacasVentanilla,butacasPasillo), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT a.Id,a.Matricula,a.Modelo,a.KG_Disponibles,f.Nombre as Fabricante,t.Nombre as Tipo_Servicio,Fecha_Alta,Baja_Fuera_Servicio,Baja_Vida_Util,Fecha_Baja_Definitiva,Cant_Butacas_Ventanilla,Cant_Butacas_Pasillo,Habilitado FROM JANADIAN_DATE.Aeronave a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fabricante] f  ON (f.Id=a.Fabricante) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t  ON (t.Id=a.Tipo_Servicio)  WHERE a.ID<>{0} AND a.Fabricante={1} AND a.Tipo_Servicio={2} AND a.Modelo='{3}' AND a.Habilitado=1 and KG_Disponibles>={4} and Cant_Butacas_Ventanilla>={5} and Cant_Butacas_Pasillo>={6}", idAeronave, fabricante, tipoServicio, modelo, kgDisponibles, butacasVentanilla, butacasPasillo), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1053,7 +1108,7 @@ namespace AerolineaFrba
         private Dictionary<String, object> obtenerDatosAeronave(int idAeronave)
         {
 
-            Dictionary<String, object>  dic = new Dictionary<String, object>();
+            Dictionary<String, object> dic = new Dictionary<String, object>();
             try
             {
                 //
@@ -1103,7 +1158,7 @@ namespace AerolineaFrba
                 updateAeronave.ExecuteNonQuery();
 
                 //creo una baja
-                SqlCommand outOfServiceInsert = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] (Fecha_Baja,Fecha_Reinicio,Aeronave) VALUES ('{0}','{1}',{2})", this.fechaSistema,dateOut,idAeronave), con);
+                SqlCommand outOfServiceInsert = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] (Fecha_Baja,Fecha_Reinicio,Aeronave) VALUES ('{0}','{1}',{2})", this.fechaSistema, dateOut, idAeronave), con);
                 outOfServiceInsert.ExecuteNonQuery();
 
                 con.Close();
@@ -1138,7 +1193,7 @@ namespace AerolineaFrba
             }
         }
 
-        internal void reemplazarAeronave(int idAeronave,string matricula, DateTime fechaReinicio)
+        internal void reemplazarAeronave(int idAeronave, string matricula, DateTime fechaReinicio)
         {
             // sacar los datos de la aeronave
 
@@ -1208,7 +1263,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-               // and a.Baja_Vida_Util=0 
+                // and a.Baja_Vida_Util=0 
                 SqlCommand cmd = new SqlCommand(String.Format("SELECT Distinct a.Id,fs.Fecha_Reinicio FROM [GD2C2015].[JANADIAN_DATE].[Aeronave] a INNER JOIN [GD2C2015].[JANADIAN_DATE].[Fuera_Servicio] fs ON (a.Id=fs.Aeronave) WHERE a.Habilitado=0 and a.Baja_Fuera_Servicio=1 and a.Baja_Vida_Util=0  order by fs.Fecha_Reinicio desc "), con);
                 DataTable dt = new DataTable();
 
@@ -1316,12 +1371,12 @@ namespace AerolineaFrba
             }
             return aeronaves;
         }
-        internal void insertarViaje(Viaje v,Aeronave a,Ruta r)
+        internal void insertarViaje(Viaje v, Aeronave a, Ruta r)
         {
             try
             {
                 con.Open();
-                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Viaje] (FechaSalida,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES ('{0}','{1}',{2},{3})", v.getFechaSalida,v.getFechaLlegadaEstimada,a.getId,r.getId), con);
+                SqlCommand insertRol = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Viaje] (FechaSalida,Fecha_Llegada_Estimada,Aeronave,Ruta) VALUES ('{0}','{1}',{2},{3})", v.getFechaSalida, v.getFechaLlegadaEstimada, a.getId, r.getId), con);
                 insertRol.ExecuteNonQuery();
 
                 con.Close();
@@ -1409,7 +1464,7 @@ namespace AerolineaFrba
             return viaje;
         }
 
-        internal void registrarLlegada(Viaje viaje,DateTime llegada)
+        internal void registrarLlegada(Viaje viaje, DateTime llegada)
         {
             try
             {
@@ -1451,7 +1506,7 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
-                    cliente = new Cliente(Convert.ToInt32(Fila["Id"]), Convert.ToDecimal(Fila["Dni"]), Convert.ToString(Fila["Nombre"]), Convert.ToString(Fila["Apellido"]), Convert.ToString(Fila["Dir"]), Convert.ToDecimal(Fila["Telefono"]),Convert.ToString(Fila["Mail"]), Convert.ToDateTime(Fila["Fecha_Nac"]) );
+                    cliente = new Cliente(Convert.ToInt32(Fila["Id"]), Convert.ToDecimal(Fila["Dni"]), Convert.ToString(Fila["Nombre"]), Convert.ToString(Fila["Apellido"]), Convert.ToString(Fila["Dir"]), Convert.ToDecimal(Fila["Telefono"]), Convert.ToString(Fila["Mail"]), Convert.ToDateTime(Fila["Fecha_Nac"]));
                 }
                 con.Close();
             }
@@ -1555,7 +1610,7 @@ namespace AerolineaFrba
                 insertCanje.ExecuteNonQuery();
 
                 //descontar stock
-                SqlCommand updateStock= new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Producto] SET Stock=(Stock-{0}) WHERE Id={1}", cantidad,producto.getId), con);
+                SqlCommand updateStock = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Producto] SET Stock=(Stock-{0}) WHERE Id={1}", cantidad, producto.getId), con);
                 updateStock.ExecuteNonQuery();
 
                 con.Close();
@@ -1572,9 +1627,12 @@ namespace AerolineaFrba
         {
             string date = dateTime.Year.ToString();
 
-            if(p.ToString().Equals("ENE-JUN")){
+            if (p.ToString().Equals("ENE-JUN"))
+            {
                 date += "-01-01";
-            }else{
+            }
+            else
+            {
                 date += "-07-01";
             }
             DateTime time = DateTime.Parse(date);
@@ -1650,7 +1708,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 [PNR],[Precio],[Fecha_Compra],[Viaje],[Forma_Pago],[Cliente]  FROM [GD2C2015].[JANADIAN_DATE].[Compra] where PNR={0} ",pnr), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 [PNR],[Precio],[Fecha_Compra],[Viaje],[Forma_Pago],[Cliente]  FROM [GD2C2015].[JANADIAN_DATE].[Compra] where PNR={0} ", pnr), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1662,7 +1720,7 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
-                    compras =new CompraDB(Convert.ToInt32(Fila["PNR"]), Convert.ToDouble(Fila["Precio"]), Convert.ToDateTime(Fila["Fecha_Compra"]), Convert.ToInt32(Fila["Viaje"]), Convert.ToString(Fila["Forma_Pago"]), Convert.ToInt32(Fila["Cliente"]));
+                    compras = new CompraDB(Convert.ToInt32(Fila["PNR"]), Convert.ToDouble(Fila["Precio"]), Convert.ToDateTime(Fila["Fecha_Compra"]), Convert.ToInt32(Fila["Viaje"]), Convert.ToString(Fila["Forma_Pago"]), Convert.ToInt32(Fila["Cliente"]));
                 }
                 con.Close();
             }
@@ -1675,14 +1733,14 @@ namespace AerolineaFrba
             return compras;
         }
 
-        internal void cancelarPasajesPaquetesDeCompra(int pnr,String motivo)
+        internal void cancelarPasajesPaquetesDeCompra(int pnr, String motivo)
         {
             try
             {
                 con.Open();
                 SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPasajesCompra] {0},'{1}'", pnr, motivo), con);
                 updateCompra.ExecuteNonQuery();
-                SqlCommand updatePaqCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPaquetesCompra] {0},'{1}'", pnr,motivo), con);
+                SqlCommand updatePaqCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPaquetesCompra] {0},'{1}'", pnr, motivo), con);
                 updatePaqCompra.ExecuteNonQuery();
 
                 con.Close();
@@ -1701,7 +1759,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Pasaje] {0},{1},'{2}',{3}", compra,codigo, motivo,viaje), con);
+                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Pasaje] {0},{1},'{2}',{3}", compra, codigo, motivo, viaje), con);
                 updateCompra.ExecuteNonQuery();
 
                 con.Close();
@@ -1734,34 +1792,35 @@ namespace AerolineaFrba
             }
         }
 
-        private double calcularPagoPaquete(Viaje v,Ruta r,decimal paquete)
+        private double calcularPagoPaquete(Viaje v, Ruta r, decimal paquete)
         {
             double val = 0;
 
             if (paquete > 0)
-                {
-                    val = (val + (Convert.ToDouble(paquete) * r.getPrecio_BaseKG));
-                }
+            {
+                val = (val + (Convert.ToDouble(paquete) * r.getPrecio_BaseKG));
+            }
 
             return val;
         }
-        private double calcularPagoPasaje(Viaje v,Ruta r,Butaca b)
+        private double calcularPagoPasaje(Viaje v, Ruta r, Butaca b)
         {
             double val = 0;
 
-                if (b != null)
-                {
-                    val = (val + (r.getPrecio_BasePasaje));
-                }
+            if (b != null)
+            {
+                val = (val + (r.getPrecio_BasePasaje));
+            }
 
             return val;
         }
 
         internal void insertarCliente(Cliente cliente)
         {
-            try{
+            try
+            {
                 con.Open();
-                SqlCommand insertCliente = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Cliente] (Dni,Nombre,Apellido,Dir,Telefono,Mail,Fecha_Nac) VALUES ({0},'{1}','{2}','{3}',{4},'{5}','{6}')", cliente.getDni,cliente.getNombre,cliente.getApellido,cliente.getDir,cliente.getTelefono,cliente.getMail,cliente.getFechaNacimiento), con);
+                SqlCommand insertCliente = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Cliente] (Dni,Nombre,Apellido,Dir,Telefono,Mail,Fecha_Nac) VALUES ({0},'{1}','{2}','{3}',{4},'{5}','{6}')", cliente.getDni, cliente.getNombre, cliente.getApellido, cliente.getDir, cliente.getTelefono, cliente.getMail, cliente.getFechaNacimiento), con);
                 insertCliente.ExecuteNonQuery();
 
                 con.Close();
@@ -1771,8 +1830,8 @@ namespace AerolineaFrba
                 con.Close();
                 throw (new Exception(exAlta.ToString()));
 
-            }       
-        
+            }
+
         }
 
         internal void actualizarCliente(Cliente cliente)
@@ -1780,7 +1839,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Cliente] SET Dni={0},Nombre='{1}',Apellido='{2}',Dir='{3}',Telefono={4},Mail='{5}',Fecha_Nac='{6}' WHERE Id={7}", cliente.getDni, cliente.getNombre, cliente.getApellido, cliente.getDir, cliente.getTelefono, cliente.getMail, cliente.getFechaNacimiento, cliente.getId), con);
+                SqlCommand updateRol = new SqlCommand(String.Format("UPDATE [GD2C2015].[JANADIAN_DATE].[Cliente] SET Dni={0},Nombre='{1}',Apellido='{2}',Dir='{3}',Telefono={4},Mail='{5}',Fecha_Nac='{6}' WHERE Dni={0}", cliente.getDni, cliente.getNombre, cliente.getApellido, cliente.getDir, cliente.getTelefono, cliente.getMail, cliente.getFechaNacimiento), con);
                 updateRol.ExecuteNonQuery();
                 con.Close();
             }
@@ -1805,7 +1864,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 v.[Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] v  WHERE v.Id={0} ",viajeId), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 v.[Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] v  WHERE v.Id={0} ", viajeId), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1842,7 +1901,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT top 1 r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado  FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) WHERE r.Id={0} ",p), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT top 1 r.Id, r.Codigo,r.Precio_BaseKG,r.Precio_BasePasaje,o.Nombre as Origen,d.Nombre as Destino,t.Nombre as Tipo_Servicio,r.Habilitado  FROM [GD2C2015].[JANADIAN_DATE].[Ruta] r INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] o on (r.Ciudad_Origen=o.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] d on (r.Ciudad_Destino=d.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Tipo_Servicio] t on (r.Tipo_Servicio=t.Id) WHERE r.Id={0} ", p), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1853,7 +1912,7 @@ namespace AerolineaFrba
                     return null;
                 }
                 foreach (DataRow Fila in dt.Rows)
-                {  
+                {
                     ruta = new Ruta(Convert.ToInt32(Fila["Id"]), Convert.ToString(Fila["Origen"]), Convert.ToString(Fila["Destino"]), Convert.ToDecimal(Fila["Codigo"]), Convert.ToDouble(Fila["Precio_BaseKG"]), Convert.ToDouble(Fila["Precio_BasePasaje"]), Convert.ToString(Fila["Tipo_Servicio"]), Convert.ToBoolean(Fila["Habilitado"]));
                 }
                 con.Close();
@@ -1869,7 +1928,7 @@ namespace AerolineaFrba
 
         internal int insertarCompra(CompraDB compra)
         {
-            int idCompra=0 ;
+            int idCompra = 0;
             try
             {
                 con.Open();
@@ -1891,7 +1950,7 @@ namespace AerolineaFrba
                     idCompra = Convert.ToInt32(Fila["Cont"]);
                     break;
                 }
-           
+
                 con.Close();
             }
             catch (Exception exAlta)
@@ -1904,7 +1963,7 @@ namespace AerolineaFrba
             return idCompra;
         }
 
-        internal List<int> insertarPaquetes(List<decimal> paquetes,List<Cliente> clientes, int idCompra,Viaje v,Ruta r)
+        internal List<int> insertarPaquetes(List<decimal> paquetes, List<Cliente> clientes, int idCompra, Viaje v, Ruta r)
         {
             List<int> idPaquete = new List<int>();
             try
@@ -1913,28 +1972,29 @@ namespace AerolineaFrba
 
                 for (int i = 0; i < paquetes.Count; i++)
                 {
-                    if(paquetes[i]!=0){
-
-                    SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Paquete] ([KG],[Compra],[Cliente],[Precio]) VALUES ({0},{1},{2},{3:0.00})", paquetes[i], idCompra, clientes[i].getId, calcularPagoPaquete(v, r, paquetes[i]).ToString().Replace(",", ".")), con);
-                    insertPaquete.ExecuteNonQuery();
-
-                    SqlCommand cmd = new SqlCommand(String.Format("SELECT SCOPE_IDENTITY() as Cont "), con);
-                    DataTable dt = new DataTable();
-
-                    dt.TableName = "Tabla";
-                    dt.Load(cmd.ExecuteReader());
-                    if (dt.Rows.Count == 0)
+                    if (paquetes[i] != 0)
                     {
-                        con.Close();
-                        new Exception();
-                    }
-                    foreach (DataRow Fila in dt.Rows)
-                    {
-                        idPaquete.Add(Convert.ToInt32(Fila["Cont"]));
-                        break;
-                    }
 
-                }
+                        SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Paquete] ([KG],[Compra],[Cliente],[Precio]) VALUES ({0},{1},{2},{3:0.00})", paquetes[i], idCompra, clientes[i].getId, calcularPagoPaquete(v, r, paquetes[i]).ToString().Replace(",", ".")), con);
+                        insertPaquete.ExecuteNonQuery();
+
+                        SqlCommand cmd = new SqlCommand(String.Format("SELECT SCOPE_IDENTITY() as Cont "), con);
+                        DataTable dt = new DataTable();
+
+                        dt.TableName = "Tabla";
+                        dt.Load(cmd.ExecuteReader());
+                        if (dt.Rows.Count == 0)
+                        {
+                            con.Close();
+                            new Exception();
+                        }
+                        foreach (DataRow Fila in dt.Rows)
+                        {
+                            idPaquete.Add(Convert.ToInt32(Fila["Cont"]));
+                            break;
+                        }
+
+                    }
 
                 }
                 con.Close();
@@ -2003,8 +2063,8 @@ namespace AerolineaFrba
             {
                 con.Open();
 
-                SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Datos_Tarjeta] ([Numero],[Tipo],[Cod_Seg],[Fecha_Venc],[Compra],[Cliente]) VALUES ({0},'{1}',{2},'{3}',{4},{5})", numero,  tipo,  codigo,  venc,  idCompra,  cliente), con);
-                    insertPaquete.ExecuteNonQuery();
+                SqlCommand insertPaquete = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Datos_Tarjeta] ([Numero],[Tipo],[Cod_Seg],[Fecha_Venc],[Compra],[Cliente]) VALUES ({0},'{1}',{2},'{3}',{4},{5})", numero, tipo, codigo, venc, idCompra, cliente), con);
+                insertPaquete.ExecuteNonQuery();
 
                 con.Close();
             }
