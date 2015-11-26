@@ -1052,7 +1052,7 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
-                    Viaje viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                    Viaje viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Fila["FechaLlegada"].GetType().ToString().Contains("Null") ? new DateTime() : Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
                     viajes.Add(viaje);
                 }
                 con.Close();
@@ -1237,7 +1237,7 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
-                    Viaje viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                    Viaje viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Fila["FechaLlegada"].GetType().ToString().Contains("Null") ? new DateTime() : Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
                     viajes.Add(viaje);
                 }
                 con.Close();
@@ -1414,7 +1414,7 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
-                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Fila["FechaLlegada"].GetType().ToString().Contains("Null") ? new DateTime() : Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
                 }
                 con.Close();
             }
@@ -1451,7 +1451,7 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
-                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Fila["FechaLlegada"].GetType().ToString().Contains("Null") ? new DateTime() : Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
                 }
                 con.Close();
             }
@@ -1876,7 +1876,7 @@ namespace AerolineaFrba
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {
-                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]), Convert.ToDateTime(Fila["FechaLlegada"]), Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
+                    viaje = new Viaje(Convert.ToInt32(Fila["Id"]), Convert.ToInt32(Fila["Aeronave"]), Convert.ToInt32(Fila["Ruta"]), Convert.ToDateTime(Fila["FechaSalida"]),Fila["FechaLlegada"].GetType().ToString().Contains("Null") ?  new DateTime() : Convert.ToDateTime(Fila["FechaLlegada"]) , Convert.ToDateTime(Fila["Fecha_Llegada_Estimada"]));
                 }
                 con.Close();
             }

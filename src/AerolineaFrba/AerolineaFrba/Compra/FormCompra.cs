@@ -62,6 +62,8 @@ namespace AerolineaFrba.Compra
             comboDestino.SelectedItem = null;
             dataGridRol1.DataSource = null;
             dataGridRol1.Columns.Clear();
+            numericUpDownKG.Value = 0;
+            numericUpDownPax.Value = 0;
         }
 
         private void buttonBuscar_Click(object sender, EventArgs e)

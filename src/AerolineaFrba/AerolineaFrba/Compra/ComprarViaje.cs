@@ -208,7 +208,7 @@ namespace AerolineaFrba.Compra
                     this.Close();
                 }else{
                     //pasaje, luego de validar los datos se elige el asiento
-                string query = string.Format(" SELECT  b.Id,b.Numero,b.Tipo FROM JANADIAN_DATE.Butaca b WHERE aeronave={0} AND b.Id not in ({1})", aeronave, string.Join(",",butacasReservadas.ToArray()));
+                    string query = string.Format(" SELECT  b.Id,b.Numero,b.Tipo FROM JANADIAN_DATE.Butaca b WHERE aeronave={0}  AND b.Id not in (SELECT Butaca from JANADIAN_DATE.Butaca_Viaje where Viaje={1})  {2}", aeronave,viaje, butacasReservadas.Count > 0 ? "AND b.Id not in (" + string.Join(",", butacasReservadas.ToArray()) + ")" : "");
                 Console.WriteLine(query);
                 //MessageBox.Show(null, query, "Query");
                 dataGridRol1.Columns.Clear();

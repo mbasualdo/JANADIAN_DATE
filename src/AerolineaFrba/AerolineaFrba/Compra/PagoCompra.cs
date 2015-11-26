@@ -287,7 +287,8 @@ namespace AerolineaFrba.Compra
 
                 }
 
-                if(comboBoxFormaPago.SelectedItem.ToString().CompareTo("TC")==0){
+                if (comboBoxFormaPago.SelectedItem != null && comboBoxFormaPago.SelectedItem.ToString().CompareTo("TC") == 0)
+                {
 
 
                 if (textBoxNumeroTarj.Text == null || textBoxNumeroTarj.Text.Trim() == "")
@@ -326,12 +327,14 @@ namespace AerolineaFrba.Compra
                     textoError += "El campo fecha de vencimiento es obligatorio\n";
                 }
 
+
+                }
+
                 if (textoError.Length != 0)
                 {
                     MessageBox.Show(null, textoError, "Error de Validacion");
                     return;
 
-                }
                 }
 
                 if (c == null)
