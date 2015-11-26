@@ -184,6 +184,12 @@ private void limpiar()
                 Aeronave nave = JanadianDateDB.Instance.getAeronaveByMatricula(comboAeronave.SelectedItem.ToString());
                 Viaje viaje = JanadianDateDB.Instance.getViaje(nave, comboOrigen.SelectedItem, comboDestino.SelectedItem, Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value),Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["Fecha_Llegada_Estimada"].Value));
 
+                if (dateTimeFechaLlegada.Value.CompareTo(viaje.getFechaSalida) <= 0)
+                {
+                    MessageBox.Show(null, "El campo fecha de llegada debe ser mayor a la fecha  de salida del viaje", "Registrar Llegada destino");
+                    return;
+                }
+
                 JanadianDateDB.Instance.registrarLlegada(viaje, dateTimeFechaLlegada.Value);
                 MessageBox.Show(null, "Se ha registrado la llegada", "Registrar Llegada destino");
                 this.limpiar();

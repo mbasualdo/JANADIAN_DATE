@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AerolineaFrba.Excepciones;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -136,32 +137,40 @@ namespace AerolineaFrba.Compra
             // Ignore clicks that are not in our 
             if (e.ColumnIndex == dataGridRol1.Columns["buttonSelection"].Index && e.RowIndex >= 0)
             {
-                if (numericUpDownKG.Value <= 0 && numericUpDownPax.Value<=0)
-                {
-                    MessageBox.Show(null, "No ingreso cantidad de pasajes/kg a enviar", "Compra");
-                    return;
-                }
 
-                if (numericUpDownKG.Value > Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value))
+                try
                 {
-                    MessageBox.Show(null, "La cantidad de kg a enviar es mayor a los disponibles", "Compra");
-                    return;
-                }
-                if (numericUpDownPax.Value > Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Butacas_Libres"].Value))
-                {
-                    MessageBox.Show(null, "La cantidad de butacas seleccionadas es mayor a las libres", "Compra");
-                    return;
-                }
-//                ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), numericUpDownKG.Value, numericUpDownPax.Value,"Pasajero 1");
-                
-                List<Cliente> clientes = new List<Cliente>();
-                List<Butaca> butacas = new List<Butaca>();
-                List<Decimal> paquetes = new List<Decimal>();
+                    if (numericUpDownKG.Value <= 0 && numericUpDownPax.Value <= 0)
+                    {
+                        MessageBox.Show(null, "No ingreso cantidad de pasajes/kg a enviar", "Compra");
+                        return;
+                    }
 
-                if (numericUpDownKG.Value > 0) {
-                    ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), numericUpDownKG.Value, 0, "Datos para enviar Encomienda", Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value), butacas);
+                    if (numericUpDownKG.Value > Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["KG_Disponibles"].Value))
+                    {
+                        MessageBox.Show(null, "La cantidad de kg a enviar es mayor a los disponibles", "Compra");
+                        return;
+                    }
+                    if (numericUpDownPax.Value > Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Butacas_Libres"].Value))
+                    {
+                        MessageBox.Show(null, "La cantidad de butacas seleccionadas es mayor a las libres", "Compra");
+                        return;
+                    }
+                    //                ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), numericUpDownKG.Value, numericUpDownPax.Value,"Pasajero 1");
+
+                    List<Cliente> clientes = new List<Cliente>();
+                    List<Butaca> butacas = new List<Butaca>();
+                    List<Decimal> paquetes = new List<Decimal>();
+
+                    if (numericUpDownKG.Value > 0)
+                    {
+                        ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), numericUpDownKG.Value, 0, "Datos para enviar Encomienda", Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value), butacas);
                         DialogResult result = frm.ShowDialog(this);
-                        if (result == DialogResult.OK )
+                        if (result == DialogResult.Cancel)
+                        {
+                            throw new CancelException("Paquete cancelado");
+                        }
+                        if (result == DialogResult.OK)
                         {
                             // fill other values
                             clientes.Add(frm.getCliente);
@@ -170,34 +179,38 @@ namespace AerolineaFrba.Compra
                         }
 
                     }
-                if (numericUpDownPax.Value > 0)
-                {
-                    for (int i = 0; i < numericUpDownPax.Value; i++)
+                    if (numericUpDownPax.Value > 0)
                     {
-
-                        ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), 0, numericUpDownPax.Value, "Datos pasaje" + (i + 1).ToString(), Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value), butacas);
-                        DialogResult result = frm.ShowDialog(this);
-                        if (result == DialogResult.OK)
+                        for (int i = 0; i < numericUpDownPax.Value; i++)
                         {
-                            // fill other values
-                            clientes.Add(frm.getCliente);
-                            butacas.Add(frm.getButaca);
-                            paquetes.Add(0);
+
+                            ComprarViaje frm = new ComprarViaje(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), 0, numericUpDownPax.Value, "Datos pasaje" + (i + 1).ToString(), Convert.ToDateTime(dataGridRol1.Rows[e.RowIndex].Cells["FechaSalida"].Value), butacas);
+                            DialogResult result = frm.ShowDialog(this);
+                            if (result == DialogResult.Cancel)
+                            {
+                                throw new CancelException("Pasaje cancelado");
+                            }
+                            if (result == DialogResult.OK)
+                            {
+                                // fill other values
+                                clientes.Add(frm.getCliente);
+                                butacas.Add(frm.getButaca);
+                                paquetes.Add(0);
+                            }
                         }
                     }
-                }
 
 
-                PagoCompra frmPago = new PagoCompra(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), clientes,butacas,paquetes);
-                DialogResult resultPago = frmPago.ShowDialog(this);
-                if (resultPago == DialogResult.OK)
-                {
-                    // fill other values
-                   // clientes.Add(frmPago.getCliente);
-                    paquetes.Add(numericUpDownKG.Value);
-                    butacas.Add(null);
+                    PagoCompra frmPago = new PagoCompra(usuario, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value), Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Aeronave"].Value), clientes, butacas, paquetes);
+                    DialogResult resultPago = frmPago.ShowDialog(this);
+
+                    this.limpiar();
+
                 }
-                this.limpiar();
+                catch (CancelException c){
+                    MessageBox.Show(null, c.Message +": Usted Cancelo la compra ", "Compra");
+                    return;
+                }
                 }
             }
     }

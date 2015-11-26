@@ -211,6 +211,8 @@ namespace AerolineaFrba.Compra
             else {
                 groupBox2.Visible = false;
             }
+            buttonLimpiarTarjeta.Visible = true;
+            buttonPagar.Visible = true;
         }
 
         private void buttonPagar_Click(object sender, EventArgs e)
@@ -351,6 +353,7 @@ namespace AerolineaFrba.Compra
 
                 MessageBox.Show(null, "Se ha confirmado la compra\n" + dataCompra, "Compra");
                 this.Close();
+
 
             }
             catch (Exception exAlta)

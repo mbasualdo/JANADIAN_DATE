@@ -130,7 +130,8 @@ AS
 BEGIN
    DECLARE @count int
 SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] v iNNER JOIN  [JANADIAN_DATE].[Compra] c ON (c.Viaje=v.Id)
- WHERE c.Cliente=@id AND DATEDIFF(SECOND,@fecha,[FechaSalida]) >=0 AND DATEDIFF(SECOND,@fecha,ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) <= 0
+ INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra=c.PNR) 
+ WHERE p.Cliente=@id AND DATEDIFF(HOUR,@fecha,[FechaSalida]) <=0 AND DATEDIFF(HOUR,@fecha,ISNULL([FechaLlegada],[Fecha_Llegada_Estimada])) >= 0
    RETURN  ISNULL ( @count , 0 )
 END
 GO

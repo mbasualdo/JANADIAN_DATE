@@ -334,6 +334,7 @@
             this.buttonPagar.TabIndex = 54;
             this.buttonPagar.Text = "Confirmar Datos Tarjeta";
             this.buttonPagar.UseVisualStyleBackColor = true;
+            this.buttonPagar.Visible = false;
             this.buttonPagar.Click += new System.EventHandler(this.buttonPagar_Click);
             // 
             // buttonLimpiarTarjeta
@@ -344,6 +345,7 @@
             this.buttonLimpiarTarjeta.TabIndex = 53;
             this.buttonLimpiarTarjeta.Text = "Limpiar";
             this.buttonLimpiarTarjeta.UseVisualStyleBackColor = true;
+            this.buttonLimpiarTarjeta.Visible = false;
             this.buttonLimpiarTarjeta.Click += new System.EventHandler(this.buttonLimpiarTarjeta_Click);
             // 
             // groupBox2

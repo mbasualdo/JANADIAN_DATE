@@ -261,6 +261,7 @@
     <Compile Include="Entidades\Producto.cs" />
     <Compile Include="Entidades\Viaje.cs" />
     <Compile Include="Entidades\Ruta.cs" />
+    <Compile Include="Excepciones\CancelException.cs" />
     <Compile Include="Excepciones\PasswordMismatchException.cs" />
     <Compile Include="Excepciones\UnavailableException.cs" />
     <Compile Include="Excepciones\NoResultsException.cs" />
