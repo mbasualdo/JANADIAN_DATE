@@ -564,7 +564,8 @@ CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Pasaje]
 	@PNR_compra int,
 	@cod_pasaje [numeric](18,0),
 	@motivo nvarchar(255),
-	@Viaje int 
+	@Viaje int ,
+	@Cancelacion int
 
 AS
 BEGIN TRY
@@ -588,14 +589,18 @@ BEGIN TRY
 
 		IF @Canc=0
 			BEGIN
-				INSERT INTO JANADIAN_DATE.Cancelacion 
-				(Motivo,FechaDevolucion) 
-				VALUES	
-				(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
+				IF (@Cancelacion IS NULL)
+				BEGIN
+					INSERT INTO JANADIAN_DATE.Cancelacion 
+					(Motivo,FechaDevolucion) 
+					VALUES	
+					(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
 
+					SELECT @Cancelacion= SCOPE_IDENTITY()
+				END
 				/** Marcamos el pasaje como cancelado **/
 
-				UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Codigo=@cod_pasaje
+				UPDATE  [JANADIAN_DATE].[Pasaje] SET Cancelado=1,Cancelacion=@Cancelacion WHERE Codigo=@cod_pasaje
 			END
 		END
 
@@ -619,7 +624,8 @@ GO
 CREATE PROCEDURE [JANADIAN_DATE].[Cancelar_Paquete] 
 	@PNR_compra int,
 	@cod_paquete [numeric](18,0),
-	@motivo nvarchar(255) 
+	@motivo nvarchar(255) ,
+	@Cancelacion int
 
 AS
 BEGIN TRY
@@ -642,14 +648,19 @@ BEGIN TRY
 
 		IF @Canc=0
 			BEGIN
-				INSERT INTO JANADIAN_DATE.Cancelacion 
-				(Motivo,FechaDevolucion) 
-				VALUES	
-				(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
+				IF (@Cancelacion IS NULL)
+				BEGIN
+					INSERT INTO JANADIAN_DATE.Cancelacion 
+					(Motivo,FechaDevolucion) 
+					VALUES	
+					(ISNULL (@motivo,''),CURRENT_TIMESTAMP)	
+
+					SELECT @Cancelacion= SCOPE_IDENTITY()
+				END
 
 				/** Marcamos el paquete como cancelado **/
 
-				UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1,Cancelacion=(SELECT SCOPE_IDENTITY()) WHERE Codigo=@cod_paquete
+				UPDATE  [JANADIAN_DATE].[Paquete] SET Cancelado=1,Cancelacion=@Cancelacion WHERE Codigo=@cod_paquete
 			END
 		END
 
@@ -711,7 +722,7 @@ BEGIN TRY
 		FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo,@viaje
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave',@viaje
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Aeronave',@viaje,null
 
 			FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo,@viaje
 		END
@@ -774,7 +785,7 @@ BEGIN TRY
 		FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Aeronave'
+			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Aeronave',null
 			FETCH NEXT FROM ViajesEnAeronave INTO @pnr,@codigo
 		END
 		CLOSE ViajesEnAeronave
@@ -799,7 +810,9 @@ GO
 /***        ****/
 CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPasajesCompra]
 @Id_Compra int,
-@motivo nvarchar(255)
+@motivo nvarchar(255),
+@cancelacionId int
+
 AS
 BEGIN TRY
 			
@@ -821,7 +834,7 @@ BEGIN TRY
 		FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo,@viaje
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,@motivo,@viaje
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,@motivo,@viaje,@cancelacionId
 
 			FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo,@viaje
 		END
@@ -847,7 +860,8 @@ GO
 /***        ****/
 CREATE PROCEDURE [JANADIAN_DATE].[inhabilitarPaquetesCompra]
 @Id_Compra int,
-@motivo nvarchar(255)
+@motivo nvarchar(255),
+@cancelacionId int
 AS
 BEGIN TRY
 			
@@ -868,7 +882,7 @@ BEGIN TRY
 		FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,@motivo
+			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,@motivo,@cancelacionId
 			FETCH NEXT FROM ViajesEnCompra INTO @pnr,@codigo
 		END
 		CLOSE ViajesEnCompra
@@ -1753,7 +1767,7 @@ BEGIN
 		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo,@viaje
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta',@viaje
+			EXEC [JANADIAN_DATE].[Cancelar_Pasaje] @pnr,@codigo,'Baja de Ruta',@viaje,null
 			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo,@viaje
 		END
 		CLOSE ViajesEnRuta
@@ -1789,7 +1803,7 @@ BEGIN
 		FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
 		WHILE @@FETCH_STATUS=0
 		BEGIN
-			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Ruta'
+			EXEC [JANADIAN_DATE].[Cancelar_Paquete] @pnr,@codigo,'Baja de Ruta',null
 			FETCH NEXT FROM ViajesEnRuta INTO @pnr,@codigo
 		END
 		CLOSE ViajesEnRuta

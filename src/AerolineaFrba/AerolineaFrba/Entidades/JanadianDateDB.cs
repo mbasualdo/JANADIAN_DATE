@@ -1735,15 +1735,38 @@ namespace AerolineaFrba
 
         internal int cancelarPasajesPaquetesDeCompra(int pnr, String motivo)
         {
+            int idCancelacion = 0;
             try
             {
                 con.Open();
-                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPasajesCompra] {0},'{1}'", pnr, motivo), con);
+
+                SqlCommand insertCompra = new SqlCommand(String.Format("INSERT INTO [GD2C2015].[JANADIAN_DATE].[Cancelacion] (Motivo,FechaDevolucion) VALUES ('{0}','{1}')", motivo,this.getFechaSistema()), con);
+                insertCompra.ExecuteNonQuery();
+
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT SCOPE_IDENTITY() as Cont "), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    new Exception();
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    idCancelacion = Convert.ToInt32(Fila["Cont"]);
+                    break;
+                }
+
+
+                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPasajesCompra] {0},'{1}',{2}", pnr, motivo,idCancelacion), con);
                 updateCompra.ExecuteNonQuery();
-                SqlCommand updatePaqCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPaquetesCompra] {0},'{1}'", pnr, motivo), con);
+                SqlCommand updatePaqCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[inhabilitarPaquetesCompra] {0},'{1}',{2}", pnr, motivo, idCancelacion), con);
                 updatePaqCompra.ExecuteNonQuery();
 
                 con.Close();
+                return idCancelacion;
             }
             catch (Exception eUpdate)
             {
@@ -1761,7 +1784,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Pasaje] {0},{1},'{2}',{3}", compra, codigo, motivo, viaje), con);
+                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Pasaje] {0},{1},'{2}',{3},null", compra, codigo, motivo, viaje), con);
                 updateCompra.ExecuteNonQuery();
 
                 SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Cancelacion FROM [GD2C2015].[JANADIAN_DATE].[Pasaje] r WHERE r.Codigo = {0}  ", codigo), con);
@@ -1798,7 +1821,7 @@ namespace AerolineaFrba
             try
             {
                 con.Open();
-                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Paquete] {0},{1},'{2}'", compra, codigo, motivo), con);
+                SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Paquete] {0},{1},'{2}',null", compra, codigo, motivo), con);
                 updateCompra.ExecuteNonQuery();
 
                 SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Cancelacion FROM [GD2C2015].[JANADIAN_DATE].[Paquete] r WHERE r.Codigo = {0}  ", codigo), con);

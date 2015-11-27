@@ -47,7 +47,7 @@ namespace AerolineaFrba.Registro_Llegada_Destino
                 comboOrigen.Items.Add(f);
                 comboDestino.Items.Add(f);
             }
-            dateTimeFechaLlegada.MinDate = JanadianDateDB.Instance.getFechaSistema();
+           // dateTimeFechaLlegada.MinDate = JanadianDateDB.Instance.getFechaSistema();
             dateTimeFechaLlegada.Value = JanadianDateDB.Instance.getFechaSistema();
             dateTimeFechaLlegada.Format = DateTimePickerFormat.Custom;
 
@@ -75,7 +75,7 @@ namespace AerolineaFrba.Registro_Llegada_Destino
 
 private void limpiar()
 {
-            dateTimeFechaLlegada.MinDate = JanadianDateDB.Instance.getFechaSistema();
+          //  dateTimeFechaLlegada.MinDate = JanadianDateDB.Instance.getFechaSistema();
             dateTimeFechaLlegada.Value = JanadianDateDB.Instance.getFechaSistema();
             comboOrigen.SelectedItem = null;
             comboDestino.SelectedItem = null;
@@ -118,10 +118,10 @@ private void limpiar()
             {
                 textoError += "El campo fecha de llegada es obligatorio\n";
             }
-            if (dateTimeFechaLlegada.Value.CompareTo(JanadianDateDB.Instance.getFechaSistema()) <= 0)
-            {
-                textoError += "El campo fecha de llegada debe ser mayor a la fecha actual\n";
-            }
+            //if (dateTimeFechaLlegada.Value.CompareTo(JanadianDateDB.Instance.getFechaSistema()) <= 0)
+            //{
+            //    textoError += "El campo fecha de llegada debe ser mayor a la fecha actual\n";
+            //}
 
             viaje = null;
 
