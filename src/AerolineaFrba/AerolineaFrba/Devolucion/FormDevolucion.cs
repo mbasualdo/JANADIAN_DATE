@@ -80,9 +80,9 @@ namespace AerolineaFrba.Devolucion
                     DialogResult dialogResult1 = MessageBox.Show("Esta Seguro que desea cancelar todos los pasajes y paquetes de la compra", "Cancelacion/Devolucion", MessageBoxButtons.YesNo);
                     if (dialogResult1 == DialogResult.Yes)
                     {
-                        JanadianDateDB.Instance.cancelarPasajesPaquetesDeCompra(compra.getPNR, textMotivo.Text);
+                        int idCancelacion = JanadianDateDB.Instance.cancelarPasajesPaquetesDeCompra(compra.getPNR, textMotivo.Text);
 
-                        MessageBox.Show(null, "Se han cancelado todos los pasajes/paquetes de la compra", "Cancelacion/Devolucion");
+                        MessageBox.Show(null, "Se han cancelado todos los pasajes/paquetes de la compra \nSe le devolvera en " + compra.getFormaPago + " el  pago realizado. \nCodigo de devolucion: " + idCancelacion.ToString(), "Cancelacion/Devolucion");
                         this.limpiar();
                     }
                 }
@@ -132,13 +132,13 @@ namespace AerolineaFrba.Devolucion
                 if (Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo"].Value).CompareTo("PASAJE") == 0)
                 {
                     int idCancelacion = JanadianDateDB.Instance.cancelarPasajeCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value));
-                    MessageBox.Show(null, "Se han cancelado el pasaje seleccionado\nSe le devolvera en " + dataGridRol1.Rows[e.RowIndex].Cells["Forma_Pago"].Value + " el  pago realizado por la butaca " + dataGridRol1.Rows[e.RowIndex].Cells["Butaca"].Value + " comprada.\nCodigo de devolucion: " + idCancelacion.ToString(), "Cancelacion/Devolucion");
+                    MessageBox.Show(null, "Se ha cancelado el pasaje seleccionado\nSe le devolvera en " + dataGridRol1.Rows[e.RowIndex].Cells["Forma_Pago"].Value + " el  pago realizado por la butaca " + dataGridRol1.Rows[e.RowIndex].Cells["Butaca"].Value + " comprada.\nCodigo de devolucion: " + idCancelacion.ToString(), "Cancelacion/Devolucion");
 
                 }
                 else
                 {
                     int idCancelacion = JanadianDateDB.Instance.cancelarPaqueteCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text);
-                    MessageBox.Show(null, "Se han cancelado el paquete seleccionado\nSe le devolvera en " + dataGridRol1.Rows[e.RowIndex].Cells["Forma_Pago"].Value + " el  pago realizado por los " + dataGridRol1.Rows[e.RowIndex].Cells["KG"].Value + " kg comprados.\nCodigo de devolucion: " + idCancelacion.ToString(), "Cancelacion/Devolucion");
+                    MessageBox.Show(null, "Se ha cancelado el paquete seleccionado\nSe le devolvera en " + dataGridRol1.Rows[e.RowIndex].Cells["Forma_Pago"].Value + " el  pago realizado por los " + dataGridRol1.Rows[e.RowIndex].Cells["KG"].Value + " kg comprados.\nCodigo de devolucion: " + idCancelacion.ToString(), "Cancelacion/Devolucion");
 
                 }
 

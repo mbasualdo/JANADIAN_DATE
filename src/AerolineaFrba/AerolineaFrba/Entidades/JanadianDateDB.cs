@@ -1733,7 +1733,7 @@ namespace AerolineaFrba
             return compras;
         }
 
-        internal void cancelarPasajesPaquetesDeCompra(int pnr, String motivo)
+        internal int cancelarPasajesPaquetesDeCompra(int pnr, String motivo)
         {
             try
             {
