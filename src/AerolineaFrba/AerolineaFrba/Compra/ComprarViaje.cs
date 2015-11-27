@@ -177,7 +177,7 @@ namespace AerolineaFrba.Compra
 
                     }
                 }
-                if (c != null && JanadianDateDB.Instance.getCantViajesFechaCliente(c, fechaSalida) > 0)
+                if (c != null && kg==0 && JanadianDateDB.Instance.getCantViajesFechaCliente(c, fechaSalida) > 0)
                 {
                     textoError += "El Cliente ya posee viajes en la fecha del viaje que selecciono\n";
                 }
