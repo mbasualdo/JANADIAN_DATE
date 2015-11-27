@@ -88,7 +88,7 @@ namespace AerolineaFrba.Devolucion
                 }
                 else
                 {
-                    string query = string.Format("SELECT PNR,codigo,Tipo,Viaje FROM JANADIAN_DATE.[Pasajes_Paquetes_Compra_Viaje] WHERE PNR={0}", compra.getPNR);
+                    string query = string.Format("SELECT PNR,codigo,Tipo,Viaje,Forma_Pago,Butaca,KG FROM JANADIAN_DATE.[Pasajes_Paquetes_Compra_Viaje] WHERE PNR={0}", compra.getPNR);
                     Console.WriteLine(query);
                     //MessageBox.Show(null, query, "Query");
                     dataGridRol1.Columns.Clear();
@@ -131,14 +131,14 @@ namespace AerolineaFrba.Devolucion
             {
                 if (Convert.ToString(dataGridRol1.Rows[e.RowIndex].Cells["Tipo"].Value).CompareTo("PASAJE") == 0)
                 {
-                    JanadianDateDB.Instance.cancelarPasajeCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value));
-                    MessageBox.Show(null, "Se han cancelado el pasaje seleccionado", "Cancelacion/Devolucion");
+                    int idCancelacion = JanadianDateDB.Instance.cancelarPasajeCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text, Convert.ToInt32(dataGridRol1.Rows[e.RowIndex].Cells["Viaje"].Value));
+                    MessageBox.Show(null, "Se han cancelado el pasaje seleccionado\nSe le devolvera en " + dataGridRol1.Rows[e.RowIndex].Cells["Forma_Pago"].Value + " el  pago realizado por la butaca " + dataGridRol1.Rows[e.RowIndex].Cells["Butaca"].Value + " comprada.\nCodigo de devolucion: " + idCancelacion.ToString(), "Cancelacion/Devolucion");
 
                 }
                 else
                 {
-                    JanadianDateDB.Instance.cancelarPaqueteCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text);
-                    MessageBox.Show(null, "Se han cancelado el paquete seleccionado", "Cancelacion/Devolucion");
+                    int idCancelacion = JanadianDateDB.Instance.cancelarPaqueteCompra(textBoxCompra.Text, Convert.ToDecimal(dataGridRol1.Rows[e.RowIndex].Cells["Codigo"].Value), textMotivo.Text);
+                    MessageBox.Show(null, "Se han cancelado el paquete seleccionado\nSe le devolvera en " + dataGridRol1.Rows[e.RowIndex].Cells["Forma_Pago"].Value + " el  pago realizado por los " + dataGridRol1.Rows[e.RowIndex].Cells["KG"].Value + " kg comprados.\nCodigo de devolucion: " + idCancelacion.ToString(), "Cancelacion/Devolucion");
 
                 }
 

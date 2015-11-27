@@ -136,6 +136,10 @@ private void limpiar()
                     textoError += "No existe el viaje para las condiciones ingresadas\n";
 
                 }
+                else if (viaje.getFechaLlegada.CompareTo(viaje.getFechaSalida)>0) {
+                    textoError += "Ya se ha registrado la llegada de este viaje\n";
+
+                }
             }
         }
 

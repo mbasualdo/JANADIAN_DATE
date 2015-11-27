@@ -543,12 +543,13 @@ INNER JOIN JANADIAN_DATE.Fuera_Servicio f ON (f.Aeronave=a.Id)
 
   /** Creacion de vista pasajes/paquetes con sus compras y viajes correspondientes no cancelados ***/
   CREATE VIEW [JANADIAN_DATE].[Pasajes_Paquetes_Compra_Viaje] AS  
- 					SELECT c.PNR, p.codigo AS codigo,'PASAJE' as Tipo,v.Id As Viaje FROM [JANADIAN_DATE].[Compra] c
+  					SELECT c.PNR, p.codigo AS codigo,'PASAJE' as Tipo,v.Id As Viaje,c.Forma_Pago,cast(b.Numero as nvarchar) + '-' + b.Tipo as Butaca,'-' AS KG FROM [JANADIAN_DATE].[Compra] c
 					INNER JOIN [JANADIAN_DATE].[Pasaje] p ON (p.Compra = c.PNR)
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
+					INNER JOIN [JANADIAN_DATE].[Butaca] b ON (p.Butaca = b.Id)
 					WHERE p.Cancelado=0
 					union
-					SELECT c.PNR, x.codigo AS codigo,'PAQUETE' as Tipo,v.Id As Viaje  FROM [JANADIAN_DATE].[Compra] c
+					SELECT c.PNR, x.codigo AS codigo,'PAQUETE' as Tipo,v.Id As Viaje,c.Forma_Pago,'-' AS Butaca,cast(x.KG as nvarchar) AS KG  FROM [JANADIAN_DATE].[Compra] c
 					INNER JOIN [JANADIAN_DATE].[Paquete] x ON (x.Compra = c.PNR)
 					INNER JOIN [JANADIAN_DATE].[Viaje] v ON (c.Viaje = v.Id)
 					WHERE x.Cancelado=0

@@ -1754,15 +1754,34 @@ namespace AerolineaFrba
             }
         }
 
-        internal void cancelarPasajeCompra(string compra, decimal codigo, string motivo, int viaje)
+        internal int cancelarPasajeCompra(string compra, decimal codigo, string motivo, int viaje)
         {
+            int cancelacionId = 0;
+
             try
             {
                 con.Open();
                 SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Pasaje] {0},{1},'{2}',{3}", compra, codigo, motivo, viaje), con);
                 updateCompra.ExecuteNonQuery();
 
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Cancelacion FROM [GD2C2015].[JANADIAN_DATE].[Pasaje] r WHERE r.Codigo = {0}  ", codigo), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return cancelacionId;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    cancelacionId = Convert.ToInt32(Fila["Cancelacion"]);
+                    break;
+                }
+
                 con.Close();
+                return cancelacionId;
             }
             catch (Exception eUpdate)
             {
@@ -1773,15 +1792,33 @@ namespace AerolineaFrba
             }
         }
 
-        internal void cancelarPaqueteCompra(string compra, decimal codigo, string motivo)
+        internal int cancelarPaqueteCompra(string compra, decimal codigo, string motivo)
         {
+            int cancelacionId = 0;
             try
             {
                 con.Open();
                 SqlCommand updateCompra = new SqlCommand(String.Format("EXEC  [GD2C2015].[JANADIAN_DATE].[Cancelar_Paquete] {0},{1},'{2}'", compra, codigo, motivo), con);
                 updateCompra.ExecuteNonQuery();
 
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 Cancelacion FROM [GD2C2015].[JANADIAN_DATE].[Paquete] r WHERE r.Codigo = {0}  ", codigo), con);
+                DataTable dt = new DataTable();
+
+                dt.TableName = "Tabla";
+                dt.Load(cmd.ExecuteReader());
+                if (dt.Rows.Count == 0)
+                {
+                    con.Close();
+                    return cancelacionId;
+                }
+                foreach (DataRow Fila in dt.Rows)
+                {
+                    cancelacionId = Convert.ToInt32(Fila["Cancelacion"]);
+                    break;
+                }
+
                 con.Close();
+                return cancelacionId;
             }
             catch (Exception eUpdate)
             {
