@@ -38,7 +38,7 @@ namespace AerolineaFrba.Consulta_Millas
             textBoxDni.Clear();
             dataGridRol1.DataSource = null;
             dataGridRol1.Columns.Clear();
-            labelPuntos.Text = "Puntos acumulados";
+            labelPuntos.Text = "Puntos acumulados disponibles";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -75,7 +75,7 @@ namespace AerolineaFrba.Consulta_Millas
                 Console.WriteLine(query);
                 //MessageBox.Show(null, query, "Query");
                 int millas = JanadianDateDB.Instance.getMillasTotalesDisponibles(cliente);
-                labelPuntos.Text += ": " + millas.ToString();
+                labelPuntos.Text = "Puntos acumulados disponibles: " + millas.ToString();
 
                 dataGridRol1.Columns.Clear();
                 dataGridRol1.DataSource = JanadianDateDB.Instance.getDataTableResults(dataGridRol1, query);

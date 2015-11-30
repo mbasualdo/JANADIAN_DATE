@@ -34,9 +34,9 @@
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBoxDni = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBoxDni = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridRol1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -45,11 +45,11 @@
             // 
             this.labelPuntos.AutoSize = true;
             this.labelPuntos.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPuntos.Location = new System.Drawing.Point(208, 192);
+            this.labelPuntos.Location = new System.Drawing.Point(117, 191);
             this.labelPuntos.Name = "labelPuntos";
-            this.labelPuntos.Size = new System.Drawing.Size(126, 16);
+            this.labelPuntos.Size = new System.Drawing.Size(199, 16);
             this.labelPuntos.TabIndex = 43;
-            this.labelPuntos.Text = "Puntos acumulados";
+            this.labelPuntos.Text = "Puntos acumulados disponibles";
             // 
             // dataGridRol1
             // 
@@ -104,6 +104,13 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos de cliente";
             // 
+            // textBoxDni
+            // 
+            this.textBoxDni.Location = new System.Drawing.Point(218, 22);
+            this.textBoxDni.Name = "textBoxDni";
+            this.textBoxDni.Size = new System.Drawing.Size(141, 20);
+            this.textBoxDni.TabIndex = 23;
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -122,13 +129,6 @@
             this.label1.Size = new System.Drawing.Size(135, 24);
             this.label1.TabIndex = 37;
             this.label1.Text = "Consulta millas";
-            // 
-            // textBoxDni
-            // 
-            this.textBoxDni.Location = new System.Drawing.Point(218, 22);
-            this.textBoxDni.Name = "textBoxDni";
-            this.textBoxDni.Size = new System.Drawing.Size(141, 20);
-            this.textBoxDni.TabIndex = 23;
             // 
             // FormMillas
             // 

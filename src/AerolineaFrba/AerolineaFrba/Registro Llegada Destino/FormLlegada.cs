@@ -133,7 +133,7 @@ private void limpiar()
 
                 if (viaje == null)
                 {
-                    textoError += "No existe el viaje para las condiciones ingresadas\n";
+                    textoError += "No existe  viaje al que no le haya sido registrada la llegada para las condiciones ingresadas\nRevise si el viaje existe o si ya registro la llegada\n";
 
                 }
                 else if (viaje.getFechaLlegada.CompareTo(viaje.getFechaSalida)>0) {

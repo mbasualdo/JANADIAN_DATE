@@ -125,7 +125,7 @@ namespace AerolineaFrba.Generacion_Viaje
                 }
                  if (dateTimeFechaLlegada.Value.Subtract(dateTimeFechaSalida.Value).TotalHours > 24)
                 {
-                    textoError += "El campo fecha de llegada debe como maximo 24 hs a la salida\n";
+                    textoError += "El campo fecha de llegada estimada debe  ser como maximo 24 hs a la salida\n";
                 }
 
                  int cantViajesFecha = JanadianDateDB.Instance.getCantViajesFecha(((Aeronave)comboAeronave.SelectedItem), dateTimeFechaSalida.Value);

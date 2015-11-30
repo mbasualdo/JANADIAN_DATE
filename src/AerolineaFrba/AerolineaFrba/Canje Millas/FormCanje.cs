@@ -103,6 +103,12 @@ namespace AerolineaFrba.Canje_Millas
 
                 MessageBox.Show(null, "Se canjearon correctamente las millas", "Canje de millas");
 
+                List<Producto> productos = JanadianDateDB.Instance.getProductos();
+                comboBoxProducto.Items.Clear();
+                foreach (Producto f in productos)
+                {
+                    comboBoxProducto.Items.Add(f);
+                }
             }
             catch (Exception exAlta)
             {

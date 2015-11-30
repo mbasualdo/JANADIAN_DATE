@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AerolineaFrba.Excepciones;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -55,6 +56,7 @@ namespace AerolineaFrba.Devolucion
                 }
 
                 CompraDB compra = null;
+                Viaje viaje = null;
 
                 if (textoError.Length == 0)
                 {
@@ -65,6 +67,24 @@ namespace AerolineaFrba.Devolucion
                     {
                         textoError += "No existe la compra para las condiciones ingresadas\n";
 
+                    }
+                    else {
+                        viaje = JanadianDateDB.Instance.getViajeById(compra.getViaje);
+
+                        if (viaje == null)
+                        {
+                            textoError += "No existe el viaje para las condiciones ingresadas\n";
+
+                        }
+                        else if (viaje.getFechaSalida.CompareTo(JanadianDateDB.Instance.getFechaSistema())<0)
+                        {
+                            textoError += "El viaje ya ha salido. No se puede cancelar pasajes\n";
+                        }
+                        else if (viaje.getFechaLlegada.CompareTo(viaje.getFechaSalida) > 0)
+                        {
+                            textoError += "Ya se ha registrado la llegada del viaje asociado a esta compra\nNo se puede cancelar porque ya ha viajado\n";
+
+                        }
                     }
                 }
 
@@ -114,6 +134,13 @@ namespace AerolineaFrba.Devolucion
                 }
 
 
+            }
+            catch (NoResultsException exAlta)
+            {
+                Console.WriteLine(exAlta.ToString());
+
+                MessageBox.Show(null, "No hay compras", "Error");
+                return;
             }
             catch (Exception exAlta)
             {

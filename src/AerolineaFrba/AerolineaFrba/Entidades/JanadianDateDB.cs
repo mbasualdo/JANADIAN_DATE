@@ -121,7 +121,7 @@ namespace AerolineaFrba
 
         public static string RemoveSpecialCharacters(string str)
         {
-            return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+            return Regex.Replace(str, "[^a-zA-Z0-9_.-]+", "", RegexOptions.Compiled);
         }
         internal List<string> getFuncionalidadesAdmin()
         {
@@ -1439,7 +1439,7 @@ namespace AerolineaFrba
                 //
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 v.[Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] v INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (v.Ruta=r.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c ON (r.Ciudad_Origen=c.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (r.Ciudad_Destino=c2.Id) WHERE v.Aeronave={0} AND c.Nombre='{1}' AND c2.Nombre='{2}'   ", nave.getId, origen.ToString(), destino.ToString()), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT TOP 1 v.[Id],[FechaSalida],[Fecha_Llegada_Estimada],[FechaLlegada],[Aeronave],[Ruta]  FROM [GD2C2015].[JANADIAN_DATE].[Viaje] v INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ruta] r ON (v.Ruta=r.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c ON (r.Ciudad_Origen=c.Id) INNER JOIN [GD2C2015].[JANADIAN_DATE].[Ciudad] c2 ON (r.Ciudad_Destino=c2.Id) WHERE v.Aeronave={0} AND c.Nombre='{1}' AND c2.Nombre='{2}' AND FechaLlegada IS NULL  ", nave.getId, origen.ToString(), destino.ToString()), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1570,7 +1570,7 @@ namespace AerolineaFrba
                 // The following code uses an SqlCommand based on the SqlConnection.
                 //
 
-                SqlCommand cmd = new SqlCommand(String.Format("SELECT [GD2C2015].[JANADIAN_DATE].[Millas_Disponibles] ({0}) as Cant ", c.getId), con);
+                SqlCommand cmd = new SqlCommand(String.Format("SELECT [GD2C2015].[JANADIAN_DATE].[Millas_Disponibles] ({0},'{1}') as Cant ", c.getId,this.getFechaSistema()), con);
                 DataTable dt = new DataTable();
 
                 dt.TableName = "Tabla";
@@ -1716,7 +1716,7 @@ namespace AerolineaFrba
                 if (dt.Rows.Count == 0)
                 {
                     con.Close();
-                    throw (new NoResultsException("No hay Compras"));
+                   return null;
                 }
                 foreach (DataRow Fila in dt.Rows)
                 {

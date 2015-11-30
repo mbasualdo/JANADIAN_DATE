@@ -69,7 +69,7 @@ SELECT @count = COUNT(*) FROM [JANADIAN_DATE].[Viaje] WHERE Aeronave=@id AND DAT
 END
 GO
 
-/****** Funcion que chequea si un rol esta habilitado  ********/
+/****** Funcion que chequea si una aeronave esta habilitado  ********/
 CREATE FUNCTION  [JANADIAN_DATE].[Aeronave_Habilitada_Por_Matricula](@matricula nvarchar(255))
 RETURNS  bit
 AS 
@@ -80,16 +80,27 @@ BEGIN
 END
 GO
 
- /****** Funcion que devuelve cuantAS millas tiene disponible un cliente ********/
-CREATE FUNCTION  [JANADIAN_DATE].[Millas_Disponibles](@id int)
+
+/****** Funcion que chequea si una aeronave tiene la matricula que le pasamos ********/
+CREATE FUNCTION  [JANADIAN_DATE].[Aeronave_Por_Matricula](@matricula nvarchar(255))
+RETURNS  int
+AS 
+BEGIN
+   DECLARE @retval int
+   SELECT @retval = count(*) FROM [JANADIAN_DATE].[Aeronave] WHERE Matricula=@matricula   
+   RETURN ISNULL ( @retval , 0 )
+END
+GO
+ /****** Funcion que devuelve cuantAS millas tiene disponible un cliente (validar que sean de los ultimos 365 dias)********/
+CREATE FUNCTION  [JANADIAN_DATE].[Millas_Disponibles](@id int,@fechaActual datetime)
 RETURNS  int
 AS 
 BEGIN
    DECLARE @count int
 	SELECT @count = SUM (Cant) FROM 
-	((SELECT - SUM ([Cantidad]) as Cant FROM [GD2C2015].[JANADIAN_DATE].[Canje] WHERE Cliente=@id AND DATEDIFF(YEAR,Fecha,CURRENT_TIMESTAMP) =0)
+	((SELECT - SUM ([Cantidad]) as Cant FROM [GD2C2015].[JANADIAN_DATE].[Canje] WHERE Cliente=@id AND DATEDIFF(DAY,Fecha,@fechaActual)  > -366)
 	union
-	(SELECT SUM ([Cantidad]) as Cant FROM [GD2C2015].[JANADIAN_DATE].[Millas] WHERE Cliente=@id AND DATEDIFF(YEAR,Fecha,CURRENT_TIMESTAMP) =0)
+	(SELECT SUM ([Cantidad]) as Cant FROM [GD2C2015].[JANADIAN_DATE].[Millas] WHERE Cliente=@id AND DATEDIFF(DAY,Fecha,@fechaActual)  > -366)
 	)AS launion
 
    RETURN  ISNULL ( @count , 0 )
@@ -986,19 +997,18 @@ BEGIN TRY
 
 		BEGIN TRANSACTION
 		declare @Aeronave int;
-		IF ( [JANADIAN_DATE].[Aeronave_Habilitada_Por_Matricula](@naveMat + '_2')=0)
-		BEGIN
-			INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) 
-			SELECT @naveMat + '_2' ,Fabricante,Modelo , Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla FROM Aeronave WHERE id=@Id_Aeronave
-			SELECT @Aeronave=Id FROM [JANADIAN_DATE].[Aeronave] where Matricula=(@naveMat + '_2')
-		END
-		ELSE
-		BEGIN
-			INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) 
-			SELECT @naveMat + '_3' ,Fabricante,Modelo , Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla FROM Aeronave WHERE id=@Id_Aeronave
-			SELECT @Aeronave=Id FROM [JANADIAN_DATE].[Aeronave] where Matricula=(@naveMat + '_3')
 
+		declare @num int;
+		set @num = 1;
+
+		WHILE ([JANADIAN_DATE].[Aeronave_Por_Matricula](@naveMat + '_' + CONVERT(varchar(255), @num))<>0)
+		BEGIN
+				set @num = @num + 1;
 		END
+
+		INSERT INTO JANADIAN_DATE.Aeronave(Matricula,Fabricante,Modelo,Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla) 
+			SELECT @naveMat + '_' +  CONVERT(varchar(255), @num) ,Fabricante,Modelo , Tipo_Servicio,KG_Disponibles,Cant_Butacas_Pasillo,Cant_Butacas_Ventanilla FROM Aeronave WHERE id=@Id_Aeronave
+			SELECT @Aeronave=Id FROM [JANADIAN_DATE].[Aeronave] where Matricula=(@naveMat + '_' +  CONVERT(varchar(255), @num))
 
 			INSERT INTO JANADIAN_DATE.Butaca (Numero,Tipo,Piso,Aeronave)
 			select Numero,Tipo,Piso,@Aeronave from JANADIAN_DATE.Butaca WHERE AERONAVE=@Id_Aeronave
