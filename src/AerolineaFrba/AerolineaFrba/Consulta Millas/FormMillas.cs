@@ -64,7 +64,10 @@ namespace AerolineaFrba.Consulta_Millas
                 {
                     cliente = JanadianDateDB.Instance.getCliente(Convert.ToDecimal(textBoxDni.Text));
                }
-
+                if (cliente == null)
+                {
+                    textoError += "No existe el cliente\n";
+                }
                 if (textoError.Length != 0)
                 {
                     MessageBox.Show(null, textoError, "Error de Validacion");
